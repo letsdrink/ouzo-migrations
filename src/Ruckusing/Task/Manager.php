@@ -37,13 +37,6 @@ class Manager
      */
     private $_tasks = array();
 
-    /**
-     * Creates an instance of Ruckusing_Task_Manager
-     *
-     * @param Ruckusing_Adpater_Base $adapter The current adapter being used
-     *
-     * @return Ruckusing_Task_Manager
-     */
     public function __construct($adapter)
     {
         $this->setAdapter($adapter);
