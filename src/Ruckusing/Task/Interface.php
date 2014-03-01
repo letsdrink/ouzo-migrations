@@ -47,7 +47,7 @@ interface Ruckusing_Task_Interface
     /**
      * Set the current adapter
      *
-     * @param Ruckusing_Adapter_Base $adapter the current adapter
+     * @param Base $adapter the current adapter
      *
      * @return Ruckusing_Task_Interface
      */

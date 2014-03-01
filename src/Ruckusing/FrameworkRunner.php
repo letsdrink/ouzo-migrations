@@ -53,7 +53,7 @@ class Ruckusing_FrameworkRunner
     /**
      * adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter = null;
 
@@ -107,8 +107,8 @@ class Ruckusing_FrameworkRunner
      */
     public function __construct($config, $argv)
     {
-        set_error_handler(array('Ruckusing_Exception', 'errorHandler'), E_ALL);
-        set_exception_handler(array('Ruckusing_Exception', 'exceptionHandler'));
+        set_error_handler(array('RuckusingException', 'errorHandler'), E_ALL);
+        set_exception_handler(array('RuckusingException', 'exceptionHandler'));
 
         //parse arguments
         $this->parse_args($argv);
@@ -196,9 +196,9 @@ class Ruckusing_FrameworkRunner
 
         if ($key) {
             if (!isset($this->_config['migrations_dir'][$key])) {
-                throw new Ruckusing_Exception(
+                throw new RuckusingException(
                                 sprintf("No module %s migration_dir set in config", $key),
-                                Ruckusing_Exception::INVALID_CONFIG
+                                RuckusingException::INVALID_CONFIG
                 );
             }
             $migration_dir = $this->_config['migrations_dir'][$key] . DIRECTORY_SEPARATOR;
@@ -264,9 +264,9 @@ class Ruckusing_FrameworkRunner
         $adapter = $this->get_adapter_class($db['type']);
 
         if (empty($adapter)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("No adapter available for DB type: %s", $db['type']),
-                            Ruckusing_Exception::INVALID_ADAPTER
+                            RuckusingException::INVALID_ADAPTER
             );
         }
         //construct our adapter
@@ -280,16 +280,16 @@ class Ruckusing_FrameworkRunner
     public function initialize_logger()
     {
         if (is_dir($this->_config['log_dir']) && !is_writable($this->_config['log_dir'])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             "\n\nCannot write to log directory: " . $this->_config['log_dir'] . "\n\nCheck permissions.\n\n",
-                            Ruckusing_Exception::INVALID_LOG
+                            RuckusingException::INVALID_LOG
             );
         } elseif (!is_dir($this->_config['log_dir'])) {
             //try and create the log directory
             mkdir($this->_config['log_dir'], 0755, true);
         }
         $log_name = sprintf("%s.log", $this->_env);
-        $this->logger = Ruckusing_Util_Logger::instance($this->_config['log_dir'] . DIRECTORY_SEPARATOR . $log_name);
+        $this->logger = Logger::instance($this->_config['log_dir'] . DIRECTORY_SEPARATOR . $log_name);
     }
 
     /**
@@ -382,73 +382,73 @@ class Ruckusing_FrameworkRunner
     private function verify_db_config()
     {
         if ( !array_key_exists($this->_env, $this->_config['db'])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: '%s' DB is not configured", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         $env = $this->_env;
         $this->_active_db_config = $this->_config['db'][$this->_env];
         if (!array_key_exists("type",$this->_active_db_config)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: 'type' is not set for '%s' DB", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (!array_key_exists("host",$this->_active_db_config)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: 'host' is not set for '%s' DB", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (!array_key_exists("database",$this->_active_db_config)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: 'database' is not set for '%s' DB", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (!array_key_exists("user",$this->_active_db_config)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: 'user' is not set for '%s' DB", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (!array_key_exists("password",$this->_active_db_config)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: 'password' is not set for '%s' DB", $this->_env),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (empty($this->_config['migrations_dir'])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             "Error: 'migrations_dir' is not set in config.",
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (is_array($this->_config['migrations_dir'])) {
             if (!isset($this->_config['migrations_dir']['default'])) {
-                throw new Ruckusing_Exception(
+                throw new RuckusingException(
                                 "Error: 'migrations_dir' 'default' key is not set in config.",
-                                Ruckusing_Exception::INVALID_CONFIG
+                                RuckusingException::INVALID_CONFIG
                 );
             } elseif (empty($this->_config['migrations_dir']['default'])) {
-                throw new Ruckusing_Exception(
+                throw new RuckusingException(
                                 "Error: 'migrations_dir' 'default' key is empty in config.",
-                                Ruckusing_Exception::INVALID_CONFIG
+                                RuckusingException::INVALID_CONFIG
                 );
             } else {
                 $names = $paths = array();
                 foreach ($this->_config['migrations_dir'] as $name => $path) {
                     if (isset($names[$name])) {
-                        throw new Ruckusing_Exception(
+                        throw new RuckusingException(
                                         "Error: 'migrations_dir' '$name' key is defined multiples times in config.",
-                                        Ruckusing_Exception::INVALID_CONFIG
+                                        RuckusingException::INVALID_CONFIG
                         );
                     }
                     if (isset($paths[$path])) {
-                        throw new Ruckusing_Exception(
+                        throw new RuckusingException(
                                         "Error: 'migrations_dir' '{$paths[$path]}' and '$name' keys defined the same path in config.",
-                                        Ruckusing_Exception::INVALID_CONFIG
+                                        RuckusingException::INVALID_CONFIG
                         );
                     }
                     $names[$name] = $path;
@@ -457,21 +457,21 @@ class Ruckusing_FrameworkRunner
             }
         }
         if (isset($this->_task_options['module']) && !isset($this->_config['migrations_dir'][$this->_task_options['module']])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Error: module name %s is not set in 'migrations_dir' option in config.", $this->_task_options['module']),
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (empty($this->_config['db_dir'])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             "Error: 'db_dir' is not set in config.",
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
         if (empty($this->_config['log_dir'])) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             "Error: 'log_dir' is not set in config.",
-                            Ruckusing_Exception::INVALID_CONFIG
+                            RuckusingException::INVALID_CONFIG
             );
         }
     }
@@ -488,16 +488,16 @@ class Ruckusing_FrameworkRunner
         $adapter_class = null;
         switch ($db_type) {
             case 'mysql':
-                $adapter_class = "Ruckusing_Adapter_MySQL_Base";
+                $adapter_class = "Base";
                 break;
             case 'mssql':
                 $adapter_class = "Ruckusing_Adapter_MSSQL_Base";
                 break;
             case 'pgsql':
-                $adapter_class = "Ruckusing_Adapter_PgSQL_Base";
+                $adapter_class = "_PgSQL_Base";
                 break;
             case 'sqlite':
-                $adapter_class = "Ruckusing_Adapter_Sqlite3_Base";
+                $adapter_class = "_Sqlite3_Base";
                 break;
         }
 
@@ -515,9 +515,9 @@ class Ruckusing_FrameworkRunner
     private function load_all_adapters($adapter_dir)
     {
         if (!is_dir($adapter_dir)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                             sprintf("Adapter dir: %s does not exist", $adapter_dir),
-                            Ruckusing_Exception::INVALID_ADAPTER
+                            RuckusingException::INVALID_ADAPTER
             );
 
             return false;

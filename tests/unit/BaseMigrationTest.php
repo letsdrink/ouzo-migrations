@@ -1,19 +1,8 @@
 <?php
+use Ruckusing\Util\Logger;
 
-/**
- * Implementation of BaseMigrationTest.
- * To run these unit-tests an empty test database needs to be setup in database.inc.php
- * and of course, it has to really exist.
- *
- * @category Ruckusing
- * @package  Ruckusing
- * @author   (c) Cody Caughlan <codycaughlan % gmail . com>
- */
 class BaseMigrationTest extends PHPUnit_Framework_TestCase
 {
-    /**
-     * Setup commands before test case
-     */
     protected function setUp()
     {
         $ruckusing_config = require RUCKUSING_BASE . '/config/database.inc.php';
@@ -26,15 +15,12 @@ class BaseMigrationTest extends PHPUnit_Framework_TestCase
         $test_db = $ruckusing_config['db']['mysql_test'];
 
         //setup our log
-        $logger = Ruckusing_Util_Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
+        $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Ruckusing_Adapter_MySQL_Base($test_db, $logger);
-        $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
-    }//setUp()
+        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
+    }
 
-    /**
-     * shutdown commands after test case
-     */
     protected function tearDown()
     {
         //delete any tables we created
@@ -47,21 +33,17 @@ class BaseMigrationTest extends PHPUnit_Framework_TestCase
         }
     }
 
-    /**
-     * test case for creating an index with a custom name
-     */
     public function test_can_create_index_with_custom_name()
     {
         //create it
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20), age int(3) );");
-        $base = new Ruckusing_Migration_Base($this->adapter);
-        $base->add_index("users", "name", array('name' => 'my_special_index'));
+        $this->adapter->add_index("users", "name", array('name' => 'my_special_index'));
 
         //ensure it exists
         $this->assertEquals(true, $this->adapter->has_index("users", "name", array('name' => 'my_special_index')));
 
         //drop it
-        $base->remove_index("users", "name", array('name' => 'my_special_index'));
+        $this->adapter->remove_index("users", "name", array('name' => 'my_special_index'));
         $this->assertEquals(false, $this->adapter->has_index("users", "my_special_index"));
     }
 }

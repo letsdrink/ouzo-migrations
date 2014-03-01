@@ -1,25 +1,9 @@
 <?php
+namespace Ruckusing;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @author   Salimane Adjao Moustapha <me@salimane.com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+use Exception;
 
-/**
- * Ruckusing_Exception
- *
- * @category Ruckusing
- * @package  Ruckusing
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @author   Salimane Adjao Moustapha <me@salimane.com>
- * @link     https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Exception extends Exception
+class RuckusingException extends Exception
 {
     const MISSING_SCHEMA_INFO_TABLE = 100;
     const INVALID_INDEX_NAME = 101;
@@ -42,11 +26,11 @@ class Ruckusing_Exception extends Exception
     /**
      * Redefine the exception so message isn't optional
      *
-     * @param string    $message
-     * @param int       $code[optional]
-     * @param Exception $previous[optional]
+     * @param string $message
+     * @param int $code [optional]
+     * @param Exception $previous [optional]
      *
-     * @return Ruckusing_Exception
+     * @return RuckusingException
      */
     public function __construct($message, $code = 0, Exception $previous = null)
     {
@@ -72,8 +56,8 @@ class Ruckusing_Exception extends Exception
      * Custom error handler
      *
      * @param integer $code
-     * @param string  $message
-     * @param string  $file
+     * @param string $message
+     * @param string $file
      * @param integer $line
      */
     public static function errorHandler($code, $message, $file, $line)

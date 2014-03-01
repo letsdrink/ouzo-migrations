@@ -1,28 +1,12 @@
 <?php
+namespace Ruckusing\Util;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Util
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Ruckusing_Util_Logger
- *
- * @category Ruckusing
- * @package  Ruckusing_Util
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Util_Logger
+class Logger
 {
     /**
      * Instance of logger
      *
-     * @var Ruckusing_Util_Logger
+     * @var Logger
      */
     private static $_instance;
 
@@ -41,11 +25,11 @@ class Ruckusing_Util_Logger
     private $_fp;
 
     /**
-     * Creates an instance of Ruckusing_Util_Logger
+     * Creates an instance of Logger
      *
      * @param string $file the path to log to
      *
-     * @return Ruckusing_Util_Logger
+     * @return Logger
      */
     public function __construct($file)
     {
@@ -75,7 +59,7 @@ class Ruckusing_Util_Logger
         if (self::$_instance !== NULL) {
             return $instance;
         }
-        $instance = new Ruckusing_Util_Logger($logfile);
+        $instance = new Logger($logfile);
 
         return $instance;
     }
@@ -93,8 +77,8 @@ class Ruckusing_Util_Logger
             fwrite($this->_fp, $line);
         } else {
             throw new Ruckusing_Exception(
-                    sprintf("Error: logfile '%s' not open for writing!", $this->_file),
-                    Ruckusing_Exception::INVALID_LOG
+                sprintf("Error: logfile '%s' not open for writing!", $this->_file),
+                Ruckusing_Exception::INVALID_LOG
             );
         }
 
@@ -112,8 +96,8 @@ class Ruckusing_Util_Logger
                 self::$_instance = null;
             } else {
                 throw new Ruckusing_Exception(
-                        'Error closing the log file',
-                        Ruckusing_Exception::INVALID_LOG
+                    'Error closing the log file',
+                    Ruckusing_Exception::INVALID_LOG
                 );
             }
         }

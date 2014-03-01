@@ -26,7 +26,7 @@ class Task_Db_Schema extends Ruckusing_Task_Base implements Ruckusing_Task_Inter
     /**
      * Current Adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter = null;
 
@@ -40,7 +40,7 @@ class Task_Db_Schema extends Ruckusing_Task_Base implements Ruckusing_Task_Inter
     /**
      * Creates an instance of Task_DB_Schema
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter being used
+     * @param Base $adapter The current adapter being used
      *
      * @return Task_DB_Schema
      */
@@ -89,11 +89,11 @@ class Task_Db_Schema extends Ruckusing_Task_Base implements Ruckusing_Task_Inter
 
         //check to make sure our destination directory is writable
         if (!is_writable($db_directory)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     "ERROR: DB Schema directory '"
                     . $db_directory
                     . "' is not writable by the current user. Check permissions and try again.\n",
-                    Ruckusing_Exception::INVALID_DB_DIR
+                    RuckusingException::INVALID_DB_DIR
             );
         }
 

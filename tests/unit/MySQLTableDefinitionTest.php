@@ -24,9 +24,9 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
 
         $test_db = $ruckusing_config['db']['mysql_test'];
         //setup our log
-        $logger = Ruckusing_Util_Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
+        $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Ruckusing_Adapter_MySQL_Base($test_db, $logger);
+        $this->adapter = new Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
     }
 
@@ -83,19 +83,19 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition()
     {
-        $c = new Ruckusing_Adapter_ColumnDefinition($this->adapter, "last_name", "string", array('limit' => 32));
+        $c = new ColumnDefinition($this->adapter, "last_name", "string", array('limit' => 32));
         $this->assertEquals("`last_name` varchar(32)", trim($c));
 
-        $c = new Ruckusing_Adapter_ColumnDefinition($this->adapter, "last_name", "string", array('null' => false));
+        $c = new ColumnDefinition($this->adapter, "last_name", "string", array('null' => false));
         $this->assertEquals("`last_name` varchar(255) NOT NULL", trim($c));
 
-        $c = new Ruckusing_Adapter_ColumnDefinition($this->adapter, "last_name", "string", array('default' => 'abc', 'null' => false));
+        $c = new ColumnDefinition($this->adapter, "last_name", "string", array('default' => 'abc', 'null' => false));
         $this->assertEquals("`last_name` varchar(255) DEFAULT 'abc' NOT NULL", trim($c));
 
-        $c = new Ruckusing_Adapter_ColumnDefinition($this->adapter, "created_at", "datetime", array('null' => false));
+        $c = new ColumnDefinition($this->adapter, "created_at", "datetime", array('null' => false));
         $this->assertEquals("`created_at` datetime NOT NULL", trim($c));
 
-        $c = new Ruckusing_Adapter_ColumnDefinition($this->adapter, "id", "integer", array("primary_key" => true, "unsigned" => true));
+        $c = new ColumnDefinition($this->adapter, "id", "integer", array("primary_key" => true, "unsigned" => true));
         $this->assertEquals("`id` int(11) UNSIGNED", trim($c));
     }
 

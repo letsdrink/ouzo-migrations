@@ -1,28 +1,12 @@
 <?php
+namespace Ruckusing\Adapter;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Ruckusing_Adapter_ColumnDefinition
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Adapter_ColumnDefinition
+class ColumnDefinition
 {
     /**
      * adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
 
     private $_adapter;
@@ -56,33 +40,33 @@ class Ruckusing_Adapter_ColumnDefinition
     private $_options = array();
 
     /**
-     * Creates an instance of Ruckusing_Adapter_ColumnDefinition
+     * Creates an instance of ColumnDefinition
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter
-     * @param string                 $name    the name of the column
-     * @param string                 $type    the type of the column
-     * @param array                  $options the column options
+     * @param Base $adapter The current adapter
+     * @param string $name the name of the column
+     * @param string $type the type of the column
+     * @param array $options the column options
      *
-     * @return Ruckusing_Adapter_ColumnDefinition
+     * @return ColumnDefinition
      */
     public function __construct($adapter, $name, $type, $options = array())
     {
-        if (!($adapter instanceof Ruckusing_Adapter_Base)) {
-            throw new Ruckusing_Exception(
-                    'Invalid Adapter instance.',
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                'Invalid Adapter instance.',
+                RuckusingException::INVALID_ADAPTER
             );
         }
         if (empty($name) || !is_string($name)) {
-            throw new Ruckusing_Exception(
-                    "Invalid 'name' parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Invalid 'name' parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($type) || !is_string($type)) {
-            throw new Ruckusing_Exception(
-                    "Invalid 'type' parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Invalid 'type' parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
 

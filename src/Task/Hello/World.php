@@ -24,7 +24,7 @@ class Task_Hello_World extends Ruckusing_Task_Base implements Ruckusing_Task_Int
     /**
      * Creates an instance of Task_Hello_World
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter being used
+     * @param Base $adapter The current adapter being used
      *
      * @return Task_Hello_World
      */

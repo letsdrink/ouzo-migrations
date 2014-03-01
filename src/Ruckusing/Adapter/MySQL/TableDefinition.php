@@ -1,30 +1,12 @@
 <?php
+namespace Ruckusing\Adapter\MySQL;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @subpackage   MySQL
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Ruckusing_Adapter_MySQL_TableDefinition
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @subpackage   MySQL
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Adapter_MySQL_TableDefinition
+class TableDefinition
 {
     /**
      * adapter MySQL
      *
-     * @var Ruckusing_Adapter_Mysql_Base
+     * @var Base
      */
     private $_adapter;
 
@@ -87,25 +69,25 @@ class Ruckusing_Adapter_MySQL_TableDefinition
     /**
      * Creates an instance of Ruckusing_Adapters_MySQL_Adapter
      *
-     * @param Ruckusing_Adapter_MySQL_Base $adapter the current adapter
-     * @param string                       $name    the table name
-     * @param array                        $options the options
+     * @param Base $adapter the current adapter
+     * @param string $name the table name
+     * @param array $options the options
      *
      * @return Ruckusing_Adapter_MySQL_TableDefinition
      */
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof Ruckusing_Adapter_MySQL_Base)) {
-            throw new Ruckusing_Exception(
-                    "Invalid MySQL Adapter instance.",
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                "Invalid MySQL Adapter instance.",
+                RuckusingException::INVALID_ADAPTER
             );
         }
         if (!$name) {
-            throw new Ruckusing_Exception(
-                    "Invalid 'name' parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Invalid 'name' parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
 
@@ -140,8 +122,8 @@ class Ruckusing_Adapter_MySQL_TableDefinition
      * Create a column
      *
      * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options
+     * @param string $type the column type
+     * @param array $options
      */
     public function column($column_name, $type, $options = array())
     {
@@ -165,10 +147,12 @@ class Ruckusing_Adapter_MySQL_TableDefinition
             }
         }
         $column_options = array_merge($column_options, $options);
-        $column = new Ruckusing_Adapter_ColumnDefinition($this->_adapter, $column_name, $type, $column_options);
+        $column = new ColumnDefinition($this->_adapter, $column_name, $type, $column_options);
 
         $this->_columns[] = $column;
-    }//column
+    }
+
+    //column
 
     /**
      * Get all primary keys
@@ -185,7 +169,7 @@ class Ruckusing_Adapter_MySQL_TableDefinition
             }
             $primary_key_sql = ",\n" . $lead . implode(",", $quoted) . ")";
 
-            return($primary_key_sql);
+            return ($primary_key_sql);
         } else {
             return '';
         }
@@ -201,9 +185,9 @@ class Ruckusing_Adapter_MySQL_TableDefinition
     public function finish($wants_sql = false)
     {
         if ($this->_initialized == false) {
-            throw new Ruckusing_Exception(
-                    sprintf("Table Definition: '%s' has not been initialized", $this->_name),
-                    Ruckusing_Exception::INVALID_TABLE_DEFINITION
+            throw new RuckusingException(
+                sprintf("Table Definition: '%s' has not been initialized", $this->_name),
+                RuckusingException::INVALID_TABLE_DEFINITION
             );
         }
         if (is_array($this->_options) && array_key_exists('options', $this->_options)) {
@@ -211,19 +195,19 @@ class Ruckusing_Adapter_MySQL_TableDefinition
         } else {
             $opt_str = null;
         }
-        if(isset($this->_adapter->db_info['charset'])){
-            $opt_str .= " DEFAULT CHARSET=".$this->_adapter->db_info['charset'];
+        if (isset($this->_adapter->db_info['charset'])) {
+            $opt_str .= " DEFAULT CHARSET=" . $this->_adapter->db_info['charset'];
         } else {
             $opt_str .= " DEFAULT CHARSET=latin1";
         }
 
-        $close_sql = sprintf(") %s;",$opt_str);
+        $close_sql = sprintf(") %s;", $opt_str);
         $create_table_sql = $this->_sql;
 
         if ($this->_auto_generate_id === true) {
             $this->_primary_keys[] = 'id';
-            $primary_id = new Ruckusing_Adapter_ColumnDefinition($this->_adapter, 'id', 'integer',
-                    array('unsigned' => true, 'null' => false, 'auto_increment' => true));
+            $primary_id = new ColumnDefinition($this->_adapter, 'id', 'integer',
+                array('unsigned' => true, 'null' => false, 'auto_increment' => true));
 
             $create_table_sql .= $primary_id->to_sql() . ",\n";
         }
@@ -236,7 +220,9 @@ class Ruckusing_Adapter_MySQL_TableDefinition
         } else {
             return $this->_adapter->execute_ddl($create_table_sql);
         }
-    }//finish
+    }
+
+    //finish
 
     /**
      * get all columns
@@ -260,7 +246,7 @@ class Ruckusing_Adapter_MySQL_TableDefinition
      * Init create sql
      *
      * @param string $name
-     * @param array  $options
+     * @param array $options
      */
     private function init_sql($name, $options)
     {
@@ -268,8 +254,8 @@ class Ruckusing_Adapter_MySQL_TableDefinition
         if (array_key_exists('force', $options) && $options['force'] == true) {
             try {
                 $this->_adapter->drop_table($name);
-            } catch (Ruckusing_Exception $e) {
-                if ($e->getCode() != Ruckusing_Exception::MISSING_TABLE) {
+            } catch (RuckusingException $e) {
+                if ($e->getCode() != RuckusingException::MISSING_TABLE) {
                     throw $e;
                 }
                 //do nothing

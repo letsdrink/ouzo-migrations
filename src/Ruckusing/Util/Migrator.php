@@ -21,7 +21,7 @@ class Ruckusing_Util_Migrator
     /**
      * adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter = null;
 
@@ -35,7 +35,7 @@ class Ruckusing_Util_Migrator
     /**
      * Creates an instance of Ruckusing_Util_Migrator
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter being used
+     * @param Base $adapter The current adapter being used
      *
      * @return Ruckusing_Util_Migrator
      */
@@ -47,16 +47,16 @@ class Ruckusing_Util_Migrator
     /**
      * set adapter
      *
-     * @param Ruckusing_Adapter_Base $adapter the current adapter
+     * @param Base $adapter the current adapter
      *
      * @return Ruckusing_Util_Migrator
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Ruckusing_Adapter_Base)) {
-            throw new Ruckusing_Exception(
-                    'Adapter must be implement Ruckusing_Adapter_Base!',
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                    'Adapter must be implement Base!',
+                    RuckusingException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;
@@ -119,9 +119,9 @@ class Ruckusing_Util_Migrator
         $current = $this->find_version($migrations, $this->get_max_version());
         $target = $this->find_version($migrations, $destination);
         if (is_null($target) && !is_null($destination) && $destination > 0) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     "Could not find target version {$destination} in set of migrations.",
-                    Ruckusing_Exception::INVALID_TARGET_MIGRATION
+                    RuckusingException::INVALID_TARGET_MIGRATION
             );
         }
         $start = $direction == 'up' ? 0 : array_search($current, $migrations);
@@ -216,9 +216,9 @@ class Ruckusing_Util_Migrator
         foreach ($directories as $name => $path) {
             if (!is_dir($path)) {
                 if (mkdir($path, 0755, true) === FALSE) {
-                    throw new Ruckusing_Exception(
+                    throw new RuckusingException(
                     		"\n\tUnable to create migrations directory at %s, check permissions?", $path,
-                    		Ruckusing_Exception::INVALID_MIGRATION_DIR
+                    		RuckusingException::INVALID_MIGRATION_DIR
                     );
                 }
             }

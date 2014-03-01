@@ -29,7 +29,7 @@ class Ruckusing_Task_Base
     /**
      * the adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter;
 
@@ -43,7 +43,7 @@ class Ruckusing_Task_Base
     /**
      * Creates an instance of Ruckusing_Task_Base
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter being used
+     * @param Base $adapter The current adapter being used
      *
      * @return Ruckusing_Task_Base
      */
@@ -70,9 +70,9 @@ class Ruckusing_Task_Base
     public function set_framework($fw)
     {
         if (!($fw instanceof Ruckusing_FrameworkRunner)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     'Framework must be instance of Ruckusing_FrameworkRunner!',
-                    Ruckusing_Exception::INVALID_FRAMEWORK
+                    RuckusingException::INVALID_FRAMEWORK
             );
         }
         $this->_framework = $fw;
@@ -81,16 +81,16 @@ class Ruckusing_Task_Base
     /**
      * set adapter
      *
-     * @param Ruckusing_Adapter_Base $adapter the current adapter
+     * @param Base $adapter the current adapter
      *
      * @return Ruckusing_Task_Base
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Ruckusing_Adapter_Base)) {
-            throw new Ruckusing_Exception(
-                    'Adapter must be implement Ruckusing_Adapter_Base!',
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                    'Adapter must be implement Base!',
+                    RuckusingException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;

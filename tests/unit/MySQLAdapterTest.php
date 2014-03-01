@@ -25,9 +25,9 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $test_db = $ruckusing_config['db']['mysql_test'];
 
         //setup our log
-        $logger = Ruckusing_Util_Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
+        $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Ruckusing_Adapter_MySQL_Base($test_db, $logger);
+        $this->adapter = new Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
     }//setUp()
 
@@ -145,14 +145,14 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
             $table->column('anothercolumnthatiscrazylongrodeclown', 'integer');
             $sql = $table->finish();
             $bm->add_index($table_name, array('somecolumnthatiscrazylong', 'anothercolumnthatiscrazylongrodeclown'));
-        } catch (Ruckusing_Exception $exception) {
-            if (Ruckusing_Exception::INVALID_INDEX_NAME == $exception->getCode()) {
+        } catch (RuckusingException $exception) {
+            if (RuckusingException::INVALID_INDEX_NAME == $exception->getCode()) {
                 $bm->drop_table($table_name);
 
                 return;
             }
         }
-        $this->fail('Expected to raise & catch Ruckusing_Exception::INVALID_INDEX_NAME');
+        $this->fail('Expected to raise & catch RuckusingException::INVALID_INDEX_NAME');
     }
 
     /**

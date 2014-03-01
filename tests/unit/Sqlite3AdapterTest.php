@@ -8,7 +8,7 @@
 class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var $adapter Ruckusing_Adapter_Sqlite3_Base
+     * @var $adapter _Sqlite3_Base
      */
     private $adapter;
 
@@ -23,9 +23,9 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
 
         $test_db = $ruckusing_config['db']['sqlite_test'];
 
-        $logger = Ruckusing_Util_Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
+        $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Ruckusing_Adapter_Sqlite3_Base($test_db, $logger);
+        $this->adapter = new _Sqlite3_Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
         $this->adapter->query('DROP TABLE IF EXISTS test');
         $this->adapter->query('CREATE TABLE test(id int)');
@@ -195,13 +195,13 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
             $table->column('anothercolumnthatiscrazylongrodeclown', 'integer');
             $sql = $table->finish();
             $bm->add_index($table_name, array('somecolumnthatiscrazylong', 'anothercolumnthatiscrazylongrodeclown'));
-        } catch (Ruckusing_Exception $exception) {
-            if (Ruckusing_Exception::INVALID_INDEX_NAME == $exception->getCode()) {
+        } catch (RuckusingException $exception) {
+            if (RuckusingException::INVALID_INDEX_NAME == $exception->getCode()) {
                 $bm->drop_table($table_name);
                 return;
             }
         }
-        $this->fail('Expected to raise & catch Ruckusing_Exception::INVALID_INDEX_NAME');
+        $this->fail('Expected to raise & catch RuckusingException::INVALID_INDEX_NAME');
     }
 
     public function test_custom_primary_key_1()

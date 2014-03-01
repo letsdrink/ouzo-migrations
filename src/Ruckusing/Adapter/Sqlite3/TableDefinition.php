@@ -24,7 +24,7 @@
 class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableDefinition
 {
     /**
-     * @var Ruckusing_Adapter_Sqlite3_Base
+     * @var _Sqlite3_Base
      */
     private $_adapter;
     private $_name;
@@ -39,11 +39,11 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof Ruckusing_Adapter_Sqlite3_Base)) {
-            throw new Ruckusing_Exception("Invalid Postgres Adapter instance.", Ruckusing_Exception::INVALID_ADAPTER);
+        if (!($adapter instanceof _Sqlite3_Base)) {
+            throw new RuckusingException("Invalid Postgres Adapter instance.", RuckusingException::INVALID_ADAPTER);
         }
         if (!$name) {
-            throw new Ruckusing_Exception("Invalid 'name' parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Invalid 'name' parameter", RuckusingException::INVALID_ARGUMENT);
         }
 
         $this->_adapter = $adapter;
@@ -70,8 +70,8 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
         if (array_key_exists('force', $options) && $options['force']) {
             try {
                 $this->_adapter->drop_table($name);
-            } catch (Ruckusing_Exception $e) {
-                if ($e->getCode() != Ruckusing_Exception::MISSING_TABLE) {
+            } catch (RuckusingException $e) {
+                if ($e->getCode() != RuckusingException::MISSING_TABLE) {
                     throw $e;
                 }
                 //do nothing
@@ -100,7 +100,7 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
         }
 
         $column_options = array_merge($column_options, $options);
-        $column = new Ruckusing_Adapter_ColumnDefinition($this->_adapter, $column_name, $type, $column_options);
+        $column = new ColumnDefinition($this->_adapter, $column_name, $type, $column_options);
 
         $this->_columns[] = $column;
     }
@@ -108,7 +108,7 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
     public function finish($wants_sql = false)
     {
         if (!$this->_initialized) {
-            throw new Ruckusing_Exception(sprintf("Table Definition: '%s' has not been initialized", $this->_name), Ruckusing_Exception::INVALID_TABLE_DEFINITION);
+            throw new RuckusingException(sprintf("Table Definition: '%s' has not been initialized", $this->_name), RuckusingException::INVALID_TABLE_DEFINITION);
         }
 
         if (is_array($this->_options) && array_key_exists('options', $this->_options)) {
@@ -122,7 +122,7 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
 
         if ($this->_auto_generate_id === true) {
             $this->_primary_keys[] = 'id';
-            $primary_id = new Ruckusing_Adapter_ColumnDefinition($this->_adapter, 'id', 'primary_key');
+            $primary_id = new ColumnDefinition($this->_adapter, 'id', 'primary_key');
             $create_table_sql .= $primary_id->to_sql() . ",\n";
         }
 

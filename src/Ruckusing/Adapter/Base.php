@@ -1,13 +1,8 @@
 <?php
+namespace Ruckusing\Adapter;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Logger;
 
 define('SQL_UNKNOWN_QUERY_TYPE', 1);
 define('SQL_SELECT', 2);
@@ -21,15 +16,7 @@ define('SQL_SHOW', 256);
 define('SQL_RENAME', 512);
 define('SQL_SET', 1024);
 
-/**
- * Ruckusing_Adapter_Base
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Adapter_Base
+class Base
 {
     /**
      * dsn
@@ -54,16 +41,16 @@ class Ruckusing_Adapter_Base
     /**
      * logger
      *
-     * @var Ruckusing_Util_Logger
+     * @var Logger
      */
     public $logger;
 
     /**
-     * Creates an instance of Ruckusing_Adapter_Base
+     * Creates an instance of Base
      *
      * @param array $dsn The current dsn
      *
-     * @return Ruckusing_Adapter_Base
+     * @return Base
      */
     public function __construct($dsn)
     {
@@ -113,14 +100,14 @@ class Ruckusing_Adapter_Base
     /**
      * Set a logger
      *
-     * @param Ruckusing_Util_Logger $logger The current logger
+     * @param Logger $logger The current logger
      */
     public function set_logger($logger)
     {
-        if (!($logger instanceof Ruckusing_Util_Logger)) {
-            throw new Ruckusing_Exception(
-                    'Logger parameter must be instance of Ruckusing_Util_Logger',
-                    Ruckusing_Exception::INVALID_ARGUMENT
+        if (!($logger instanceof Logger)) {
+            throw new RuckusingException(
+                    'Logger parameter must be instance of Logger',
+                    RuckusingException::INVALID_ARGUMENT
             );
         }
         $this->logger = $logger;
@@ -129,7 +116,7 @@ class Ruckusing_Adapter_Base
     /**
      * Get the current logger
      *
-     * @return Ruckusing_Util_Logger
+     * @return Logger
      */
     public function get_logger($logger)
     {

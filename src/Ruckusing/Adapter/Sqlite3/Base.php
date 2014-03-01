@@ -14,7 +14,7 @@
 define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
 
 /**
- * Ruckusing_Adapter_Sqlite3_Base
+ * _Sqlite3_Base
  *
  * @category Ruckusing
  * @package  Ruckusing_Adapter
@@ -23,7 +23,7 @@ define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
  * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Interface
+class _Sqlite3_Base extends Base implements AdapterInterface
 {
     /**
      * @var SQLite3
@@ -46,8 +46,8 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     private function db_connect($dsn)
     {
         if (!class_exists('SQLite3')) {
-            throw new Ruckusing_Exception("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3",
-                Ruckusing_Exception::INVALID_CONFIG
+            throw new RuckusingException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3",
+                RuckusingException::INVALID_CONFIG
             );
         }
         $db_info = $this->get_dsn();
@@ -56,13 +56,13 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
             try {
                 $this->sqlite3 = new SQLite3($db_info['database']);
             } catch (Exception $e) {
-                throw new Ruckusing_Exception("\n\nCould not connect to the DB, check database name\n\n",
-                    Ruckusing_Exception::INVALID_CONFIG, $e->getCode(), $e);
+                throw new RuckusingException("\n\nCould not connect to the DB, check database name\n\n",
+                    RuckusingException::INVALID_CONFIG, $e->getCode(), $e);
             }
             return true;
         } else {
-            throw new Ruckusing_Exception("\n\nCould not extract DB connection information from: {$dsn}\n\n",
-                Ruckusing_Exception::INVALID_CONFIG
+            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n",
+                RuckusingException::INVALID_CONFIG
             );
         }
     }
@@ -116,8 +116,8 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     {
         $SqliteResult = $this->sqlite3->query($query);
         if ($this->isError($SqliteResult)) {
-            throw new Ruckusing_Exception(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
-                Ruckusing_Exception::QUERY_ERROR
+            throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
+                RuckusingException::QUERY_ERROR
             );
         }
         return $SqliteResult;
@@ -258,10 +258,10 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     public function rename_table($name, $new_name)
     {
         if (empty($name)) {
-            throw new Ruckusing_Exception("Missing original column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($new_name)) {
-            throw new Ruckusing_Exception("Missing new column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
         return $this->execute_ddl($sql);
@@ -281,13 +281,13 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     public function add_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception("Missing table name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception("Missing column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($type)) {
-            throw new Ruckusing_Exception("Missing type parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing type parameter", RuckusingException::INVALID_ARGUMENT);
         }
         $defaultOptions = array(
             'limit' => null,
@@ -318,10 +318,10 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     public function remove_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception("Missing table name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception("Missing column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
@@ -337,10 +337,10 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     public function add_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception("Missing table name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception("Missing column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         //unique index?
         if (is_array($options) && array_key_exists('unique', $options) && $options['unique'] === true) {
@@ -361,7 +361,7 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
             $msg .= " this custom name in a drop_index() - if you have one.";
-            throw new Ruckusing_Exception($msg, Ruckusing_Exception::INVALID_INDEX_NAME);
+            throw new RuckusingException($msg, RuckusingException::INVALID_INDEX_NAME);
         }
 
         if (!is_array($column_name)) {
@@ -418,7 +418,7 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
             $error .= "\nYou provided: {$type}\n";
             $error .= "Valid types are: \n";
             $error .= implode(', ', array_diff(array_keys($natives), array('primary_key')));
-            throw new Ruckusing_Exception($error, Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException($error, RuckusingException::INVALID_ARGUMENT);
         }
 
         $native_type = $natives[$type];
@@ -437,10 +437,10 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
     public function column_info($table, $column)
     {
         if (empty($table)) {
-            throw new Ruckusing_Exception("Missing table name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($column)) {
-            throw new Ruckusing_Exception("Missing original column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
 
         try {
@@ -519,11 +519,11 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->executeQuery($query);
             if ($this->isError($res)) {
-                throw new Ruckusing_Exception(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), Ruckusing_Exception::QUERY_ERROR);
+                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), RuckusingException::QUERY_ERROR);
             }
             return $res->fetchArray(SQLITE3_ASSOC);
         } else {
-            throw new Ruckusing_Exception("Query for select_one() is not one of SELECT or SHOW: $query", Ruckusing_Exception::QUERY_ERROR);
+            throw new RuckusingException("Query for select_one() is not one of SELECT or SHOW: $query", RuckusingException::QUERY_ERROR);
         }
     }
 
@@ -534,17 +534,17 @@ class Ruckusing_Adapter_Sqlite3_Base extends Ruckusing_Adapter_Base implements R
 
     public function column_definition($column_name, $type, $options = null)
     {
-        $col = new Ruckusing_Adapter_ColumnDefinition($this, $column_name, $type, $options);
+        $col = new ColumnDefinition($this, $column_name, $type, $options);
         return $col->__toString();
     }
 
     public function has_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception("Missing table name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception("Missing column name parameter", Ruckusing_Exception::INVALID_ARGUMENT);
+            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
 
         if (is_array($options) && array_key_exists('name', $options)) {

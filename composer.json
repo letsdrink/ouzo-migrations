@@ -1,0 +1,14 @@
+{
+    "name": "letsdrink/ouzo-migrations",
+    "description": "PHP migrations ala ActiveRecord",
+    "minimum-stability": "dev",
+    "autoload": {
+        "psr-0": {
+            "Ruckusing\\": "src/",
+            "Task\\": "src/"
+        }
+    },
+    "require": {
+        "letsdrink/ouzo": "1.0"
+    }
+}

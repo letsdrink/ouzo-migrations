@@ -1,28 +1,16 @@
 <?php
+namespace Ruckusing\Adapter\MySQL;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @subpackage MySQL
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+use mysqli;
+use Ruckusing\Adapter\AdapterInterface;
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Logger;
+use Ruckusing\Util\Naming;
 
-// max length of an identifier like a column or index name
 define('MYSQL_MAX_IDENTIFIER_LENGTH', 64);
 
-/**
- * Ruckusing_Adapter_MySQL_Base
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @subpackage Mysql
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruckusing_Adapter_Interface
+class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
 {
     /**
      * Name of adapter
@@ -60,12 +48,12 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     private $_in_trx = false;
 
     /**
-     * Creates an instance of Ruckusing_Adapter_MySQL_Base
+     * Creates an instance of Base
      *
-     * @param array                 $dsn    The current dsn
-     * @param Ruckusing_Util_Logger $logger the current logger
+     * @param array $dsn The current dsn
+     * @param Logger $logger the current logger
      *
-     * @return Ruckusing_Adapter_MySQL_Base
+     * @return Base
      */
     public function __construct($dsn, $logger)
     {
@@ -81,7 +69,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
      */
     public function get_database_name()
     {
-        return($this->db_info['database']);
+        return ($this->db_info['database']);
     }
 
     /**
@@ -102,29 +90,29 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     public function native_database_types()
     {
         $types = array(
-                'primary_key'   => array('name' => 'integer', 'limit' => 11, 'null' => false),
-                'string'        => array('name' => "varchar", 'limit' => 255),
-                'text'          => array('name' => "text"),
-                'tinytext'      => array('name' => "tinytext"),
-                'mediumtext'    => array('name' => 'mediumtext'),
-                'integer'       => array('name' => "int", 'limit' => 11),
-                'tinyinteger'  	=> array('name' => "tinyint"),
-                'smallinteger'  => array('name' => "smallint"),
-                'mediuminteger'	=> array('name' => "mediumint"),
-                'biginteger'    => array('name' => "bigint"),
-                'float'         => array('name' => "float"),
-                'decimal'       => array('name' => "decimal", 'scale' => 0, 'precision' => 10),
-                'datetime'      => array('name' => "datetime"),
-                'timestamp'     => array('name' => "timestamp"),
-                'time'          => array('name' => "time"),
-                'date'          => array('name' => "date"),
-                'binary'        => array('name' => "blob"),
-		            'tinybinary'    => array('name' => "tinyblob"),
-		            'mediumbinary'  => array('name' => "mediumblob"),
-		            'longbinary'    => array('name' => "longblob"),
-                'boolean'       => array('name' => "tinyint", 'limit' => 1),
-                'enum'          => array('name' => "enum", 'values' => array()),
-                'uuid'          => array('name' => "char", 'limit' => 36),
+            'primary_key' => array('name' => 'integer', 'limit' => 11, 'null' => false),
+            'string' => array('name' => "varchar", 'limit' => 255),
+            'text' => array('name' => "text"),
+            'tinytext' => array('name' => "tinytext"),
+            'mediumtext' => array('name' => 'mediumtext'),
+            'integer' => array('name' => "int", 'limit' => 11),
+            'tinyinteger' => array('name' => "tinyint"),
+            'smallinteger' => array('name' => "smallint"),
+            'mediuminteger' => array('name' => "mediumint"),
+            'biginteger' => array('name' => "bigint"),
+            'float' => array('name' => "float"),
+            'decimal' => array('name' => "decimal", 'scale' => 0, 'precision' => 10),
+            'datetime' => array('name' => "datetime"),
+            'timestamp' => array('name' => "timestamp"),
+            'time' => array('name' => "time"),
+            'date' => array('name' => "date"),
+            'binary' => array('name' => "blob"),
+            'tinybinary' => array('name' => "tinyblob"),
+            'mediumbinary' => array('name' => "mediumblob"),
+            'longbinary' => array('name' => "longblob"),
+            'boolean' => array('name' => "tinyint", 'limit' => 1),
+            'enum' => array('name' => "enum", 'values' => array()),
+            'uuid' => array('name' => "char", 'limit' => 36),
         );
 
         return $types;
@@ -187,26 +175,26 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
      * Column definition
      *
      * @param string $column_name the column name
-     * @param string $type        the type of the column
-     * @param array  $options     column options
+     * @param string $type the type of the column
+     * @param array $options column options
      *
      * @return string
      */
     public function column_definition($column_name, $type, $options = null)
     {
-        $col = new Ruckusing_Adapter_ColumnDefinition($this, $column_name, $type, $options);
+        $col = new ColumnDefinition($this, $column_name, $type, $options);
 
         return $col->__toString();
     }
 
     //-------- DATABASE LEVEL OPERATIONS
     /**
-    * Check if a db exists
-    *
-    * @param string $db the db name
-    *
-    * @return boolean
-    */
+     * Check if a db exists
+     *
+     * @param string $db the db name
+     *
+     * @return boolean
+     */
     public function database_exists($db)
     {
         $ddl = "SHOW DATABASES";
@@ -238,7 +226,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         $ddl = sprintf("CREATE DATABASE %s", $this->identifier($db));
         $result = $this->query($ddl);
 
-        return($result === true);
+        return ($result === true);
     }
 
     /**
@@ -294,7 +282,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
                 }
             }
         }
-        $data = $final.$views;
+        $data = $final . $views;
 
         return file_put_contents($output_file, $data, LOCK_EX);
     }
@@ -302,7 +290,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Check if a table exists
      *
-     * @param string  $tbl           the table name
+     * @param string $tbl the table name
      * @param boolean $reload_tables reload table or not
      *
      * @return boolean
@@ -341,9 +329,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new Ruckusing_Exception(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
-                        Ruckusing_Exception::QUERY_ERROR
+                throw new RuckusingException(
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
+                    RuckusingException::QUERY_ERROR
                 );
             }
             while ($row = $res->fetch_assoc()) {
@@ -356,9 +344,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
             // INSERT, DELETE, etc...
             $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new Ruckusing_Exception(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
-                        Ruckusing_Exception::QUERY_ERROR
+                throw new RuckusingException(
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
+                    RuckusingException::QUERY_ERROR
                 );
             }
 
@@ -384,17 +372,17 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new Ruckusing_Exception(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
-                        Ruckusing_Exception::QUERY_ERROR
+                throw new RuckusingException(
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error),
+                    RuckusingException::QUERY_ERROR
                 );
             }
 
             return $res->fetch_assoc();
         } else {
-            throw new Ruckusing_Exception(
-                    "Query for select_one() is not one of SELECT or SHOW: $query",
-                    Ruckusing_Exception::QUERY_ERROR
+            throw new RuckusingException(
+                "Query for select_one() is not one of SELECT or SHOW: $query",
+                RuckusingException::QUERY_ERROR
             );
         }
     }
@@ -446,13 +434,13 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
      * Create table
      *
      * @param string $table_name the table name
-     * @param array  $options    the options
+     * @param array $options the options
      *
      * @return object
      */
     public function create_table($table_name, $options = array())
     {
-        return new Ruckusing_Adapter_MySQL_TableDefinition($this, $table_name, $options);
+        return new TableDefinition($this, $table_name, $options);
     }
 
     /**
@@ -482,7 +470,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Quote a string
      *
-     * @param string $value  the string
+     * @param string $value the string
      * @param string $column the column
      *
      * @return string
@@ -495,7 +483,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Rename a table
      *
-     * @param string $name     the current table name
+     * @param string $name the current table name
      * @param string $new_name the new table name
      *
      * @return boolean
@@ -503,50 +491,52 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     public function rename_table($name, $new_name)
     {
         if (empty($name)) {
-            throw new Ruckusing_Exception(
-                    "Missing original column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($new_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing new column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing new column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $sql = sprintf("RENAME TABLE %s TO %s", $this->identifier($name), $this->identifier($new_name));
 
         return $this->execute_ddl($sql);
-    }//create_table
+    }
+
+    //create_table
 
     /**
      * Add a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options     column options
+     * @param string $type the column type
+     * @param array $options column options
      *
      * @return boolean
      */
     public function add_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($type)) {
-            throw new Ruckusing_Exception(
-                    "Missing type parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing type parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //default types
@@ -559,16 +549,18 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE %s ADD `%s` %s", $this->identifier($table_name), $column_name, $this->type_to_sql($type,$options));
+        $sql = sprintf("ALTER TABLE %s ADD `%s` %s", $this->identifier($table_name), $column_name, $this->type_to_sql($type, $options));
         $sql .= $this->add_column_options($type, $options);
 
         return $this->execute_ddl($sql);
-    }//add_column
+    }
+
+    //add_column
 
     /**
      * Drop a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
      *
      * @return boolean
@@ -578,13 +570,15 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         $sql = sprintf("ALTER TABLE %s DROP COLUMN %s", $this->identifier($table_name), $this->identifier($column_name));
 
         return $this->execute_ddl($sql);
-    }//remove_column
+    }
+
+    //remove_column
 
     /**
      * Rename a column
      *
-     * @param string $table_name      the table name
-     * @param string $column_name     the column name
+     * @param string $table_name the table name
+     * @param string $column_name the column name
      * @param string $new_column_name the new column name
      *
      * @return boolean
@@ -592,63 +586,65 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     public function rename_column($table_name, $column_name, $new_column_name)
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing original column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($new_column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing new column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing new column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $column_info = $this->column_info($table_name, $column_name);
         $current_type = $column_info['type'];
-        $sql =  sprintf("ALTER TABLE %s CHANGE %s %s %s",
-                $this->identifier($table_name),
-                $this->identifier($column_name),
-                $this->identifier($new_column_name), $current_type);
-        
+        $sql = sprintf("ALTER TABLE %s CHANGE %s %s %s",
+            $this->identifier($table_name),
+            $this->identifier($column_name),
+            $this->identifier($new_column_name), $current_type);
+
         $sql .= $this->add_column_options($current_type, $column_info);
 
         return $this->execute_ddl($sql);
-    }//rename_column
+    }
+
+    //rename_column
 
     /**
      * Change a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options     column options
+     * @param string $type the column type
+     * @param array $options column options
      *
      * @return boolean
      */
     public function change_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing original column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($type)) {
-            throw new Ruckusing_Exception(
-                    "Missing type parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing type parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $column_info = $this->column_info($table_name, $column_name);
@@ -662,16 +658,18 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE `%s` CHANGE `%s` `%s` %s", $table_name, $column_name, $column_name,  $this->type_to_sql($type,$options));
+        $sql = sprintf("ALTER TABLE `%s` CHANGE `%s` `%s` %s", $table_name, $column_name, $column_name, $this->type_to_sql($type, $options));
         $sql .= $this->add_column_options($type, $options);
 
         return $this->execute_ddl($sql);
-    }//change_column
+    }
+
+    //change_column
 
     /**
      * Get a column info
      *
-     * @param string $table  the table name
+     * @param string $table the table name
      * @param string $column the column name
      *
      * @return array
@@ -679,15 +677,15 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     public function column_info($table, $column)
     {
         if (empty($table)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column)) {
-            throw new Ruckusing_Exception(
-                    "Missing original column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         try {
@@ -707,24 +705,24 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Add an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
     public function add_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //unique index?
@@ -737,7 +735,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
 
         if (strlen($index_name) > MYSQL_MAX_IDENTIFIER_LENGTH) {
@@ -745,7 +743,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
             $msg .= " this custom name in a drop_index() - if you have one.";
-            throw new Ruckusing_Exception($msg, Ruckusing_Exception::INVALID_INDEX_NAME);
+            throw new RuckusingException($msg, RuckusingException::INVALID_INDEX_NAME);
         }
         if (!is_array($column_name)) {
             $column_names = array($column_name);
@@ -757,10 +755,10 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
             $cols[] = $this->identifier($name);
         }
         $sql = sprintf("CREATE %sINDEX %s ON %s(%s)",
-                $unique ? "UNIQUE " : "",
-                $index_name,
-                $this->identifier($table_name),
-                join(", ", $cols));
+            $unique ? "UNIQUE " : "",
+            $index_name,
+            $this->identifier($table_name),
+            join(", ", $cols));
 
         return $this->execute_ddl($sql);
     }
@@ -768,31 +766,31 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Drop an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
     public function remove_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $sql = sprintf("DROP INDEX %s ON %s", $this->identifier($index_name), $this->identifier($table_name));
 
@@ -802,31 +800,31 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Check an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
     public function has_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing table name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
-            throw new Ruckusing_Exception(
-                    "Missing column name parameter",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $indexes = $this->indexes($table_name);
         foreach ($indexes as $idx) {
@@ -857,7 +855,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
                 continue;
             }
             $cur_idx = $row['Key_name'];
-            $indexes[] = array('name' => $row['Key_name'], 'unique' => (int) $row['Non_unique'] == 0 ? true : false);
+            $indexes[] = array('name' => $row['Key_name'], 'unique' => (int)$row['Non_unique'] == 0 ? true : false);
         }
 
         return $indexes;
@@ -867,8 +865,8 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
      * Convert type to sql
      * $limit = null, $precision = null, $scale = null
      *
-     * @param string $type    the native type
-     * @param array  $options
+     * @param string $type the native type
+     * @param array $options
      *
      * @return string
      */
@@ -887,9 +885,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
                 }
                 $error .= "\t{$t}\n";
             }
-            throw new Ruckusing_Exception(
-                    $error,
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                $error,
+                RuckusingException::INVALID_ARGUMENT
             );
         }
 
@@ -911,17 +909,17 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         }
 
         $native_type = $natives[$type];
-        if ( is_array($native_type) && array_key_exists('name', $native_type)) {
+        if (is_array($native_type) && array_key_exists('name', $native_type)) {
             $column_type_sql = $native_type['name'];
         } else {
             return $native_type;
         }
         if ($type == "decimal") {
             //ignore limit, use precison and scale
-            if ( $precision == null && array_key_exists('precision', $native_type)) {
+            if ($precision == null && array_key_exists('precision', $native_type)) {
                 $precision = $native_type['precision'];
             }
-            if ( $scale == null && array_key_exists('scale', $native_type)) {
+            if ($scale == null && array_key_exists('scale', $native_type)) {
                 $scale = $native_type['scale'];
             }
             if ($precision != null) {
@@ -929,21 +927,23 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
                     $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
                 } else {
                     $column_type_sql .= sprintf("(%d)", $precision);
-                }//scale
+                }
+                //scale
             } else {
                 if ($scale) {
-                    throw new Ruckusing_Exception(
-                            "Error adding decimal column: precision cannot be empty if scale is specified",
-                            Ruckusing_Exception::INVALID_ARGUMENT
+                    throw new RuckusingException(
+                        "Error adding decimal column: precision cannot be empty if scale is specified",
+                        RuckusingException::INVALID_ARGUMENT
                     );
                 }
-            }//precision
+            }
+            //precision
         } elseif ($type == "float") {
             //ignore limit, use precison and scale
-            if ( $precision == null && array_key_exists('precision', $native_type)) {
+            if ($precision == null && array_key_exists('precision', $native_type)) {
                 $precision = $native_type['precision'];
             }
-            if ( $scale == null && array_key_exists('scale', $native_type)) {
+            if ($scale == null && array_key_exists('scale', $native_type)) {
                 $scale = $native_type['scale'];
             }
             if ($precision != null) {
@@ -951,25 +951,28 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
                     $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
                 } else {
                     $column_type_sql .= sprintf("(%d)", $precision);
-                }//scale
+                }
+                //scale
             } else {
                 if ($scale) {
-                    throw new Ruckusing_Exception(
-                            "Error adding float column: precision cannot be empty if scale is specified",
-                            Ruckusing_Exception::INVALID_ARGUMENT
+                    throw new RuckusingException(
+                        "Error adding float column: precision cannot be empty if scale is specified",
+                        RuckusingException::INVALID_ARGUMENT
                     );
                 }
-            }//precision
+            }
+            //precision
         } elseif ($type == "enum") {
             if (empty($values)) {
-                throw new Ruckusing_Exception(
-                        "Error adding enum column: there must be at least one value defined",
-                        Ruckusing_Exception::INVALID_ARGUMENT
+                throw new RuckusingException(
+                    "Error adding enum column: there must be at least one value defined",
+                    RuckusingException::INVALID_ARGUMENT
                 );
             } else {
                 $column_type_sql .= sprintf("('%s')", implode("','", array_map(array($this, 'quote_string'), $values)));
             }
-        }  {
+        }
+        {
             //not a decimal column
             if ($limit == null && array_key_exists('limit', $native_type)) {
                 $limit = $native_type['limit'];
@@ -985,8 +988,8 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     /**
      * Add column options
      *
-     * @param string $type    the native type
-     * @param array  $options
+     * @param string $type the native type
+     * @param array $options
      *
      * @return string
      */
@@ -994,7 +997,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     {
         $sql = "";
 
-        if(!is_array($options))
+        if (!is_array($options))
 
             return $sql;
 
@@ -1003,7 +1006,7 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         }
 
         if (array_key_exists('character', $options)) {
-        	$sql .= sprintf(" CHARACTER SET %s", $this->identifier($options['character']));
+            $sql .= sprintf(" CHARACTER SET %s", $this->identifier($options['character']));
         }
         if (array_key_exists('collate', $options)) {
             $sql .= sprintf(" COLLATE %s", $this->identifier($options['collate']));
@@ -1016,9 +1019,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
         if (array_key_exists('default', $options) && $options['default'] !== null) {
             if ($this->is_sql_method_call($options['default'])) {
                 //$default_value = $options['default'];
-                throw new Ruckusing_Exception(
-                        "MySQL does not support function calls as default values, constants only.",
-                        Ruckusing_Exception::INVALID_ARGUMENT
+                throw new RuckusingException(
+                    "MySQL does not support function calls as default values, constants only.",
+                    RuckusingException::INVALID_ARGUMENT
                 );
             }
 
@@ -1082,17 +1085,17 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
      */
     public function __toString()
     {
-        return "Ruckusing_Adapter_MySQL_Base, version " . $this->_version;
+        return "Base, version " . $this->_version;
     }
 
     //-----------------------------------
     // PRIVATE METHODS
     //-----------------------------------
     /**
-    * Connect to the db
-    *
-    * @param string $dsn the current dsn
-    */
+     * Connect to the db
+     *
+     * @param string $dsn the current dsn
+     */
     private function connect($dsn)
     {
         $this->db_connect($dsn);
@@ -1122,29 +1125,29 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
             }
             $this->conn = new mysqli($db_info['host'], $db_info['user'], $db_info['password'], '', $db_info['port'], $db_info['socket']); //db name leaved for selection
             if ($this->conn->connect_error) {
-                throw new Ruckusing_Exception(
-                        "\n\nCould not connect to the DB, check host / user / password\n\n",
-                        Ruckusing_Exception::INVALID_CONFIG
+                throw new RuckusingException(
+                    "\n\nCould not connect to the DB, check host / user / password\n\n",
+                    RuckusingException::INVALID_CONFIG
                 );
             }
             if (!$this->conn->select_db($db_info['database'])) {
-                throw new Ruckusing_Exception(
-                        "\n\nCould not select the DB " . $db_info['database'] . ", check permissions on host " . $db_info['host'] . " \n\n",
-                        Ruckusing_Exception::INVALID_CONFIG
+                throw new RuckusingException(
+                    "\n\nCould not select the DB " . $db_info['database'] . ", check permissions on host " . $db_info['host'] . " \n\n",
+                    RuckusingException::INVALID_CONFIG
                 );
             }
             if (!$this->conn->set_charset($db_info['charset'])) {
-                throw new Ruckusing_Exception(
-                        "\n\nCould not set charset " . $db_info['charset'] . " \n\n",
-                        Ruckusing_Exception::INVALID_CONFIG
+                throw new RuckusingException(
+                    "\n\nCould not set charset " . $db_info['charset'] . " \n\n",
+                    RuckusingException::INVALID_CONFIG
                 );
             }
 
             return true;
         } else {
-            throw new Ruckusing_Exception(
-                    "\n\nCould not extract DB connection information from: " . implode(' ', $dsn) . "\n\n",
-                    Ruckusing_Exception::INVALID_CONFIG
+            throw new RuckusingException(
+                "\n\nCould not extract DB connection information from: " . implode(' ', $dsn) . "\n\n",
+                RuckusingException::INVALID_CONFIG
             );
         }
     }
@@ -1269,9 +1272,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     private function beginTransaction()
     {
         if ($this->_in_trx === true) {
-            throw new Ruckusing_Exception(
-                    'Transaction already started',
-                    Ruckusing_Exception::QUERY_ERROR
+            throw new RuckusingException(
+                'Transaction already started',
+                RuckusingException::QUERY_ERROR
             );
         }
         $this->conn->autocommit(FALSE);
@@ -1284,9 +1287,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     private function commit()
     {
         if ($this->_in_trx === false) {
-            throw new Ruckusing_Exception(
-                    'Transaction not started',
-                    Ruckusing_Exception::QUERY_ERROR
+            throw new RuckusingException(
+                'Transaction not started',
+                RuckusingException::QUERY_ERROR
             );
         }
         $this->conn->commit();
@@ -1299,9 +1302,9 @@ class Ruckusing_Adapter_MySQL_Base extends Ruckusing_Adapter_Base implements Ruc
     private function rollback()
     {
         if ($this->_in_trx === false) {
-            throw new Ruckusing_Exception(
-                    'Transaction not started',
-                    Ruckusing_Exception::QUERY_ERROR
+            throw new RuckusingException(
+                'Transaction not started',
+                RuckusingException::QUERY_ERROR
             );
         }
         $this->conn->rollback();

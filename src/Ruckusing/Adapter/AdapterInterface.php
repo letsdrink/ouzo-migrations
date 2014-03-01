@@ -1,25 +1,7 @@
 <?php
+namespace Ruckusing\Adapter;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Ruckusing_Adapter_Interface
- *
- * Interface of adapters
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-interface Ruckusing_Adapter_Interface
+interface AdapterInterface
 {
     /**
      * get the current database name
@@ -31,7 +13,7 @@ interface Ruckusing_Adapter_Interface
     /**
      * Quote a raw string.
      *
-     * @param string $value  Raw string
+     * @param string $value Raw string
      * @param string $column the column name
      *
      * @return string
@@ -91,7 +73,7 @@ interface Ruckusing_Adapter_Interface
      * create table
      *
      * @param string $table_name The table name
-     * @param array  $options    Options for definition table
+     * @param array $options Options for definition table
      *
      * @return boolean
      */
@@ -128,7 +110,7 @@ interface Ruckusing_Adapter_Interface
     /**
      * rename table
      *
-     * @param string $name     The old name of table
+     * @param string $name The old name of table
      * @param string $new_name The new name
      *
      * @return boolean
@@ -139,8 +121,8 @@ interface Ruckusing_Adapter_Interface
     /**
      * rename column
      *
-     * @param string $table_name      The table name where is the column
-     * @param string $column_name     The old column name
+     * @param string $table_name The table name where is the column
+     * @param string $column_name The old column name
      * @param string $new_column_name The new column name
      *
      * @return boolean
@@ -150,10 +132,10 @@ interface Ruckusing_Adapter_Interface
     /**
      * add column
      *
-     * @param string $table_name  The table name
+     * @param string $table_name The table name
      * @param string $column_name The column name
-     * @param string $type        The type generic of the column
-     * @param array  $options     The options definition of the column
+     * @param string $type The type generic of the column
+     * @param array $options The options definition of the column
      *
      * @return boolean
      */
@@ -162,7 +144,7 @@ interface Ruckusing_Adapter_Interface
     /**
      * remove column
      *
-     * @param string $table_name  The table name
+     * @param string $table_name The table name
      * @param string $column_name The column name
      *
      * @return boolean
@@ -172,10 +154,10 @@ interface Ruckusing_Adapter_Interface
     /**
      * change column
      *
-     * @param string $table_name  The table name
+     * @param string $table_name The table name
      * @param string $column_name The column name
-     * @param string $type        The type generic of the column
-     * @param array  $options     The options definition of the column
+     * @param string $type The type generic of the column
+     * @param array $options The options definition of the column
      *
      * @return void
      */
@@ -184,7 +166,7 @@ interface Ruckusing_Adapter_Interface
     /**
      * remove index
      *
-     * @param string $table_name  The table name
+     * @param string $table_name The table name
      * @param string $column_name The column name
      *
      * @return boolean
@@ -194,9 +176,9 @@ interface Ruckusing_Adapter_Interface
     /**
      * add index
      *
-     * @param string $table_name  The table name
+     * @param string $table_name The table name
      * @param string $column_name The column name
-     * @param array  $options     The options definition of the index
+     * @param array $options The options definition of the index
      *
      * @return boolean
      */

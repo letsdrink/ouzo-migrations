@@ -22,14 +22,14 @@ class Ruckusing_Migration_Base
     /**
      * adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter;
 
     /**
      * __construct
      *
-     * @param Ruckusing_Adapter_Base $adapter the current adapter
+     * @param Base $adapter the current adapter
      *
      * @return void
      */
@@ -44,27 +44,27 @@ class Ruckusing_Migration_Base
      * @param string $name The method name
      * @param array  $args The parameters of method called
      *
-     * @throws Ruckusing_Exception
+     * @throws RuckusingException
      */
     public function __call($name, $args)
     {
-        throw new Ruckusing_Exception(
+        throw new RuckusingException(
                 'Method unknown (' . $name . ')',
-                Ruckusing_Exception::INVALID_MIGRATION_METHOD
+                RuckusingException::INVALID_MIGRATION_METHOD
         );
     }
 
     /**
      * Set an adapter
      *
-     * @param Ruckusing_Adapter_Base $adapter the adapter to set
+     * @param Base $adapter the adapter to set
      */
     public function set_adapter($adapter)
     {
-        if (!($adapter instanceof Ruckusing_Adapter_Base)) {
-            throw new Ruckusing_Exception(
-                    'Adapter must be implement Ruckusing_Adapter_Base!',
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                    'Adapter must be implement Base!',
+                    RuckusingException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;

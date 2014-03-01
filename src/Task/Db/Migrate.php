@@ -36,7 +36,7 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
     /**
      * Current Adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter = null;
 
@@ -71,7 +71,7 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
     /**
      * Creates an instance of Task_DB_Migrate
      *
-     * @param Ruckusing_Adapter_Base $adapter The current adapter being used
+     * @param Base $adapter The current adapter being used
      *
      * @return Task_DB_Migrate
      */
@@ -90,9 +90,9 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
     public function execute($args)
     {
         if (!$this->_adapter->supports_migrations()) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     "This database does not support migrations.",
-                    Ruckusing_Exception::MIGRATION_NOT_SUPPORTED
+                    RuckusingException::MIGRATION_NOT_SUPPORTED
             );
         }
         $this->_task_args = $args;
@@ -140,8 +140,8 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
             if (!empty($output)) {
                 $this->_return .= "\n\n";
             }
-        } catch (Ruckusing_Exception $ex) {
-            if ($ex->getCode() == Ruckusing_Exception::MISSING_SCHEMA_INFO_TABLE) {
+        } catch (RuckusingException $ex) {
+            if ($ex->getCode() == RuckusingException::MISSING_SCHEMA_INFO_TABLE) {
                 $this->_return .= "\tSchema info table does not exist. I tried creating it but failed. Check permissions.";
             } else {
                 throw $ex;
@@ -253,12 +253,12 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
                     //successfully ran migration, update our version and commit
                     $this->_migrator_util->resolve_current_version($file['version'], $target_method);
                     $this->_adapter->commit_transaction();
-                } catch (Ruckusing_Exception $e) {
+                } catch (RuckusingException $e) {
                     $this->_adapter->rollback_transaction();
                     //wrap the caught exception in our own
-                    throw new Ruckusing_Exception(
+                    throw new RuckusingException(
                             sprintf("%s - %s", $file['class'], $e->getMessage()),
-                            Ruckusing_Exception::MIGRATION_FAILED
+                            RuckusingException::MIGRATION_FAILED
                     );
                 }
                 $end = $this->end_timer();
@@ -332,11 +332,11 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
             }
             //check to make sure our destination directory is writable
             if (!is_writable($path)) {
-                throw new Ruckusing_Exception(
+                throw new RuckusingException(
                     "ERROR: Migrations directory '"
                     . $path
                     . "' is not writable by the current user. Check permissions and try again.\n",
-                    Ruckusing_Exception::INVALID_MIGRATION_DIR
+                    RuckusingException::INVALID_MIGRATION_DIR
                 );
             }
         }
@@ -355,9 +355,9 @@ class Task_Db_Migrate extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
 
             return true;
         } catch (Exception $e) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     "\nError auto-creating 'schema_info' table: " . $e->getMessage() . "\n\n",
-                    Ruckusing_Exception::MIGRATION_FAILED
+                    RuckusingException::MIGRATION_FAILED
             );
         }
     }

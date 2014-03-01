@@ -24,7 +24,7 @@ class Ruckusing_Task_Manager
     /**
      * adapter
      *
-     * @var Ruckusing_Adapter_Base
+     * @var Base
      */
     private $_adapter;
 
@@ -50,16 +50,16 @@ class Ruckusing_Task_Manager
     /**
      * set adapter
      *
-     * @param Ruckusing_Adapter_Base $adapter the current adapter
+     * @param Base $adapter the current adapter
      *
      * @return Ruckusing_Util_Migrator
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Ruckusing_Adapter_Base)) {
-            throw new Ruckusing_Exception(
-                    'Adapter must be implement Ruckusing_Adapter_Base!',
-                    Ruckusing_Exception::INVALID_ADAPTER
+        if (!($adapter instanceof Base)) {
+            throw new RuckusingException(
+                    'Adapter must be implement Base!',
+                    RuckusingException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;
@@ -88,9 +88,9 @@ class Ruckusing_Task_Manager
     public function get_task($key)
     {
         if (!$this->has_task($key)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     "Task '$key' is not registered.",
-                    Ruckusing_Exception::INVALID_ARGUMENT
+                    RuckusingException::INVALID_ARGUMENT
             );
         }
 
@@ -129,18 +129,18 @@ class Ruckusing_Task_Manager
     public function register_task($key, $obj)
     {
         if (array_key_exists($key, $this->_tasks)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     sprintf("Task key '%s' is already defined!", $key),
-                    Ruckusing_Exception::INVALID_ARGUMENT
+                    RuckusingException::INVALID_ARGUMENT
             );
 
             return false;
         }
 
         if (!($obj instanceof Ruckusing_Task_Interface)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     sprintf('Task (' . $key . ') does not implement Ruckusing_Task_Interface', $key),
-                    Ruckusing_Exception::INVALID_ARGUMENT
+                    RuckusingException::INVALID_ARGUMENT
             );
 
             return false;
@@ -161,9 +161,9 @@ class Ruckusing_Task_Manager
     private function load_all_tasks($task_dir)
     {
         if (!is_dir($task_dir)) {
-            throw new Ruckusing_Exception(
+            throw new RuckusingException(
                     sprintf("Task dir: %s does not exist", $task_dir),
-                    Ruckusing_Exception::INVALID_ARGUMENT
+                    RuckusingException::INVALID_ARGUMENT
             );
 
             return false;

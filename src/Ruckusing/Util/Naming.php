@@ -1,13 +1,13 @@
 <?php
-
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Util
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+namespace Ruckusing\Util;
+    /**
+     * Ruckusing
+     *
+     * @category  Ruckusing
+     * @package   Ruckusing_Util
+     * @author    Cody Caughlan <codycaughlan % gmail . com>
+     * @link      https://github.com/ruckus/ruckusing-migrations
+     */
 
 /**
  * Ruckusing_Util_Naming
@@ -28,7 +28,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Util_Naming
+class Naming
 {
     /**
      * prefix of class name
@@ -46,10 +46,10 @@ class Ruckusing_Util_Naming
      */
     public static function task_from_class_name($klass)
     {
-        if (! preg_match('/'.self::CLASS_NS_PREFIX.'/', $klass)) {
-            throw new Ruckusing_Exception(
-                    'The class name must start with ' . self::CLASS_NS_PREFIX,
-                    Ruckusing_Exception::INVALID_ARGUMENT
+        if (!preg_match('/' . self::CLASS_NS_PREFIX . '/', $klass)) {
+            throw new RuckusingException(
+                'The class name must start with ' . self::CLASS_NS_PREFIX,
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //strip namespace
@@ -70,9 +70,9 @@ class Ruckusing_Util_Naming
     public static function task_to_class_name($task)
     {
         if (false === stripos($task, ':')) {
-            throw new Ruckusing_Exception(
-                    'Task name (' . $task . ') must be contains ":"',
-                    Ruckusing_Exception::INVALID_ARGUMENT
+            throw new RuckusingException(
+                'Task name (' . $task . ') must be contains ":"',
+                RuckusingException::INVALID_ARGUMENT
             );
         }
 
@@ -97,8 +97,8 @@ class Ruckusing_Util_Naming
         $file_name = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $file_name);
 
         $parts = explode(DIRECTORY_SEPARATOR, $file_name);
-        $namespace = $parts[count($parts)-2];
-        $file_name = substr($parts[count($parts)-1], 0, -4);
+        $namespace = $parts[count($parts) - 2];
+        $file_name = substr($parts[count($parts) - 1], 0, -4);
 
         return self::CLASS_NS_PREFIX . ucfirst($namespace) . '_' . ucfirst($file_name);
     }
@@ -114,7 +114,7 @@ class Ruckusing_Util_Naming
     {
         $className = false;
         if (preg_match('/^(\d+)_(.*)\.php$/', $file_name, $matches)) {
-            if ( count($matches) == 3) {
+            if (count($matches) == 3) {
                 $className = $matches[2];
             }
         }
@@ -149,7 +149,7 @@ class Ruckusing_Util_Naming
     /**
      * Get an index name
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
      *
      * @return string
