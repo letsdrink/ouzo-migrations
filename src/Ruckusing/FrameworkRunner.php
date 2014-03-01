@@ -234,7 +234,7 @@ class FrameworkRunner
 
     private function _verifyDbConfig()
     {
-        $this->_checkConfigParameter($this->_env);
+        $this->_checkEnvConfig();
         $this->_checkConfigParameter('db_dir');
         $this->_checkConfigParameter('log_dir');
         $this->_checkConfigParameter('migrations_dir');
@@ -247,6 +247,14 @@ class FrameworkRunner
         $this->_checkDbConfigParameter('database');
         $this->_checkDbConfigParameter('user');
         $this->_checkDbConfigParameter('password');
+    }
+
+    private function _checkEnvConfig()
+    {
+        $db_config = $this->_config['db'];
+        if (!Arrays::keyExists($db_config, $this->_env)) {
+            throw new RuckusingException(sprintf("Error: enc '%s' is not set DB", $this->_env), RuckusingException::INVALID_CONFIG);
+        }
     }
 
     private function _checkDbConfigParameter($key)
