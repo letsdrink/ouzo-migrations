@@ -1,6 +1,9 @@
 <?php
 namespace Ruckusing\Adapter\MySQL;
 
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
+
 class TableDefinition
 {
     /**
@@ -73,7 +76,7 @@ class TableDefinition
      * @param string $name the table name
      * @param array $options the options
      *
-     * @return Ruckusing_Adapter_MySQL_TableDefinition
+     * @return TableDefinition
      */
     public function __construct($adapter, $name, $options = array())
     {
@@ -95,7 +98,7 @@ class TableDefinition
         $this->_name = $name;
         $this->_options = $options;
         $this->init_sql($name, $options);
-        $this->_table_def = new Ruckusing_Adapter_TableDefinition($this->_adapter, $this->_options);
+        $this->_table_def = new \Ruckusing\Adapter\TableDefinition($this->_adapter, $this->_options);
 
         if (array_key_exists('id', $options)) {
             if (is_bool($options['id']) && $options['id'] == false) {

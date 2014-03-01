@@ -5,6 +5,7 @@ define('RUCKUSING_WORKING_BASE', dirname(__FILE__) . DIRECTORY_SEPARATOR . 'dumm
 $config = require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.inc.php';
 define('RUCKUSING_BASE', $config['ruckusing_base']);
 define('RUCKUSING_TS_SCHEMA_TBL_NAME', 'schema_migrations');
+define('RUCKUSING_TEST_HOME', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'tests');
 
 //set up some preliminary defaults, this is so all of our framework includes work
 //$ruckusing_config = require dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'database.inc.php';

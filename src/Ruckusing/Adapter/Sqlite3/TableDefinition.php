@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Adapter\Sqlite3;
 /**
  * Ruckusing
  *
@@ -10,6 +10,8 @@
  * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
 
 /**
  * Ruckusing_Adapter_Sqlite3_TableDefinition
@@ -21,7 +23,7 @@
  * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableDefinition
+class TableDefinition extends \Ruckusing\Adapter\TableDefinition
 {
     /**
      * @var _Sqlite3_Base
@@ -39,7 +41,7 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof _Sqlite3_Base)) {
+        if (!($adapter instanceof Base)) {
             throw new RuckusingException("Invalid Postgres Adapter instance.", RuckusingException::INVALID_ADAPTER);
         }
         if (!$name) {
@@ -50,7 +52,7 @@ class Ruckusing_Adapter_Sqlite3_TableDefinition extends Ruckusing_Adapter_TableD
         $this->_name = $name;
         $this->_options = $options;
         $this->init_sql($name, $options);
-        $this->_table_def = new Ruckusing_Adapter_TableDefinition($this->_adapter, $this->_options);
+        $this->_table_def = new \Ruckusing\Adapter\TableDefinition($this->_adapter, $this->_options);
 
         if (array_key_exists('id', $options)) {
             if (is_bool($options['id']) && $options['id'] == false) {

@@ -1,14 +1,8 @@
 <?php
+use Ruckusing\Adapter\MySQL\TableDefinition;
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Logger;
 
-/**
- * Implementation of MySQLAdapterTest
- * To run these unit-tests an empty test database needs to be setup in database.inc.php
- * and of course, it has to really exist.
- *
- * @category Ruckusing_Tests
- * @package  Ruckusing_Migrations
- * @author   (c) Cody Caughlan <codycaughlan % gmail . com>
- */
 class MySQLAdapterTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -27,9 +21,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Base($test_db, $logger);
-        $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
-    }//setUp()
+        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
+    }
+
+    //setUp()
 
     /**
      * shutdown commands after test case
@@ -81,7 +77,7 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         //first make sure the table does not exist
         $users = $this->adapter->has_table('users', true);
         $this->assertEquals(false, $users);
-        $t1 = new Ruckusing_Adapter_MySQL_TableDefinition($this->adapter, "users", array('options' => 'Engine=InnoDB'));
+        $t1 = new TableDefinition($this->adapter, "users", array('options' => 'Engine=InnoDB'));
         $t1->column("name", "string", array('limit' => 20));
         $sql = $t1->finish();
 
@@ -136,7 +132,7 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_index_name_too_long_throws_exception()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         try {
             srand();
             $table_name = "users_" . rand(0, 1000000);
@@ -160,7 +156,7 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_custom_primary_key_1()
     {
-        $t1 = new Ruckusing_Adapter_MySQL_TableDefinition($this->adapter, "users", array('id' => true, 'options' => 'Engine=InnoDB') );
+        $t1 = new TableDefinition($this->adapter, "users", array('id' => true, 'options' => 'Engine=InnoDB'));
         $t1->column("user_id", "integer", array("primary_key" => true));
         $actual = $t1->finish(true);
         $this->remove_table('users');
@@ -179,15 +175,15 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
 
         $expected = "`age` varchar(32) NOT NULL";
         $this->assertEquals($expected, $this->adapter->column_definition("age", "string",
-                array('limit' => 32, 'null' => false)));
+            array('limit' => 32, 'null' => false)));
 
         $expected = "`age` varchar(32) DEFAULT 'abc' NOT NULL";
         $this->assertEquals($expected, $this->adapter->column_definition("age", "string",
-                array('limit' => 32, 'default' => 'abc', 'null' => false)));
+            array('limit' => 32, 'default' => 'abc', 'null' => false)));
 
         $expected = "`age` varchar(32) DEFAULT 'abc'";
         $this->assertEquals($expected, $this->adapter->column_definition("age", "string",
-                array('limit' => 32, 'default' => 'abc')));
+            array('limit' => 32, 'default' => 'abc')));
 
         $expected = "`age` int(11)";
         $this->assertEquals($expected, $this->adapter->column_definition("age", "integer"));
@@ -213,9 +209,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $expected = "`age` tinytext";
         $this->assertEquals($expected, $this->adapter->column_definition("age", "tinytext"));
 
-	$expected = "`age` longblob";
-	$this->assertEquals($expected, $this->adapter->column_definition("age", "longbinary"));
-    }//test_column_definition
+        $expected = "`age` longblob";
+        $this->assertEquals($expected, $this->adapter->column_definition("age", "longbinary"));
+    }
+
+    //test_column_definition
 
     /**
      * test column info
@@ -227,8 +225,8 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
 
         $expected = array();
         $actual = $this->adapter->column_info("users", "name");
-        $this->assertEquals('varchar(20)', $actual['type'] );
-        $this->assertEquals('name', $actual['field'] );
+        $this->assertEquals('varchar(20)', $actual['type']);
+        $this->assertEquals('name', $actual['field']);
         $this->remove_table('users');
     }
 
@@ -239,12 +237,12 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
     {
         //create it
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20) );");
-        $this->assertEquals(true, $this->adapter->has_table('users') );
-        $this->assertEquals(false, $this->adapter->has_table('users_new') );
+        $this->assertEquals(true, $this->adapter->has_table('users'));
+        $this->assertEquals(false, $this->adapter->has_table('users_new'));
         //rename it
         $this->adapter->rename_table('users', 'users_new');
-        $this->assertEquals(false, $this->adapter->has_table('users') );
-        $this->assertEquals(true, $this->adapter->has_table('users_new') );
+        $this->assertEquals(false, $this->adapter->has_table('users'));
+        $this->assertEquals(true, $this->adapter->has_table('users_new'));
         //clean up
         $this->adapter->drop_table('users_new');
     }
@@ -258,19 +256,19 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20) DEFAULT 'abc' NOT NULL);");
 
         $before = $this->adapter->column_info("users", "name");
-        $this->assertEquals('varchar(20)', $before['type'] );
-        $this->assertEquals('name', $before['field'] );
+        $this->assertEquals('varchar(20)', $before['type']);
+        $this->assertEquals('name', $before['field']);
 
         //rename the name column
         $this->adapter->rename_column('users', 'name', 'new_name');
 
         $after = $this->adapter->column_info("users", "new_name");
-        $this->assertEquals('varchar(20)', $after['type'] );
-        $this->assertEquals('new_name', $after['field'] );
-        
+        $this->assertEquals('varchar(20)', $after['type']);
+        $this->assertEquals('new_name', $after['field']);
+
         // assert that we didnt mess up the NOT NULL and DEFAULT
-        $this->assertEquals('NO', $after['null'] );
-        $this->assertEquals('abc', $after['default'] );
+        $this->assertEquals('NO', $after['null']);
+        $this->assertEquals('abc', $after['default']);
 
         $this->remove_table('users');
     }
@@ -290,25 +288,25 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->add_column("users", "fav_color", "string", array('limit' => 32));
         $col = $this->adapter->column_info("users", "fav_color");
         $this->assertEquals("fav_color", $col['field']);
-        $this->assertEquals('varchar(32)', $col['type'] );
+        $this->assertEquals('varchar(32)', $col['type']);
 
         //add column
         $this->adapter->add_column("users", "latitude", "decimal", array('precision' => 10, 'scale' => 2));
         $col = $this->adapter->column_info("users", "latitude");
         $this->assertEquals("latitude", $col['field']);
-        $this->assertEquals('decimal(10,2)', $col['type'] );
+        $this->assertEquals('decimal(10,2)', $col['type']);
 
         //add column with unsigned parameter
         $this->adapter->add_column("users", "age", "integer", array('unsigned' => true));
         $col = $this->adapter->column_info("users", "age");
         $this->assertEquals("age", $col['field']);
-        $this->assertEquals('int(11) unsigned', $col['type'] );
+        $this->assertEquals('int(11) unsigned', $col['type']);
 
         //add column with biginteger datatype
         $this->adapter->add_column("users", "weight", "biginteger", array('limit' => 20));
         $col = $this->adapter->column_info("users", "weight");
         $this->assertEquals("weight", $col['field']);
-        $this->assertEquals('bigint(20)', $col['type'] );
+        $this->assertEquals('bigint(20)', $col['type']);
 
         // Test that the collate option works
         $this->adapter->add_column('users', 'shortcode', 'string', array('collate' => 'utf8_bin'));
@@ -355,19 +353,19 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
 
         //verify its type
         $col = $this->adapter->column_info("users", "name");
-        $this->assertEquals('varchar(20)', $col['type'] );
-        $this->assertEquals('', $col['default'] );
+        $this->assertEquals('varchar(20)', $col['type']);
+        $this->assertEquals('', $col['default']);
 
         //change it, add a default too!
         $this->adapter->change_column("users", "name", "string", array('default' => 'abc', 'limit' => 128));
 
         $col = $this->adapter->column_info("users", "name");
-        $this->assertEquals('varchar(128)', $col['type'] );
-        $this->assertEquals('abc', $col['default'] );
+        $this->assertEquals('varchar(128)', $col['type']);
+        $this->assertEquals('abc', $col['default']);
 
         // Test collate option
         $this->adapter->change_column("users", "name", "string", array('default' => 'abc', 'limit' => 128,
-                'collate' => 'ascii_bin'));
+            'collate' => 'ascii_bin'));
         $col = $this->adapter->column_info('users', 'name');
         $this->assertEquals('ascii_bin', $col['collation']);
 
@@ -383,11 +381,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20), age int(3), title varchar(20) );");
         $this->adapter->add_index("users", "name");
 
-        $this->assertEquals(true, $this->adapter->has_index("users", "name") );
-        $this->assertEquals(false, $this->adapter->has_index("users", "age") );
+        $this->assertEquals(true, $this->adapter->has_index("users", "name"));
+        $this->assertEquals(false, $this->adapter->has_index("users", "age"));
 
         $this->adapter->add_index("users", "age", array('unique' => true));
-        $this->assertEquals(true, $this->adapter->has_index("users", "age") );
+        $this->assertEquals(true, $this->adapter->has_index("users", "age"));
 
         $this->adapter->add_index("users", "title", array('name' => 'index_on_super_title'));
         $this->assertEquals(true, $this->adapter->has_index("users", "title", array('name' => 'index_on_super_title')));
@@ -403,11 +401,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20), age int(3) );");
         $this->adapter->add_index("users", array("name", "age"));
 
-        $this->assertEquals(true, $this->adapter->has_index("users", array("name", "age") ));
+        $this->assertEquals(true, $this->adapter->has_index("users", array("name", "age")));
 
         //drop it
         $this->adapter->remove_index("users", array("name", "age"));
-        $this->assertEquals(false, $this->adapter->has_index("users", array("name", "age") ));
+        $this->assertEquals(false, $this->adapter->has_index("users", array("name", "age")));
         $this->remove_table('users');
     }
 
@@ -420,11 +418,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20), age int(3) );");
         $this->adapter->add_index("users", "name");
 
-        $this->assertEquals(true, $this->adapter->has_index("users", "name") );
+        $this->assertEquals(true, $this->adapter->has_index("users", "name"));
 
         //drop it
         $this->adapter->remove_index("users", "name");
-        $this->assertEquals(false, $this->adapter->has_index("users", "name") );
+        $this->assertEquals(false, $this->adapter->has_index("users", "name"));
         $this->remove_table('users');
     }
 
@@ -437,11 +435,11 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         $this->adapter->execute_ddl("CREATE TABLE `users` ( name varchar(20), age int(3) );");
         $this->adapter->add_index("users", "name", array('name' => 'my_special_index'));
 
-        $this->assertEquals(true, $this->adapter->has_index("users", "name", array('name' => 'my_special_index')) );
+        $this->assertEquals(true, $this->adapter->has_index("users", "name", array('name' => 'my_special_index')));
 
         //drop it
         $this->adapter->remove_index("users", "name", array('name' => 'my_special_index'));
-        $this->assertEquals(false, $this->adapter->has_index("users", "name", array('name' => 'my_special_index')) );
+        $this->assertEquals(false, $this->adapter->has_index("users", "name", array('name' => 'my_special_index')));
         $this->remove_table('users');
     }
 

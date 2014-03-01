@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Task;
 /**
  * Ruckusing
  *
@@ -8,6 +8,8 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+
+use Ruckusing\RuckusingException;
 
 define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Task');
 
@@ -19,7 +21,7 @@ define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRE
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Task_Manager
+class Manager
 {
     /**
      * adapter
@@ -56,7 +58,7 @@ class Ruckusing_Task_Manager
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof \Ruckusing\Adapter\Base)) {
             throw new RuckusingException(
                     'Adapter must be implement Base!',
                     RuckusingException::INVALID_ADAPTER

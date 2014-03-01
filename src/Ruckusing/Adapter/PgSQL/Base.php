@@ -1,4 +1,10 @@
 <?php
+namespace Ruckusing\Adapter\PgSQL;
+
+use Ruckusing\Adapter\AdapterInterface;
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Naming;
 
 /**
  * Ruckusing
@@ -22,7 +28,7 @@ define('PG_MAX_IDENTIFIER_LENGTH', 64);
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class _PgSQL_Base extends Base implements AdapterInterface
+class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
 {
     /**
      * Name of adapter
@@ -62,7 +68,7 @@ class _PgSQL_Base extends Base implements AdapterInterface
     /**
      * Creates an instance of _PgSQL_Base
      *
-     * @param array                 $dsn    The current dsn being used
+     * @param array $dsn The current dsn being used
      * @param Logger $logger the current logger
      *
      * @return _PgSQL_Base
@@ -102,29 +108,29 @@ class _PgSQL_Base extends Base implements AdapterInterface
     public function native_database_types()
     {
         $types = array(
-                'primary_key'   => array('name' => 'serial'),
-                'string'        => array('name' => 'varchar', 'limit' => 255),
-                'text'          => array('name' => 'text'),
-                'tinytext'      => array('name' => 'text'),
-                'mediumtext'    => array('name' => 'text'),
-                'integer'       => array('name' => 'integer'),
-                'tinyinteger'	  => array('name' => 'smallint'),
-                'smallinteger'  => array('name' => 'smallint'),
-                'mediuminteger' => array('name' => 'integer'),
-                'biginteger'    => array('name' => 'bigint'),
-                'float'         => array('name' => 'float'),
-                'decimal'       => array('name' => 'decimal', 'scale' => 0, 'precision' => 10),
-                'datetime'      => array('name' => 'timestamp'),
-                'timestamp'     => array('name' => 'timestamp'),
-                'time'          => array('name' => 'time'),
-                'date'          => array('name' => 'date'),
-                'binary'        => array('name' => 'bytea'),
-		            'tinybinary'    => array('name' => "bytea"),
-		            'mediumbinary'  => array('name' => "bytea"),
-		            'longbinary'    => array('name' => "bytea"),
-                'boolean'       => array('name' => 'boolean'),
-                'tsvector'      => array('name' => 'tsvector'),
-                'uuid'          => array('name' => 'uuid'),
+            'primary_key' => array('name' => 'serial'),
+            'string' => array('name' => 'varchar', 'limit' => 255),
+            'text' => array('name' => 'text'),
+            'tinytext' => array('name' => 'text'),
+            'mediumtext' => array('name' => 'text'),
+            'integer' => array('name' => 'integer'),
+            'tinyinteger' => array('name' => 'smallint'),
+            'smallinteger' => array('name' => 'smallint'),
+            'mediuminteger' => array('name' => 'integer'),
+            'biginteger' => array('name' => 'bigint'),
+            'float' => array('name' => 'float'),
+            'decimal' => array('name' => 'decimal', 'scale' => 0, 'precision' => 10),
+            'datetime' => array('name' => 'timestamp'),
+            'timestamp' => array('name' => 'timestamp'),
+            'time' => array('name' => 'time'),
+            'date' => array('name' => 'date'),
+            'binary' => array('name' => 'bytea'),
+            'tinybinary' => array('name' => "bytea"),
+            'mediumbinary' => array('name' => "bytea"),
+            'longbinary' => array('name' => "bytea"),
+            'boolean' => array('name' => 'boolean'),
+            'tsvector' => array('name' => 'tsvector'),
+            'uuid' => array('name' => 'uuid'),
         );
 
         return $types;
@@ -181,8 +187,8 @@ class _PgSQL_Base extends Base implements AdapterInterface
      * Column definition
      *
      * @param string $column_name the column name
-     * @param string $type        the type of the column
-     * @param array  $options     column options
+     * @param string $type the type of the column
+     * @param array $options column options
      *
      * @return string
      */
@@ -221,7 +227,7 @@ SQL;
         $sql = sprintf($sql, $table);
         $result = $this->select_one($sql);
         if ($result) {
-            return(array($result['attname'], $result['relname']));
+            return (array($result['attname'], $result['relname']));
         } else {
             return array();
         }
@@ -272,7 +278,7 @@ SQL;
             $was_in_transaction = false;
         }
 
-        return($result === true);
+        return ($result === true);
     }
 
     /**
@@ -287,7 +293,7 @@ SQL;
         $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
         $result = $this->select_one($sql);
 
-        return(count($result) == 1 && $result['datname'] == $db);
+        return (count($result) == 1 && $result['datname'] == $db);
     }
 
     /**
@@ -305,7 +311,7 @@ SQL;
         $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quote_table_name($db));
         $result = $this->query($ddl);
 
-        return($result === true);
+        return ($result === true);
     }
 
     /**
@@ -320,9 +326,9 @@ SQL;
     public function schema($output_file)
     {
         $command = sprintf("pg_dump -U %s -Fp -s -f '%s' %s",
-                $this->db_info['user'],
-                $output_file,
-                $this->db_info['database']
+            $this->db_info['user'],
+            $output_file,
+            $this->db_info['database']
         );
 
         return system($command);
@@ -331,7 +337,7 @@ SQL;
     /**
      * Check if a table exists
      *
-     * @param string  $tbl           the table name
+     * @param string $tbl the table name
      * @param boolean $reload_tables reload table or not
      *
      * @return boolean
@@ -364,8 +370,8 @@ SQL;
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
                 throw new RuckusingException(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
-                        RuckusingException::QUERY_ERROR
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
+                    RuckusingException::QUERY_ERROR
                 );
             }
             while ($row = pg_fetch_assoc($res)) {
@@ -378,8 +384,8 @@ SQL;
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
                 throw new RuckusingException(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
-                        RuckusingException::QUERY_ERROR
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
+                    RuckusingException::QUERY_ERROR
                 );
             }
             // if the query contained a 'RETURNING' class then grab its value
@@ -389,7 +395,7 @@ SQL;
                 if (count($matches) == 2) {
                     $returning_column_value = pg_fetch_result($res, 0, $matches[1]);
 
-                    return($returning_column_value);
+                    return ($returning_column_value);
                 }
             }
 
@@ -412,16 +418,16 @@ SQL;
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
                 throw new RuckusingException(
-                        sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
-                        RuckusingException::QUERY_ERROR
+                    sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)),
+                    RuckusingException::QUERY_ERROR
                 );
             }
 
             return pg_fetch_assoc($res);
         } else {
             throw new RuckusingException(
-                    "Query for select_one() is not one of SELECT or SHOW: $query",
-                    RuckusingException::QUERY_ERROR
+                "Query for select_one() is not one of SELECT or SHOW: $query",
+                RuckusingException::QUERY_ERROR
             );
         }
     }
@@ -472,13 +478,13 @@ SQL;
      * Create table
      *
      * @param string $table_name the table name
-     * @param array  $options    the options
+     * @param array $options the options
      *
      * @return object
      */
     public function create_table($table_name, $options = array())
     {
-        return new Ruckusing_Adapter_PgSQL_TableDefinition($this, $table_name, $options);
+        return new TableDefinition($this, $table_name, $options);
     }
 
     /**
@@ -532,7 +538,7 @@ SQL;
     /**
      * Quote a string
      *
-     * @param string $value  the string
+     * @param string $value the string
      * @param string $column the column
      *
      * @return string
@@ -541,13 +547,13 @@ SQL;
     {
         $type = gettype($value);
         if ($type == "double") {
-            return("'{$value}'");
+            return ("'{$value}'");
         } elseif ($type == "integer") {
-            return("'{$value}'");
+            return ("'{$value}'");
         } else {
             // TODO: this global else is probably going to be problematic.
             // I think eventually we'll need to do more introspection and handle all possible types
-            return("'{$value}'");
+            return ("'{$value}'");
         }
         /*
          "boolean"
@@ -569,7 +575,7 @@ SQL;
      * Renames a table.
      * Also renames a table's primary key sequence if the sequence name matches the Ruckusing Migrations default.
      *
-     * @param string $name     the current table name
+     * @param string $name the current table name
      * @param string $new_name the new table name
      *
      * @return boolean
@@ -578,14 +584,14 @@ SQL;
     {
         if (empty($name)) {
             throw new RuckusingException(
-                    "Missing original column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($new_name)) {
             throw new RuckusingException(
-                    "Missing new column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing new column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
@@ -603,10 +609,10 @@ SQL;
     /**
      * Add a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options     column options
+     * @param string $type the column type
+     * @param array $options column options
      *
      * @return boolean
      */
@@ -614,20 +620,20 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($type)) {
             throw new RuckusingException(
-                    "Missing type parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing type parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //default types
@@ -641,9 +647,9 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                $this->type_to_sql($type, $options)
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name),
+            $this->type_to_sql($type, $options)
         );
         $sql .= $this->add_column_options($type, $options);
 
@@ -653,7 +659,7 @@ SQL;
     /**
      * Drop a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
      *
      * @return boolean
@@ -661,8 +667,8 @@ SQL;
     public function remove_column($table_name, $column_name)
     {
         $sql = sprintf("ALTER TABLE %s DROP COLUMN %s",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name)
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name)
         );
 
         return $this->execute_ddl($sql);
@@ -671,8 +677,8 @@ SQL;
     /**
      * Rename a column
      *
-     * @param string $table_name      the table name
-     * @param string $column_name     the column name
+     * @param string $table_name the table name
+     * @param string $column_name the column name
      * @param string $new_column_name the new column name
      *
      * @return boolean
@@ -681,28 +687,28 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing original column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($new_column_name)) {
             throw new RuckusingException(
-                    "Missing new column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing new column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $column_info = $this->column_info($table_name, $column_name);
         $current_type = $column_info['type'];
-        $sql =  sprintf("ALTER TABLE %s RENAME COLUMN %s TO %s",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                $this->quote_column_name($new_column_name)
+        $sql = sprintf("ALTER TABLE %s RENAME COLUMN %s TO %s",
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name),
+            $this->quote_column_name($new_column_name)
         );
 
         return $this->execute_ddl($sql);
@@ -711,10 +717,10 @@ SQL;
     /**
      * Change a column
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options     column options
+     * @param string $type the column type
+     * @param array $options column options
      *
      * @return boolean
      */
@@ -722,20 +728,20 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing original column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($type)) {
             throw new RuckusingException(
-                    "Missing type parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing type parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         $column_info = $this->column_info($table_name, $column_name);
@@ -750,9 +756,9 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                $this->type_to_sql($type,$options)
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name),
+            $this->type_to_sql($type, $options)
         );
         $sql .= $this->add_column_options($type, $options, true);
 
@@ -770,7 +776,7 @@ SQL;
     /**
      * Change column default
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
      * @param string $default
      *
@@ -779,9 +785,9 @@ SQL;
     private function change_column_default($table_name, $column_name, $default)
     {
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                $this->quote($default)
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name),
+            $this->quote($default)
         );
         $this->execute_ddl($sql);
     }
@@ -789,7 +795,7 @@ SQL;
     /**
      * Change column null
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
      * @param string $null
      * @param string $default
@@ -800,17 +806,17 @@ SQL;
     {
         if (($null !== false) || ($default !== null)) {
             $sql = sprintf("UPDATE %s SET %s=%s WHERE %s IS NULL",
-                    $this->quote_table_name($table_name),
-                    $this->quote_column_name($column_name),
-                    $this->quote($default),
-                    $this->quote_column_name($column_name)
+                $this->quote_table_name($table_name),
+                $this->quote_column_name($column_name),
+                $this->quote($default),
+                $this->quote_column_name($column_name)
             );
             $this->query($sql);
         }
         $sql = sprintf("ALTER TABLE %s ALTER %s %s NOT NULL",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                ($null ? 'DROP' : 'SET')
+            $this->quote_table_name($table_name),
+            $this->quote_column_name($column_name),
+            ($null ? 'DROP' : 'SET')
         );
         $this->query($sql);
     }
@@ -818,7 +824,7 @@ SQL;
     /**
      * Get a column info
      *
-     * @param string $table  the table name
+     * @param string $table the table name
      * @param string $column the column name
      *
      * @return array
@@ -827,14 +833,14 @@ SQL;
     {
         if (empty($table)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column)) {
             throw new RuckusingException(
-                    "Missing original column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing original column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         try {
@@ -867,9 +873,9 @@ SQL;
     /**
      * Add an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
@@ -877,14 +883,14 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //unique index?
@@ -898,7 +904,7 @@ SQL;
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
 
         if (strlen($index_name) > PG_MAX_IDENTIFIER_LENGTH) {
@@ -918,10 +924,10 @@ SQL;
             $cols[] = $this->quote_column_name($name);
         }
         $sql = sprintf("CREATE %sINDEX %s ON %s(%s)",
-                $unique ? "UNIQUE " : "",
-                $this->quote_column_name($index_name),
-                $this->quote_column_name($table_name),
-                join(", ", $cols)
+            $unique ? "UNIQUE " : "",
+            $this->quote_column_name($index_name),
+            $this->quote_column_name($table_name),
+            join(", ", $cols)
         );
 
         return $this->execute_ddl($sql);
@@ -930,9 +936,9 @@ SQL;
     /**
      * Drop an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
@@ -940,21 +946,21 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
 
@@ -964,9 +970,9 @@ SQL;
     /**
      * Check an index
      *
-     * @param string $table_name  the table name
+     * @param string $table_name the table name
      * @param string $column_name the column name
-     * @param array  $options     index options
+     * @param array $options index options
      *
      * @return boolean
      */
@@ -974,21 +980,21 @@ SQL;
     {
         if (empty($table_name)) {
             throw new RuckusingException(
-                    "Missing table name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing table name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         if (empty($column_name)) {
             throw new RuckusingException(
-                    "Missing column name parameter",
-                    RuckusingException::INVALID_ARGUMENT
+                "Missing column name parameter",
+                RuckusingException::INVALID_ARGUMENT
             );
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $indexes = $this->indexes($table_name);
         foreach ($indexes as $idx) {
@@ -1026,8 +1032,8 @@ SQL;
         $indexes = array();
         foreach ($result as $row) {
             $indexes[] = array(
-                    'name' => $row['relname'],
-                    'unique' => $row['indisunique'] == 't' ? true : false
+                'name' => $row['relname'],
+                'unique' => $row['indisunique'] == 't' ? true : false
             );
         }
 
@@ -1061,8 +1067,8 @@ SQL;
         $primary_keys = array();
         foreach ($result as $row) {
             $primary_keys[] = array(
-                    'name' => $row['attname'],
-                    'type' => $row['format_type']
+                'name' => $row['attname'],
+                'type' => $row['format_type']
             );
         }
 
@@ -1072,8 +1078,8 @@ SQL;
     /**
      * Convert type to sql
      *
-     * @param string $type    the native type
-     * @param array  $options
+     * @param string $type the native type
+     * @param array $options
      *
      * @return string
      */
@@ -1092,8 +1098,8 @@ SQL;
                 $error .= "\t{$t}\n";
             }
             throw new RuckusingException(
-                    $error,
-                    RuckusingException::INVALID_ARGUMENT
+                $error,
+                RuckusingException::INVALID_ARGUMENT
             );
         }
 
@@ -1112,17 +1118,17 @@ SQL;
         }
 
         $native_type = $natives[$type];
-        if ( is_array($native_type) && array_key_exists('name', $native_type)) {
+        if (is_array($native_type) && array_key_exists('name', $native_type)) {
             $column_type_sql = $native_type['name'];
         } else {
             return $native_type;
         }
         if ($type == "decimal") {
             //ignore limit, use precison and scale
-            if ( $precision == null && array_key_exists('precision', $native_type)) {
+            if ($precision == null && array_key_exists('precision', $native_type)) {
                 $precision = $native_type['precision'];
             }
-            if ( $scale == null && array_key_exists('scale', $native_type)) {
+            if ($scale == null && array_key_exists('scale', $native_type)) {
                 $scale = $native_type['scale'];
             }
             if ($precision != null) {
@@ -1130,15 +1136,17 @@ SQL;
                     $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
                 } else {
                     $column_type_sql .= sprintf("(%d)", $precision);
-                }//scale
+                }
+                //scale
             } else {
                 if ($scale) {
                     throw new RuckusingException(
-                            "Error adding decimal column: precision cannot be empty if scale is specified",
-                            RuckusingException::INVALID_ARGUMENT
+                        "Error adding decimal column: precision cannot be empty if scale is specified",
+                        RuckusingException::INVALID_ARGUMENT
                     );
                 }
-            }//pre
+            }
+            //pre
         }
         // integer columns dont support limit (sizing)
         if ($native_type['name'] != "integer") {
@@ -1151,13 +1159,15 @@ SQL;
         }
 
         return $column_type_sql;
-    }//type_to_sql
+    }
+
+    //type_to_sql
 
     /**
      * Add column options
      *
-     * @param string  $type              the native type
-     * @param array   $options
+     * @param string $type the native type
+     * @param array $options
      * @param boolean $performing_change
      *
      * @return string
@@ -1188,7 +1198,9 @@ SQL;
         }
 
         return $sql;
-    }//add_column_options
+    }
+
+    //add_column_options
 
     /**
      * Set current version
@@ -1253,34 +1265,34 @@ SQL;
     {
         if (!function_exists('pg_connect')) {
             throw new RuckusingException(
-                    "\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()",
-                    RuckusingException::INVALID_CONFIG
+                "\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()",
+                RuckusingException::INVALID_CONFIG
             );
         }
         $db_info = $this->get_dsn();
         if ($db_info) {
             $this->db_info = $db_info;
             $conninfo = sprintf('host=%s port=%s dbname=%s user=%s password=%s',
-                    $db_info['host'],
-                    (!empty($db_info['port']) ? $db_info['port'] : '5432'),
-                    $db_info['database'],
-                    $db_info['user'],
-                    $db_info['password']
+                $db_info['host'],
+                (!empty($db_info['port']) ? $db_info['port'] : '5432'),
+                $db_info['database'],
+                $db_info['user'],
+                $db_info['password']
             );
             $this->conn = pg_connect($conninfo);
             if ($this->conn === FALSE) {
                 throw new RuckusingException(
-                        "\n\nCould not connect to the DB, check host / user / password\n\n",
-                        RuckusingException::INVALID_CONFIG
+                    "\n\nCould not connect to the DB, check host / user / password\n\n",
+                    RuckusingException::INVALID_CONFIG
                 );
             }
 
             return true;
         } else {
             throw new RuckusingException(
-                    "\n\nCould not extract DB connection information from: {$dsn}\n\n",
-                    RuckusingException::INVALID_CONFIG
-                    );
+                "\n\nCould not extract DB connection information from: {$dsn}\n\n",
+                RuckusingException::INVALID_CONFIG
+            );
         }
     }
 
@@ -1356,7 +1368,7 @@ SQL;
 
     private function is_select($query_type)
     {
-        return($query_type == SQL_SELECT);
+        return ($query_type == SQL_SELECT);
     }
 
     /**
@@ -1371,7 +1383,7 @@ SQL;
     {
         $str = trim($str);
 
-        return(substr($str, -2, 2) == "()");
+        return (substr($str, -2, 2) == "()");
     }
 
     /**
@@ -1391,8 +1403,8 @@ SQL;
     {
         if ($this->_in_trx === true) {
             throw new RuckusingException(
-                    'Transaction already started',
-                    RuckusingException::QUERY_ERROR
+                'Transaction already started',
+                RuckusingException::QUERY_ERROR
             );
         }
         pg_query($this->conn, "BEGIN");
@@ -1406,8 +1418,8 @@ SQL;
     {
         if ($this->_in_trx === false) {
             throw new RuckusingException(
-                    'Transaction not started',
-                    RuckusingException::QUERY_ERROR
+                'Transaction not started',
+                RuckusingException::QUERY_ERROR
             );
         }
         pg_query($this->conn, "COMMIT");
@@ -1421,8 +1433,8 @@ SQL;
     {
         if ($this->_in_trx === false) {
             throw new RuckusingException(
-                    'Transaction not started',
-                    RuckusingException::QUERY_ERROR
+                'Transaction not started',
+                RuckusingException::QUERY_ERROR
             );
         }
         pg_query($this->conn, "ROLLBACK");

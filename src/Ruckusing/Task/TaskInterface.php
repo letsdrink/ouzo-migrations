@@ -1,4 +1,5 @@
 <?php
+namespace Ruckusing\Task;
 /**
  * Ruckusing
  *
@@ -17,7 +18,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-interface Ruckusing_Task_Interface
+interface TaskInterface
 {
     /**
      * execute the task

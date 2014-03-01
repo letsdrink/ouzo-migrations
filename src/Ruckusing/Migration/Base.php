@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Migration;
 /**
  * Ruckusing
  *
@@ -8,16 +8,17 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\RuckusingException;
 
 /**
- * Ruckusing_Migration_Base
+ * Base
  *
  * @category Ruckusing
  * @package  Ruckusing_Migration
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Migration_Base
+class Base
 {
     /**
      * adapter
@@ -61,7 +62,7 @@ class Ruckusing_Migration_Base
      */
     public function set_adapter($adapter)
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof \Ruckusing\Adapter\Base)) {
             throw new RuckusingException(
                     'Adapter must be implement Base!',
                     RuckusingException::INVALID_ADAPTER
@@ -302,6 +303,6 @@ class Ruckusing_Migration_Base
  * @package  Ruckusing_Migration
  * @author   (c) Cody Caughlan <codycaughlan % gmail . com>
  */
-class Ruckusing_BaseMigration extends Ruckusing_Migration_Base
+class Ruckusing_BaseMigration extends Base
 {
 }

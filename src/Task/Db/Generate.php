@@ -179,7 +179,7 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
         $template = <<<TPL
 <?php
 
-class $klass extends Ruckusing_Migration_Base
+class $klass extends Base
 {
     public function up()
     {

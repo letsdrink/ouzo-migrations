@@ -1,5 +1,5 @@
 <?php
-
+namespace Task\Db;
 /**
  * Ruckusing
  *
@@ -9,6 +9,9 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\RuckusingException;
+use Ruckusing\Task\Base;
+use Ruckusing\Task\TaskInterface;
 
 /**
  * Task_DB_Schema
@@ -21,7 +24,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Task_Db_Schema extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Schema extends Base implements TaskInterface
 {
     /**
      * Current Adapter

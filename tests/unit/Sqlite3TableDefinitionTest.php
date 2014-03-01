@@ -1,5 +1,9 @@
 <?php
 
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\Adapter\Sqlite3\TableDefinition;
+use Ruckusing\Util\Logger;
+
 class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 {
     /**
@@ -19,7 +23,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new _Sqlite3_Base($test_db, $logger);
+        $this->adapter = new \Ruckusing\Adapter\Sqlite3\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
     }
 
@@ -51,7 +55,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_limit()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -65,7 +69,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_not_null()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -80,7 +84,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_default_value()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -95,7 +99,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_multiple_primary_keys()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));
@@ -123,7 +127,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_generate_table_without_primary_key()
     {
-        $tableDefinition = new Ruckusing_Adapter_Sqlite3_TableDefinition($this->adapter, "users", array('id' => false));
+        $tableDefinition = new TableDefinition($this->adapter, "users", array('id' => false));
         $tableDefinition->column("first_name", "string");
         $tableDefinition->column("last_name", "string", array('limit' => 32));
         $tableDefinition->finish();

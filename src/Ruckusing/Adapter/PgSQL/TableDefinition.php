@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Adapter\PgSQL;
 /**
  * Ruckusing
  *
@@ -9,6 +9,8 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
 
 /**
  * Ruckusing_Adapter_PgSQL_TableDefinition
@@ -19,7 +21,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_PgSQL_TableDefinition extends Ruckusing_Adapter_TableDefinition
+class TableDefinition extends \Ruckusing\Adapter\TableDefinition
 {
     /**
      * adapter PgSQL
@@ -96,7 +98,7 @@ class Ruckusing_Adapter_PgSQL_TableDefinition extends Ruckusing_Adapter_TableDef
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof _PgSQL_Base)) {
+        if (!($adapter instanceof Base)) {
             throw new RuckusingException(
                     "Invalid Postgres Adapter instance.",
                     RuckusingException::INVALID_ADAPTER
@@ -113,7 +115,7 @@ class Ruckusing_Adapter_PgSQL_TableDefinition extends Ruckusing_Adapter_TableDef
         $this->_name = $name;
         $this->_options = $options;
         $this->init_sql($name, $options);
-        $this->_table_def = new Ruckusing_Adapter_TableDefinition($this->_adapter, $this->_options);
+        $this->_table_def = new \Ruckusing\Adapter\TableDefinition($this->_adapter, $this->_options);
 
         if (array_key_exists('id', $options)) {
             if (is_bool($options['id']) && $options['id'] == false) {

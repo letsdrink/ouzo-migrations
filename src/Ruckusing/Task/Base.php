@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Task;
 /**
  * Ruckusing
  *
@@ -8,6 +8,7 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\RuckusingException;
 
 /**
  * Ruckusing_Task_Base
@@ -17,7 +18,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Task_Base
+class Base
 {
     /**
      * the framework
@@ -69,7 +70,7 @@ class Ruckusing_Task_Base
      */
     public function set_framework($fw)
     {
-        if (!($fw instanceof Ruckusing_FrameworkRunner)) {
+        if (!($fw instanceof \Ruckusing~\FrameworkRunner)) {
             throw new RuckusingException(
                     'Framework must be instance of Ruckusing_FrameworkRunner!',
                     RuckusingException::INVALID_FRAMEWORK
@@ -87,7 +88,7 @@ class Ruckusing_Task_Base
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof \Ruckusing\Adapter\Base)) {
             throw new RuckusingException(
                     'Adapter must be implement Base!',
                     RuckusingException::INVALID_ADAPTER

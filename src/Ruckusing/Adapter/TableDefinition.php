@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Adapter;
 /**
  * Ruckusing
  *
@@ -8,6 +8,7 @@
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+use Ruckusing\RuckusingException;
 
 /**
  * Ruckusing_Adapter_TableDefinition
@@ -17,7 +18,7 @@
  * @author   Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class Ruckusing_Adapter_TableDefinition
+class TableDefinition
 {
     /**
      * columns

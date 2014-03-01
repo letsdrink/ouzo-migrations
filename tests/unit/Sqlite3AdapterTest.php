@@ -1,4 +1,7 @@
 <?php
+use Ruckusing\Adapter\Sqlite3\TableDefinition;
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Logger;
 
 /**
  * @category Ruckusing_Tests
@@ -25,7 +28,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
 
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new _Sqlite3_Base($test_db, $logger);
+        $this->adapter = new \Ruckusing\Adapter\Sqlite3\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
         $this->adapter->query('DROP TABLE IF EXISTS test');
         $this->adapter->query('CREATE TABLE test(id int)');
@@ -160,7 +163,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
         //first make sure the table does not exist
         $users = $this->adapter->has_table('users', true);
         $this->assertEquals(false, $users);
-        $t1 = new Ruckusing_Adapter_Sqlite3_TableDefinition($this->adapter, "users");
+        $t1 = new TableDefinition($this->adapter, "users");
         $t1->column("email", "string", array('limit' => 20));
         $sql = $t1->finish();
 
@@ -186,7 +189,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_index_name_too_long_throws_exception()
     {
-        $bm = new Ruckusing_Migration_Base($this->adapter);
+        $bm = new \Ruckusing\Migration\Base($this->adapter);
         try {
             srand();
             $table_name = "users_" . rand(0, 1000000);
@@ -207,7 +210,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
     public function test_custom_primary_key_1()
     {
         $this->drop_table('users');
-        $t1 = new Ruckusing_Adapter_Sqlite3_TableDefinition($this->adapter, "users", array('id' => true));
+        $t1 = new TableDefinition($this->adapter, "users", array('id' => true));
         $t1->column("user_id", "integer", array("primary_key" => true));
         $t1->finish(true);
         $this->drop_table('users');

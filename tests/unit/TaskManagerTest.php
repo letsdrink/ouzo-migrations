@@ -1,4 +1,6 @@
 <?php
+use Ruckusing\FrameworkRunner;
+use Ruckusing\Util\Logger;
 
 /**
  * Implementation of TaskManagerTest.
@@ -26,10 +28,10 @@ class TaskManagerTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new Base($test_db, $logger);
+        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
 
-        $this->framework = new Ruckusing_FrameworkRunner($ruckusing_config, array('ENV=mysql_test'));
+        $this->framework = new FrameworkRunner($ruckusing_config, array('ENV=mysql_test'));
         $this->db_dir = $this->framework->db_directory();
         if (!is_dir($this->db_dir)) {
             mkdir($this->db_dir, 0755, true);
@@ -42,7 +44,7 @@ class TaskManagerTest extends PHPUnit_Framework_TestCase
      */
     public function test_db_schema_creation()
     {
-        $schema = new Task_Db_Schema($this->adapter);
+        $schema = new \Task\Db\Schema($this->adapter);
         $schema->set_framework($this->framework);
         $schema->execute(array());
         $this->assertEquals(true, file_exists($this->db_dir . '/schema.txt'));

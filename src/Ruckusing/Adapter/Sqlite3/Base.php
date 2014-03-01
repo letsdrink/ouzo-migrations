@@ -1,5 +1,5 @@
 <?php
-
+namespace Ruckusing\Adapter\Sqlite3;
 /**
  * Ruckusing
  *
@@ -10,6 +10,12 @@
  * @author    Piotr Olaszewski <piotroo89 % gmail dot com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
+
+use Ruckusing\Adapter\AdapterInterface;
+use Ruckusing\Adapter\ColumnDefinition;
+use Ruckusing\RuckusingException;
+use Ruckusing\Util\Naming;
+use SQLite3;
 
 define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
 
@@ -23,7 +29,7 @@ define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
  * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-class _Sqlite3_Base extends Base implements AdapterInterface
+class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
 {
     /**
      * @var SQLite3
@@ -222,7 +228,7 @@ class _Sqlite3_Base extends Base implements AdapterInterface
 
     public function create_table($table_name, $options = array())
     {
-        return new Ruckusing_Adapter_Sqlite3_TableDefinition($this, $table_name, $options);
+        return new TableDefinition($this, $table_name, $options);
     }
 
     public function drop_database($databaseName)
@@ -327,7 +333,7 @@ class _Sqlite3_Base extends Base implements AdapterInterface
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
 
@@ -353,7 +359,7 @@ class _Sqlite3_Base extends Base implements AdapterInterface
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
 
         if (strlen($index_name) > SQLITE3_MAX_IDENTIFIER_LENGTH) {
@@ -550,7 +556,7 @@ class _Sqlite3_Base extends Base implements AdapterInterface
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
         } else {
-            $index_name = Ruckusing_Util_Naming::index_name($table_name, $column_name);
+            $index_name = Naming::index_name($table_name, $column_name);
         }
         $indexes = $this->indexes($table_name);
         foreach ($indexes as $idx) {
