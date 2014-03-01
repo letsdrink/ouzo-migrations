@@ -70,7 +70,7 @@ class Base
      */
     public function set_framework($fw)
     {
-        if (!($fw instanceof \Ruckusing~\FrameworkRunner)) {
+        if (!($fw instanceof \Ruckusing\FrameworkRunner)) {
             throw new RuckusingException(
                     'Framework must be instance of Ruckusing_FrameworkRunner!',
                     RuckusingException::INVALID_FRAMEWORK
