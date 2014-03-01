@@ -9,7 +9,7 @@
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
 
-define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Task');
+define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Task');
 
 /**
  * Ruckusing_Task_Manager

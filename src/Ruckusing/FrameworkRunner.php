@@ -123,7 +123,7 @@ class Ruckusing_FrameworkRunner
         $this->initialize_logger();
 
         //include all adapters
-        $this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
+        $this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
 
         //initialize logger
         $this->initialize_db();
@@ -505,7 +505,7 @@ class Ruckusing_FrameworkRunner
     }
 
     /**
-     * DB adapters are classes in lib/Ruckusing/Adapter
+     * DB adapters are classes in src/Ruckusing/Adapter
      * and they follow the file name syntax of "<DB Name>/Base.php".
      *
      * See the function "get_adapter_class" in this class for examples.

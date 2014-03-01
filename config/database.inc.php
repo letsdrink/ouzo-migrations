@@ -1,5 +1,4 @@
 <?php
-
 //----------------------------
 // DATABASE CONFIGURATION
 //----------------------------
@@ -29,8 +28,8 @@ return array(
             'host' => 'localhost',
             'port' => 5432,
             'database' => 'ruckusing_migrations_test',
-            'user' => 'postgres',
-            'password' => '',
+            'user' => 'db_user',
+            'password' => 'dbuser123',
             //'directory' => 'custom_name',
 
         ),
@@ -40,7 +39,7 @@ return array(
             'port' => 3306,
             'database' => 'ruckusing_migrations_test',
             'user' => 'root',
-            'password' => '',
+            'password' => 'piotr0987',
             //'directory' => 'custom_name',
             //'socket' => '/var/run/mysqld/mysqld.sock'
         ),

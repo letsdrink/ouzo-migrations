@@ -42,7 +42,7 @@ if (!$composer_found) {
             implode(
                     PATH_SEPARATOR,
                     array(
-                            RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib',
+                            RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src',
                             get_include_path(),
                     )
             )
@@ -50,7 +50,7 @@ if (!$composer_found) {
 
     function loader($classname)
     {
-        include RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php';
+        include RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php';
     }
 
     if ($php53) {

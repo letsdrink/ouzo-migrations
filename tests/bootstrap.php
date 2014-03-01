@@ -27,7 +27,7 @@ set_include_path(
         implode(
                 PATH_SEPARATOR,
                 array(
-                        RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib',
+                        RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src',
                         get_include_path(),
                 )
         )
@@ -35,7 +35,7 @@ set_include_path(
 
 function loader($classname)
 {
-    $filename = RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'lib' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php';
+    $filename = RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . str_replace('_', DIRECTORY_SEPARATOR, $classname) . '.php';
     if (is_file($filename)) {
         include $filename;
     }
