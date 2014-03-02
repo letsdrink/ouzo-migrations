@@ -23,18 +23,8 @@ class RuckusingException extends Exception
     const MIGRATION_NOT_SUPPORTED = 115;
     const INVALID_DB_DIR = 116;
 
-    /**
-     * Redefine the exception so message isn't optional
-     *
-     * @param string $message
-     * @param int $code [optional]
-     * @param Exception $previous [optional]
-     *
-     * @return RuckusingException
-     */
     public function __construct($message, $code = 0, Exception $previous = null)
     {
-        // make sure everything is assigned properly
         if (version_compare(PHP_VERSION, '5.3.0', '>=')) {
             parent::__construct($message, $code, $previous);
         } else {
@@ -42,24 +32,11 @@ class RuckusingException extends Exception
         }
     }
 
-    /**
-     * custom string representation of object
-     *
-     * @return string
-     */
     public function __toString()
     {
         return "\n" . basename($this->file) . "({$this->line}) : {$this->message}\n";
     }
 
-    /**
-     * Custom error handler
-     *
-     * @param integer $code
-     * @param string $message
-     * @param string $file
-     * @param integer $line
-     */
     public static function errorHandler($code, $message, $file, $line)
     {
         file_put_contents('php://stderr', "\n" . basename($file) . "({$line}) : {$message}\n\n");
@@ -68,15 +45,9 @@ class RuckusingException extends Exception
         }
     }
 
-    /**
-     * Custom exception handler
-     *
-     * @param Exception $exception
-     */
-    public static function exceptionHandler($exception)
+    public static function exceptionHandler(Exception $exception)
     {
         file_put_contents('php://stderr', "\n" . basename($exception->getFile()) . "({$exception->getLine()}) : {$exception->getMessage()}\n\n");
         exit(1);
     }
-
 }
