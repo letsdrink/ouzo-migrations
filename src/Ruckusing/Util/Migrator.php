@@ -1,22 +1,10 @@
 <?php
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Util
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+namespace Ruckusing\Util;
 
-/**
- * Implementation of Ruckusing_Util_Migrator
- *
- * @category Ruckusing
- * @package  Ruckusing_Util
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Ruckusing_Util_Migrator
+use Ruckusing\Adapter\Base;
+use Ruckusing\RuckusingException;
+
+class Migrator
 {
     /**
      * adapter
@@ -32,32 +20,20 @@ class Ruckusing_Util_Migrator
      */
     private $_migrations = array();
 
-    /**
-     * Creates an instance of Ruckusing_Util_Migrator
-     *
-     * @param Base $adapter The current adapter being used
-     *
-     * @return Ruckusing_Util_Migrator
-     */
     public function __construct($adapter)
     {
         $this->setAdapter($adapter);
     }
 
     /**
-     * set adapter
-     *
-     * @param Base $adapter the current adapter
-     *
-     * @return Ruckusing_Util_Migrator
+     * @param $adapter
+     * @throws RuckusingException
+     * @return Migrator
      */
     public function setAdapter($adapter)
     {
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException(
-                    'Adapter must be implement Base!',
-                    RuckusingException::INVALID_ADAPTER
-            );
+            throw new RuckusingException('Adapter must be implement Base!', RuckusingException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
 
@@ -83,8 +59,7 @@ class Ruckusing_Util_Migrator
         $num_versions = count($versions);
         if ($num_versions) {
             sort($versions); //sorts lowest-to-highest (ascending)
-
-            return (string) $versions[$num_versions-1];
+            return (string)$versions[$num_versions - 1];
         } else {
             return null;
         }
@@ -96,11 +71,12 @@ class Ruckusing_Util_Migrator
      * skip migrations that have not been executed, when going down this method will only include migrations
      * that have been executed.
      *
-     * @param array   $directories the migration dirs
-     * @param string  $direction   up/down
-     * @param string  $destination the version to migrate to
-     * @param boolean $use_cache   the current logger
+     * @param array $directories the migration dirs
+     * @param string $direction up/down
+     * @param string $destination the version to migrate to
+     * @param boolean $use_cache the current logger
      *
+     * @throws \Ruckusing\RuckusingException
      * @return array
      */
     public function get_runnable_migrations($directories, $direction, $destination = null, $use_cache = true)
@@ -109,7 +85,7 @@ class Ruckusing_Util_Migrator
         if ($use_cache == true) {
             $key = $direction . '-' . $destination;
             if (array_key_exists($key, $this->_migrations)) {
-                return($this->_migrations[$key]);
+                return ($this->_migrations[$key]);
             }
         }
 
@@ -120,8 +96,8 @@ class Ruckusing_Util_Migrator
         $target = $this->find_version($migrations, $destination);
         if (is_null($target) && !is_null($destination) && $destination > 0) {
             throw new RuckusingException(
-                    "Could not find target version {$destination} in set of migrations.",
-                    RuckusingException::INVALID_TARGET_MIGRATION
+                "Could not find target version {$destination} in set of migrations.",
+                RuckusingException::INVALID_TARGET_MIGRATION
             );
         }
         $start = $direction == 'up' ? 0 : array_search($current, $migrations);
@@ -155,29 +131,14 @@ class Ruckusing_Util_Migrator
             $this->_migrations[$key] = $to_execute;
         }
 
-        return($to_execute);
+        return ($to_execute);
     }
 
-    /**
-     * Generate a timestamp for the current time in UTC format
-     * Returns a string like '20090122193325'
-     *
-     * @return string
-     */
     public static function generate_timestamp()
     {
         return gmdate('YmdHis', time());
     }
 
-    /**
-     * If we are going UP then log this version as executed, if going DOWN then delete
-     * this version from our set of executed migrations.
-     *
-     * @param object $version   the version
-     * @param object $direction up/down
-     *
-     * @return string
-     */
     public function resolve_current_version($version, $direction)
     {
         if ($direction === 'up') {
@@ -190,11 +151,6 @@ class Ruckusing_Util_Migrator
         return $version;
     }
 
-    /**
-     * Returns an array of strings which represent version numbers that we *have* migrated
-     *
-     * @return array
-     */
     public function get_executed_migrations()
     {
         return $this->executed_migrations();
@@ -205,9 +161,10 @@ class Ruckusing_Util_Migrator
      * If nested, then return a complex array with the migration parts broken up into parts
      * which make analysis much easier.
      *
-     * @param array  $directories the migration dirs
-     * @param string $direction   the direction  up/down
+     * @param array $directories the migration dirs
+     * @param string $direction the direction  up/down
      *
+     * @throws \Ruckusing\RuckusingException
      * @return array
      */
     public static function get_migration_files($directories, $direction)
@@ -216,10 +173,7 @@ class Ruckusing_Util_Migrator
         foreach ($directories as $name => $path) {
             if (!is_dir($path)) {
                 if (mkdir($path, 0755, true) === FALSE) {
-                    throw new RuckusingException(
-                    		"\n\tUnable to create migrations directory at %s, check permissions?", $path,
-                    		RuckusingException::INVALID_MIGRATION_DIR
-                    );
+                    throw new RuckusingException("\n\tUnable to create migrations directory at %s, check permissions?", $path, RuckusingException::INVALID_MIGRATION_DIR);
                 }
             }
             $files = scandir($path);
@@ -229,8 +183,8 @@ class Ruckusing_Util_Migrator
                     if (preg_match('/^(\d+)_(.*)\.php$/', $files[$i], $matches)) {
                         if (count($matches) == 3) {
                             $valid_files[] = array(
-                                            'name'  =>  $files[$i],
-                                            'module'  =>  $name
+                                'name' => $files[$i],
+                                'module' => $name
                             );
                         }
                     }
@@ -251,10 +205,10 @@ class Ruckusing_Util_Migrator
             $migration = $valid_files[$i];
             if (preg_match('/^(\d+)_(.*)\.php$/', $migration['name'], $matches)) {
                 $files[] = array(
-                                'version'   => $matches[1],
-                                'class'     => $matches[2],
-                                'file'		=> $matches[0],
-                                'module'    => $migration['module']
+                    'version' => $matches[1],
+                    'class' => $matches[2],
+                    'file' => $matches[0],
+                    'module' => $migration['module']
                 );
             }
         }
@@ -265,8 +219,8 @@ class Ruckusing_Util_Migrator
     /**
      * Find the specified structure (representing a migration) that matches the given version
      *
-     * @param array  $migrations the list of migrations
-     * @param string $version    the version being searched
+     * @param array $migrations the list of migrations
+     * @param string $version the version being searched
      * @param boolean $only_index whether to only return the index of the version
      *
      * @return null | integer | array
@@ -283,43 +237,12 @@ class Ruckusing_Util_Migrator
         return null;
     }
 
-    //== Private methods
-
     /**
-     * Custom comparator for migration sorting
-     *
-     * @param array $a first migration structure
-     * @param array $b second migration structure
-     *
-     * @return integer
+     * @SuppressWarnings(PHPMD)
      */
     private static function migration_compare($a, $b)
     {
         return strcmp($a["name"], $b["name"]);
-    }
-
-    /**
-     * Find the index of the migration in the set of migrations that match the given version
-     *
-     * @param array  $migrations the list of migrations
-     * @param string $version    the version being searched
-     *
-     * @return integer
-     */
-    private function find_version_index($migrations, $version)
-    {
-        //edge case
-        if (is_null($version)) {
-            return null;
-        }
-        $len = count($migrations);
-        for ($i = 0; $i < $len; $i++) {
-            if ($migrations[$i]['version'] == $version) {
-                return $i;
-            }
-        }
-
-        return null;
     }
 
     /**
@@ -339,5 +262,4 @@ class Ruckusing_Util_Migrator
 
         return $executed;
     }
-
 }
