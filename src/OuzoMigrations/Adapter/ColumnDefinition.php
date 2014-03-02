@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Adapter;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class ColumnDefinition
 {
@@ -21,13 +21,13 @@ class ColumnDefinition
     public function __construct($adapter, $name, $type, $options = array())
     {
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException('Invalid Adapter instance.', RuckusingException::INVALID_ADAPTER);
+            throw new OuzoMigrationsException('Invalid Adapter instance.', OuzoMigrationsException::INVALID_ADAPTER);
         }
         if (empty($name) || !is_string($name)) {
-            throw new RuckusingException("Invalid 'name' parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Invalid 'name' parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($type) || !is_string($type)) {
-            throw new RuckusingException("Invalid 'type' parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Invalid 'type' parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $this->_adapter = $adapter;

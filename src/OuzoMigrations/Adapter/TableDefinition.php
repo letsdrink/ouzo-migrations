@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Adapter;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class TableDefinition
 {
@@ -15,14 +15,14 @@ class TableDefinition
     public function __construct($adapter)
     {
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException('Invalid Adapter instance.', RuckusingException::INVALID_ADAPTER);
+            throw new OuzoMigrationsException('Invalid Adapter instance.', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
     }
 
     public function __call($name, $args)
     {
-        throw new RuckusingException('Method unknown (' . $name . ')', RuckusingException::INVALID_MIGRATION_METHOD);
+        throw new OuzoMigrationsException('Method unknown (' . $name . ')', OuzoMigrationsException::INVALID_MIGRATION_METHOD);
     }
 
     public function included($column)

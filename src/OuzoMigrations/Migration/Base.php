@@ -8,7 +8,7 @@ namespace OuzoMigrations\Migration;
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 /**
  * Base
@@ -45,13 +45,13 @@ class Base
      * @param string $name The method name
      * @param array  $args The parameters of method called
      *
-     * @throws RuckusingException
+     * @throws OuzoMigrationsException
      */
     public function __call($name, $args)
     {
-        throw new RuckusingException(
+        throw new OuzoMigrationsException(
                 'Method unknown (' . $name . ')',
-                RuckusingException::INVALID_MIGRATION_METHOD
+                OuzoMigrationsException::INVALID_MIGRATION_METHOD
         );
     }
 
@@ -63,9 +63,9 @@ class Base
     public function set_adapter($adapter)
     {
         if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     'Adapter must be implement Base!',
-                    RuckusingException::INVALID_ADAPTER
+                    OuzoMigrationsException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;

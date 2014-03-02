@@ -4,7 +4,7 @@ namespace OuzoMigrations\Adapter\Sqlite3;
 use Exception;
 use OuzoMigrations\Adapter\AdapterInterface;
 use OuzoMigrations\Adapter\ColumnDefinition;
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
 use SQLite3;
 
@@ -34,7 +34,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     private function db_connect($dsn)
     {
         if (!class_exists('SQLite3')) {
-            throw new RuckusingException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3", RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3", OuzoMigrationsException::INVALID_CONFIG);
         }
         $db_info = $this->get_dsn();
         if ($db_info) {
@@ -42,11 +42,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
             try {
                 $this->sqlite3 = new SQLite3($db_info['database']);
             } catch (Exception $e) {
-                throw new RuckusingException("\n\nCould not connect to the DB, check database name\n\n", RuckusingException::INVALID_CONFIG, $e->getCode(), $e);
+                throw new OuzoMigrationsException("\n\nCould not connect to the DB, check database name\n\n", OuzoMigrationsException::INVALID_CONFIG, $e->getCode(), $e);
             }
             return true;
         } else {
-            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n", RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException("\n\nCould not extract DB connection information from: {$dsn}\n\n", OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -99,8 +99,8 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     {
         $SqliteResult = $this->sqlite3->query($query);
         if ($this->isError($SqliteResult)) {
-            throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
-                RuckusingException::QUERY_ERROR
+            throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
+                OuzoMigrationsException::QUERY_ERROR
             );
         }
         return $SqliteResult;
@@ -234,10 +234,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function rename_table($name, $new_name)
     {
         if (empty($name)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($new_name)) {
-            throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
         return $this->execute_ddl($sql);
@@ -257,13 +257,13 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function add_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($type)) {
-            throw new RuckusingException("Missing type parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing type parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $defaultOptions = array(
             'limit' => null,
@@ -294,10 +294,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function remove_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
@@ -313,10 +313,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function add_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //unique index?
         if (is_array($options) && array_key_exists('unique', $options) && $options['unique'] === true) {
@@ -337,7 +337,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
             $msg .= " this custom name in a drop_index() - if you have one.";
-            throw new RuckusingException($msg, RuckusingException::INVALID_INDEX_NAME);
+            throw new OuzoMigrationsException($msg, OuzoMigrationsException::INVALID_INDEX_NAME);
         }
 
         if (!is_array($column_name)) {
@@ -394,7 +394,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
             $error .= "\nYou provided: {$type}\n";
             $error .= "Valid types are: \n";
             $error .= implode(', ', array_diff(array_keys($natives), array('primary_key')));
-            throw new RuckusingException($error, RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $native_type = $natives[$type];
@@ -413,10 +413,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function column_info($table, $column)
     {
         if (empty($table)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         try {
@@ -495,11 +495,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->executeQuery($query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), RuckusingException::QUERY_ERROR);
+                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), OuzoMigrationsException::QUERY_ERROR);
             }
             return $res->fetchArray(SQLITE3_ASSOC);
         } else {
-            throw new RuckusingException("Query for select_one() is not one of SELECT or SHOW: $query", RuckusingException::QUERY_ERROR);
+            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
         }
     }
 
@@ -517,10 +517,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     public function has_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         if (is_array($options) && array_key_exists('name', $options)) {

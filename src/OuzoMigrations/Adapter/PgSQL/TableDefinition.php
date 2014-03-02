@@ -2,7 +2,7 @@
 namespace OuzoMigrations\Adapter\PgSQL;
 
 use OuzoMigrations\Adapter\ColumnDefinition;
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
 {
@@ -31,10 +31,10 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
     {
         //sanity check
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException("Invalid Postgres Adapter instance.", RuckusingException::INVALID_ADAPTER);
+            throw new OuzoMigrationsException("Invalid Postgres Adapter instance.", OuzoMigrationsException::INVALID_ADAPTER);
         }
         if (!$name) {
-            throw new RuckusingException("Invalid 'name' parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Invalid 'name' parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $this->_adapter = $adapter;
@@ -93,7 +93,7 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
     public function finish($wants_sql = false)
     {
         if ($this->_initialized == false) {
-            throw new RuckusingException(sprintf("Table Definition: '%s' has not been initialized", $this->_name), RuckusingException::INVALID_TABLE_DEFINITION);
+            throw new OuzoMigrationsException(sprintf("Table Definition: '%s' has not been initialized", $this->_name), OuzoMigrationsException::INVALID_TABLE_DEFINITION);
         }
         if (is_array($this->_options) && array_key_exists('options', $this->_options)) {
             $opt_str = $this->_options['options'];
@@ -137,8 +137,8 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
         if (array_key_exists('force', $options) && $options['force'] == true) {
             try {
                 $this->_adapter->drop_table($name);
-            } catch (RuckusingException $e) {
-                if ($e->getCode() != RuckusingException::MISSING_TABLE) {
+            } catch (OuzoMigrationsException $e) {
+                if ($e->getCode() != OuzoMigrationsException::MISSING_TABLE) {
                     throw $e;
                 }
             }

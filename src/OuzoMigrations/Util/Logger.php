@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Util;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class Logger
 {
@@ -44,7 +44,7 @@ class Logger
             $line = sprintf("%s [info] %s\n", $ts, $msg);
             fwrite($this->_fp, $line);
         } else {
-            throw new RuckusingException(sprintf("Error: logfile '%s' not open for writing!", $this->_file), RuckusingException::INVALID_LOG);
+            throw new OuzoMigrationsException(sprintf("Error: logfile '%s' not open for writing!", $this->_file), OuzoMigrationsException::INVALID_LOG);
         }
     }
 
@@ -56,7 +56,7 @@ class Logger
                 $this->_fp = null;
                 self::$_instance = null;
             } else {
-                throw new RuckusingException('Error closing the log file', RuckusingException::INVALID_LOG);
+                throw new OuzoMigrationsException('Error closing the log file', OuzoMigrationsException::INVALID_LOG);
             }
         }
     }

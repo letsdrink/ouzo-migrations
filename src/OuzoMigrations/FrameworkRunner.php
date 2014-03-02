@@ -34,8 +34,8 @@ class FrameworkRunner
 
     public function __construct($config, $argv)
     {
-        set_error_handler(array('\OuzoMigrations\RuckusingException', 'errorHandler'), E_ALL);
-        set_exception_handler(array('\OuzoMigrations\RuckusingException', 'exceptionHandler'));
+        set_error_handler(array('\OuzoMigrations\OuzoMigrationsException', 'errorHandler'), E_ALL);
+        set_exception_handler(array('\OuzoMigrations\OuzoMigrationsException', 'exceptionHandler'));
 
         $this->_config = $config;
 
@@ -99,9 +99,9 @@ class FrameworkRunner
     {
         if ($key) {
             if (!isset($this->_config['migrations_dir'][$key])) {
-                throw new RuckusingException(
+                throw new OuzoMigrationsException(
                     sprintf("No module %s migration_dir set in config", $key),
-                    RuckusingException::INVALID_CONFIG
+                    OuzoMigrationsException::INVALID_CONFIG
                 );
             }
             $migration_dir = $this->_config['migrations_dir'][$key] . DIRECTORY_SEPARATOR;
@@ -154,9 +154,9 @@ class FrameworkRunner
         $adapter = $this->get_adapter_class($db['type']);
 
         if (empty($adapter)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                 sprintf("No adapter available for DB type: %s", $db['type']),
-                RuckusingException::INVALID_ADAPTER
+                OuzoMigrationsException::INVALID_ADAPTER
             );
         }
         //construct our adapter
@@ -167,9 +167,9 @@ class FrameworkRunner
     public function initialize_logger()
     {
         if (is_dir($this->_config['log_dir']) && !is_writable($this->_config['log_dir'])) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                 "\n\nCannot write to log directory: " . $this->_config['log_dir'] . "\n\nCheck permissions.\n\n",
-                RuckusingException::INVALID_LOG
+                OuzoMigrationsException::INVALID_LOG
             );
         } elseif (!is_dir($this->_config['log_dir'])) {
             //try and create the log directory
@@ -254,7 +254,7 @@ class FrameworkRunner
     {
         $db_config = $this->_config['db'];
         if (!Arrays::keyExists($db_config, $this->_env)) {
-            throw new RuckusingException(sprintf("Error: env '%s' is not set DB", $this->_env), RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException(sprintf("Error: env '%s' is not set DB", $this->_env), OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -262,7 +262,7 @@ class FrameworkRunner
     {
         $db_config = $this->_config['db'][$this->_env];
         if (!Arrays::keyExists($db_config, $key)) {
-            throw new RuckusingException(sprintf("Error: '%s' is not set for '%s' DB", $key, $this->_env), RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException(sprintf("Error: '%s' is not set for '%s' DB", $key, $this->_env), OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -270,7 +270,7 @@ class FrameworkRunner
     {
         $db_config = $this->_config;
         if (!Arrays::keyExists($db_config, $key)) {
-            throw new RuckusingException(sprintf("Error: '%s' is not set in config", $key), RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException(sprintf("Error: '%s' is not set in config", $key), OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -278,9 +278,9 @@ class FrameworkRunner
     {
         if (is_array($this->_config['migrations_dir'])) {
             if (!isset($this->_config['migrations_dir']['default'])) {
-                throw new RuckusingException("Error: 'migrations_dir' 'default' key is not set in config.", RuckusingException::INVALID_CONFIG);
+                throw new OuzoMigrationsException("Error: 'migrations_dir' 'default' key is not set in config.", OuzoMigrationsException::INVALID_CONFIG);
             } elseif (empty($this->_config['migrations_dir']['default'])) {
-                throw new RuckusingException("Error: 'migrations_dir' 'default' key is empty in config.", RuckusingException::INVALID_CONFIG);
+                throw new OuzoMigrationsException("Error: 'migrations_dir' 'default' key is empty in config.", OuzoMigrationsException::INVALID_CONFIG);
             }
         }
     }
@@ -288,7 +288,7 @@ class FrameworkRunner
     private function _checkTaskConfig()
     {
         if (isset($this->_task_options['module']) && !isset($this->_config['migrations_dir'][$this->_task_options['module']])) {
-            throw new RuckusingException(sprintf("Error: module name %s is not set in 'migrations_dir' option in config.", $this->_task_options['module']), RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException(sprintf("Error: module name %s is not set in 'migrations_dir' option in config.", $this->_task_options['module']), OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -315,7 +315,7 @@ class FrameworkRunner
     private function load_all_adapters($adapter_dir)
     {
         if (!is_dir($adapter_dir)) {
-            throw new RuckusingException(sprintf("Adapter dir: %s does not exist", $adapter_dir), RuckusingException::INVALID_ADAPTER);
+            throw new OuzoMigrationsException(sprintf("Adapter dir: %s does not exist", $adapter_dir), OuzoMigrationsException::INVALID_ADAPTER);
         }
         $files = scandir($adapter_dir);
         foreach ($files as $f) {

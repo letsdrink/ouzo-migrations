@@ -9,7 +9,7 @@ namespace OuzoMigrations\Task;
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Task');
 
@@ -52,9 +52,9 @@ class Manager
     public function setAdapter($adapter)
     {
         if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     'Adapter must be implement Base!',
-                    RuckusingException::INVALID_ADAPTER
+                    OuzoMigrationsException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;
@@ -83,9 +83,9 @@ class Manager
     public function get_task($key)
     {
         if (!$this->has_task($key)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     "Task '$key' is not registered.",
-                    RuckusingException::INVALID_ARGUMENT
+                    OuzoMigrationsException::INVALID_ARGUMENT
             );
         }
 
@@ -124,18 +124,18 @@ class Manager
     public function register_task($key, $obj)
     {
         if (array_key_exists($key, $this->_tasks)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     sprintf("Task key '%s' is already defined!", $key),
-                    RuckusingException::INVALID_ARGUMENT
+                    OuzoMigrationsException::INVALID_ARGUMENT
             );
 
             return false;
         }
 
         if (!($obj instanceof Ruckusing_Task_Interface)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     sprintf('Task (' . $key . ') does not implement Ruckusing_Task_Interface', $key),
-                    RuckusingException::INVALID_ARGUMENT
+                    OuzoMigrationsException::INVALID_ARGUMENT
             );
 
             return false;
@@ -156,9 +156,9 @@ class Manager
     private function load_all_tasks($task_dir)
     {
         if (!is_dir($task_dir)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     sprintf("Task dir: %s does not exist", $task_dir),
-                    RuckusingException::INVALID_ARGUMENT
+                    OuzoMigrationsException::INVALID_ARGUMENT
             );
 
             return false;

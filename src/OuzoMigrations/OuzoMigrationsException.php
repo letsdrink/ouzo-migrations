@@ -3,7 +3,7 @@ namespace OuzoMigrations;
 
 use Exception;
 
-class RuckusingException extends Exception
+class OuzoMigrationsException extends Exception
 {
     const MISSING_SCHEMA_INFO_TABLE = 100;
     const INVALID_INDEX_NAME = 101;

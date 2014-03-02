@@ -3,7 +3,7 @@ namespace OuzoMigrations\Adapter\PgSQL;
 
 use OuzoMigrations\Adapter\AdapterInterface;
 use OuzoMigrations\Adapter\ColumnDefinition;
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
 
 define('PG_MAX_IDENTIFIER_LENGTH', 64);
@@ -216,7 +216,7 @@ SQL;
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
             }
             while ($row = pg_fetch_assoc($res)) {
                 $data[] = $row;
@@ -225,7 +225,7 @@ SQL;
         } else {
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
             }
             $returning_regex = '/ RETURNING \"(.+)\"$/';
             $matches = array();
@@ -246,11 +246,11 @@ SQL;
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
             }
             return pg_fetch_assoc($res);
         } else {
-            throw new RuckusingException("Query for select_one() is not one of SELECT or SHOW: $query", RuckusingException::QUERY_ERROR);
+            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
         }
     }
 
@@ -314,10 +314,10 @@ SQL;
     public function rename_table($name, $new_name)
     {
         if (empty($name)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($new_name)) {
-            throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
         $this->execute_ddl($sql);
@@ -334,13 +334,13 @@ SQL;
     public function add_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($type)) {
-            throw new RuckusingException("Missing type parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing type parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //default types
         if (!array_key_exists('limit', $options)) {
@@ -374,13 +374,13 @@ SQL;
     public function rename_column($table_name, $column_name, $new_column_name)
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($new_column_name)) {
-            throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $column_info = $this->column_info($table_name, $column_name);
         $column_info['type'];
@@ -395,13 +395,13 @@ SQL;
     public function change_column($table_name, $column_name, $type, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($type)) {
-            throw new RuckusingException("Missing type parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing type parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $this->column_info($table_name, $column_name);
@@ -465,10 +465,10 @@ SQL;
     public function column_info($table, $column)
     {
         if (empty($table)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column)) {
-            throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         try {
             $sql = <<<SQL
@@ -500,10 +500,10 @@ SQL;
     public function add_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //unique index?
         if (is_array($options) && array_key_exists('unique', $options) && $options['unique'] === true) {
@@ -524,7 +524,7 @@ SQL;
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
             $msg .= " this custom name in a drop_index() - if you have one.";
-            throw new RuckusingException($msg, RuckusingException::INVALID_INDEX_NAME);
+            throw new OuzoMigrationsException($msg, OuzoMigrationsException::INVALID_INDEX_NAME);
         }
         if (!is_array($column_name)) {
             $column_names = array($column_name);
@@ -548,10 +548,10 @@ SQL;
     public function remove_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
@@ -567,10 +567,10 @@ SQL;
     public function has_index($table_name, $column_name, $options = array())
     {
         if (empty($table_name)) {
-            throw new RuckusingException("Missing table name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         if (empty($column_name)) {
-            throw new RuckusingException("Missing column name parameter", RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
@@ -656,7 +656,7 @@ SQL;
                 }
                 $error .= "\t{$t}\n";
             }
-            throw new RuckusingException($error, RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $scale = null;
@@ -696,7 +696,7 @@ SQL;
                 //scale
             } else {
                 if ($scale) {
-                    throw new RuckusingException("Error adding decimal column: precision cannot be empty if scale is specified", RuckusingException::INVALID_ARGUMENT);
+                    throw new OuzoMigrationsException("Error adding decimal column: precision cannot be empty if scale is specified", OuzoMigrationsException::INVALID_ARGUMENT);
                 }
             }
             //pre
@@ -766,7 +766,7 @@ SQL;
     private function db_connect($dsn)
     {
         if (!function_exists('pg_connect')) {
-            throw new RuckusingException("\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()", RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException("\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()", OuzoMigrationsException::INVALID_CONFIG);
         }
         $db_info = $this->get_dsn();
         if ($db_info) {
@@ -780,11 +780,11 @@ SQL;
             );
             $this->conn = pg_connect($conninfo);
             if ($this->conn === FALSE) {
-                throw new RuckusingException("\n\nCould not connect to the DB, check host / user / password\n\n", RuckusingException::INVALID_CONFIG);
+                throw new OuzoMigrationsException("\n\nCould not connect to the DB, check host / user / password\n\n", OuzoMigrationsException::INVALID_CONFIG);
             }
             return true;
         } else {
-            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n", RuckusingException::INVALID_CONFIG);
+            throw new OuzoMigrationsException("\n\nCould not extract DB connection information from: {$dsn}\n\n", OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
@@ -853,7 +853,7 @@ SQL;
     private function beginTransaction()
     {
         if ($this->_in_trx) {
-            throw new RuckusingException('Transaction already started', RuckusingException::QUERY_ERROR);
+            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
         }
         pg_query($this->conn, "BEGIN");
         $this->_in_trx = true;
@@ -862,7 +862,7 @@ SQL;
     private function commit()
     {
         if (!$this->_in_trx) {
-            throw new RuckusingException('Transaction not started', RuckusingException::QUERY_ERROR);
+            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
         }
         pg_query($this->conn, "COMMIT");
         $this->_in_trx = false;
@@ -871,7 +871,7 @@ SQL;
     private function rollback()
     {
         if (!$this->_in_trx) {
-            throw new RuckusingException('Transaction not started', RuckusingException::QUERY_ERROR);
+            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
         }
         pg_query($this->conn, "ROLLBACK");
         $this->_in_trx = false;

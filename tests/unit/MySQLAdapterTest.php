@@ -1,6 +1,6 @@
 <?php
 use OuzoMigrations\Adapter\MySQL\TableDefinition;
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Logger;
 
 class MySQLAdapterTest extends PHPUnit_Framework_TestCase
@@ -141,14 +141,14 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
             $table->column('anothercolumnthatiscrazylongrodeclown', 'integer');
             $sql = $table->finish();
             $bm->add_index($table_name, array('somecolumnthatiscrazylong', 'anothercolumnthatiscrazylongrodeclown'));
-        } catch (RuckusingException $exception) {
-            if (RuckusingException::INVALID_INDEX_NAME == $exception->getCode()) {
+        } catch (OuzoMigrationsException $exception) {
+            if (OuzoMigrationsException::INVALID_INDEX_NAME == $exception->getCode()) {
                 $bm->drop_table($table_name);
 
                 return;
             }
         }
-        $this->fail('Expected to raise & catch RuckusingException::INVALID_INDEX_NAME');
+        $this->fail('Expected to raise & catch OuzoMigrationsException::INVALID_INDEX_NAME');
     }
 
     /**

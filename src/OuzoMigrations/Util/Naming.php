@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Util;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class Naming
 {
@@ -10,7 +10,7 @@ class Naming
     public static function task_from_class_name($className)
     {
         if (!preg_match('/' . self::CLASS_NS_PREFIX . '/', $className)) {
-            throw new RuckusingException('The class name must start with ' . self::CLASS_NS_PREFIX, RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException('The class name must start with ' . self::CLASS_NS_PREFIX, OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $className = str_replace(self::CLASS_NS_PREFIX, '', $className);
         $className = strtolower($className);
@@ -22,7 +22,7 @@ class Naming
     public static function task_to_class_name($task)
     {
         if (false === stripos($task, ':')) {
-            throw new RuckusingException('Task name (' . $task . ') must be contains ":"', RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException('Task name (' . $task . ') must be contains ":"', OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $parts = explode(":", $task);
 

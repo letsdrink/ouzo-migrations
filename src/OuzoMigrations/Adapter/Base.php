@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Adapter;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Logger;
 
 define('SQL_UNKNOWN_QUERY_TYPE', 1);
@@ -55,7 +55,7 @@ class Base
     public function set_logger($logger)
     {
         if (!($logger instanceof Logger)) {
-            throw new RuckusingException('Logger parameter must be instance of Logger', RuckusingException::INVALID_ARGUMENT);
+            throw new OuzoMigrationsException('Logger parameter must be instance of Logger', OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $this->logger = $logger;
     }

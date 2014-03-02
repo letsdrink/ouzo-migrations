@@ -9,7 +9,7 @@ namespace Task\Db;
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\Base;
 use OuzoMigrations\Task\TaskInterface;
 
@@ -92,11 +92,11 @@ class Schema extends Base implements TaskInterface
 
         //check to make sure our destination directory is writable
         if (!is_writable($db_directory)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     "ERROR: DB Schema directory '"
                     . $db_directory
                     . "' is not writable by the current user. Check permissions and try again.\n",
-                    RuckusingException::INVALID_DB_DIR
+                    OuzoMigrationsException::INVALID_DB_DIR
             );
         }
 

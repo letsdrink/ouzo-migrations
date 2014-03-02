@@ -2,7 +2,7 @@
 namespace OuzoMigrations\Util;
 
 use OuzoMigrations\Adapter\Base;
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class Migrator
 {
@@ -27,13 +27,13 @@ class Migrator
 
     /**
      * @param $adapter
-     * @throws RuckusingException
+     * @throws OuzoMigrationsException
      * @return Migrator
      */
     public function setAdapter($adapter)
     {
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException('Adapter must be implement Base!', RuckusingException::INVALID_ADAPTER);
+            throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
 
@@ -95,9 +95,9 @@ class Migrator
         $current = $this->find_version($migrations, $this->get_max_version());
         $target = $this->find_version($migrations, $destination);
         if (is_null($target) && !is_null($destination) && $destination > 0) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                 "Could not find target version {$destination} in set of migrations.",
-                RuckusingException::INVALID_TARGET_MIGRATION
+                OuzoMigrationsException::INVALID_TARGET_MIGRATION
             );
         }
         $start = $direction == 'up' ? 0 : array_search($current, $migrations);
@@ -173,7 +173,7 @@ class Migrator
         foreach ($directories as $name => $path) {
             if (!is_dir($path)) {
                 if (mkdir($path, 0755, true) === FALSE) {
-                    throw new RuckusingException("\n\tUnable to create migrations directory at %s, check permissions?", $path, RuckusingException::INVALID_MIGRATION_DIR);
+                    throw new OuzoMigrationsException("\n\tUnable to create migrations directory at %s, check permissions?", $path, OuzoMigrationsException::INVALID_MIGRATION_DIR);
                 }
             }
             $files = scandir($path);

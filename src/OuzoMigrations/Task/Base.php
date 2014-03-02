@@ -1,7 +1,7 @@
 <?php
 namespace OuzoMigrations\Task;
 
-use OuzoMigrations\RuckusingException;
+use OuzoMigrations\OuzoMigrationsException;
 
 class Base
 {
@@ -56,9 +56,9 @@ class Base
     public function set_framework($fw)
     {
         if (!($fw instanceof \OuzoMigrations\FrameworkRunner)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     'Framework must be instance of Ruckusing_FrameworkRunner!',
-                    RuckusingException::INVALID_FRAMEWORK
+                    OuzoMigrationsException::INVALID_FRAMEWORK
             );
         }
         $this->_framework = $fw;
@@ -74,9 +74,9 @@ class Base
     public function setAdapter($adapter)
     {
         if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
-            throw new RuckusingException(
+            throw new OuzoMigrationsException(
                     'Adapter must be implement Base!',
-                    RuckusingException::INVALID_ADAPTER
+                    OuzoMigrationsException::INVALID_ADAPTER
             );
         }
         $this->_adapter = $adapter;
