@@ -93,7 +93,7 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
         return '"' . $string . '"';
     }
 
-    public function quote($value, $column = null)
+    public function quote($value)
     {
         return ("'{$value}'");
     }

@@ -539,11 +539,11 @@ SQL;
      * Quote a string
      *
      * @param string $value the string
-     * @param string $column the column
+     * @internal param string $column the column
      *
      * @return string
      */
-    public function quote($value, $column = null)
+    public function quote($value)
     {
         $type = gettype($value);
         if ($type == "double") {

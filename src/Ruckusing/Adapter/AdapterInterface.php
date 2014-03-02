@@ -5,7 +5,7 @@ interface AdapterInterface
 {
     public function get_database_name();
 
-    public function quote($value, $column = null);
+    public function quote($value);
 
     public function supports_migrations();
 
