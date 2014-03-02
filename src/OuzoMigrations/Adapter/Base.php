@@ -72,4 +72,37 @@ class Base
     {
         return $this->table_exists($tbl);
     }
+
+    protected function determine_query_type($query)
+    {
+        $query = strtolower(trim($query));
+        $match = array();
+        preg_match('/^(\w)*/i', $query, $match);
+        $type = $match[0];
+
+        switch ($type) {
+            case 'select':
+                return SQL_SELECT;
+            case 'update':
+                return SQL_UPDATE;
+            case 'delete':
+                return SQL_DELETE;
+            case 'insert':
+                return SQL_INSERT;
+            case 'alter':
+                return SQL_ALTER;
+            case 'drop':
+                return SQL_DROP;
+            case 'create':
+                return SQL_CREATE;
+            case 'show':
+                return SQL_SHOW;
+            case 'rename':
+                return SQL_RENAME;
+            case 'set':
+                return SQL_SET;
+            default:
+                return SQL_UNKNOWN_QUERY_TYPE;
+        }
+    }
 }

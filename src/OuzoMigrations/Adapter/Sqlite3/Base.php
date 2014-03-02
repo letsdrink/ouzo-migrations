@@ -106,34 +106,6 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return $SqliteResult;
     }
 
-    private function determine_query_type($query)
-    {
-        $query = strtolower(trim($query));
-        $match = array();
-        preg_match('/^(\w)*/i', $query, $match);
-        $type = $match[0];
-        switch ($type) {
-            case 'select':
-                return SQL_SELECT;
-            case 'update':
-                return SQL_UPDATE;
-            case 'delete':
-                return SQL_DELETE;
-            case 'insert':
-                return SQL_INSERT;
-            case 'alter':
-                return SQL_ALTER;
-            case 'drop':
-                return SQL_DROP;
-            case 'create':
-                return SQL_CREATE;
-            case 'pragma':
-                return SQL_SHOW;
-            default:
-                return SQL_UNKNOWN_QUERY_TYPE;
-        }
-    }
-
     public function supports_migrations()
     {
         return true;
