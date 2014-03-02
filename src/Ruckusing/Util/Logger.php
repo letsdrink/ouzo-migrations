@@ -1,74 +1,42 @@
 <?php
 namespace Ruckusing\Util;
 
+use Ruckusing\RuckusingException;
+
 class Logger
 {
     /**
-     * Instance of logger
-     *
      * @var Logger
      */
     private static $_instance;
 
-    /**
-     * file
-     *
-     * @var string
-     */
     private $_file = '';
 
-    /**
-     * File descriptor
-     *
-     * @var resource
-     */
     private $_fp;
 
-    /**
-     * Creates an instance of Logger
-     *
-     * @param string $file the path to log to
-     *
-     * @return Logger
-     */
     public function __construct($file)
     {
         $this->_file = $file;
         $this->_fp = fopen($this->_file, "a+");
     }
 
-    /**
-     * Close the file descriptor
-     *
-     * @return void
-     */
     public function __destruct()
     {
         $this->close();
     }
 
     /**
-     * Singleton for the instance
-     *
-     * @param string $logfile the path to log to
-     *
-     * @return object
+     * @param $logfile
+     * @return Logger
      */
     public static function instance($logfile)
     {
         if (self::$_instance !== NULL) {
-            return $instance;
+            return self::$_instance;
         }
-        $instance = new Logger($logfile);
-
-        return $instance;
+        return new Logger($logfile);
     }
 
-    /**
-     * Log a message
-     *
-     * @param string $msg message to log
-     */
     public function log($msg)
     {
         if ($this->_fp) {
@@ -76,17 +44,10 @@ class Logger
             $line = sprintf("%s [info] %s\n", $ts, $msg);
             fwrite($this->_fp, $line);
         } else {
-            throw new Ruckusing_Exception(
-                sprintf("Error: logfile '%s' not open for writing!", $this->_file),
-                Ruckusing_Exception::INVALID_LOG
-            );
+            throw new RuckusingException(sprintf("Error: logfile '%s' not open for writing!", $this->_file), RuckusingException::INVALID_LOG);
         }
-
     }
 
-    /**
-     * Close the log file handler
-     */
     public function close()
     {
         if ($this->_fp) {
@@ -95,12 +56,8 @@ class Logger
                 $this->_fp = null;
                 self::$_instance = null;
             } else {
-                throw new Ruckusing_Exception(
-                    'Error closing the log file',
-                    Ruckusing_Exception::INVALID_LOG
-                );
+                throw new RuckusingException('Error closing the log file', RuckusingException::INVALID_LOG);
             }
         }
     }
-
 }

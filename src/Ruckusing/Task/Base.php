@@ -1,23 +1,8 @@
 <?php
 namespace Ruckusing\Task;
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Task
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+
 use Ruckusing\RuckusingException;
 
-/**
- * Ruckusing_Task_Base
- *
- * @category Ruckusing
- * @package  Ruckusing_Task
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 class Base
 {
     /**
