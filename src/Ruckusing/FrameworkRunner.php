@@ -235,6 +235,7 @@ class FrameworkRunner
     private function _verifyDbConfig()
     {
         $this->_checkEnvConfig();
+
         $this->_checkConfigParameter('db_dir');
         $this->_checkConfigParameter('log_dir');
         $this->_checkConfigParameter('migrations_dir');
@@ -253,7 +254,7 @@ class FrameworkRunner
     {
         $db_config = $this->_config['db'];
         if (!Arrays::keyExists($db_config, $this->_env)) {
-            throw new RuckusingException(sprintf("Error: enc '%s' is not set DB", $this->_env), RuckusingException::INVALID_CONFIG);
+            throw new RuckusingException(sprintf("Error: env '%s' is not set DB", $this->_env), RuckusingException::INVALID_CONFIG);
         }
     }
 
@@ -314,16 +315,10 @@ class FrameworkRunner
     private function load_all_adapters($adapter_dir)
     {
         if (!is_dir($adapter_dir)) {
-            throw new RuckusingException(
-                sprintf("Adapter dir: %s does not exist", $adapter_dir),
-                RuckusingException::INVALID_ADAPTER
-            );
-
-            return false;
+            throw new RuckusingException(sprintf("Adapter dir: %s does not exist", $adapter_dir), RuckusingException::INVALID_ADAPTER);
         }
         $files = scandir($adapter_dir);
         foreach ($files as $f) {
-            //skip over invalid files
             if ($f == '.' || $f == ".." || !is_dir($adapter_dir . DIRECTORY_SEPARATOR . $f)) {
                 continue;
             }
