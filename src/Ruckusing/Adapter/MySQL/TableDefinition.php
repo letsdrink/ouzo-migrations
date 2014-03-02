@@ -7,91 +7,33 @@ use Ruckusing\RuckusingException;
 class TableDefinition
 {
     /**
-     * adapter MySQL
-     *
      * @var Base
      */
     private $_adapter;
 
-    /**
-     * Name
-     *
-     * @var string
-     */
     private $_name;
 
-    /**
-     * options
-     *
-     * @var array
-     */
     private $_options;
 
-    /**
-     * sql
-     *
-     * @var string
-     */
     private $_sql = "";
 
-    /**
-     * initialized
-     *
-     * @var boolean
-     */
     private $_initialized = false;
 
-    /**
-     * Columns
-     *
-     * @var array
-     */
     private $_columns = array();
 
-    /**
-     * Table definition
-     *
-     * @var array
-     */
     private $_table_def;
 
-    /**
-     * primary keys
-     *
-     * @var array
-     */
     private $_primary_keys = array();
 
-    /**
-     * auto generate id
-     *
-     * @var boolean
-     */
     private $_auto_generate_id = true;
 
-    /**
-     * Creates an instance of Ruckusing_Adapters_MySQL_Adapter
-     *
-     * @param Base $adapter the current adapter
-     * @param string $name the table name
-     * @param array $options the options
-     *
-     * @return TableDefinition
-     */
     public function __construct($adapter, $name, $options = array())
     {
-        //sanity check
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException(
-                "Invalid MySQL Adapter instance.",
-                RuckusingException::INVALID_ADAPTER
-            );
+            throw new RuckusingException("Invalid MySQL Adapter instance.", RuckusingException::INVALID_ADAPTER);
         }
         if (!$name) {
-            throw new RuckusingException(
-                "Invalid 'name' parameter",
-                RuckusingException::INVALID_ARGUMENT
-            );
+            throw new RuckusingException("Invalid 'name' parameter", RuckusingException::INVALID_ARGUMENT);
         }
 
         $this->_adapter = $adapter;
@@ -113,21 +55,6 @@ class TableDefinition
         }
     }
 
-    /*
-     public function primary_key($name, $auto_increment)
-     {
-    $options = array('auto_increment' => $auto_increment);
-    $this->column($name, "primary_key", $options);
-    }
-    */
-
-    /**
-     * Create a column
-     *
-     * @param string $column_name the column name
-     * @param string $type the column type
-     * @param array $options
-     */
     public function column($column_name, $type, $options = array())
     {
         //if there is already a column by the same name then silently fail
@@ -155,13 +82,6 @@ class TableDefinition
         $this->_columns[] = $column;
     }
 
-    //column
-
-    /**
-     * Get all primary keys
-     *
-     * @return string
-     */
     private function keys()
     {
         if (count($this->_primary_keys) > 0) {
@@ -178,20 +98,10 @@ class TableDefinition
         }
     }
 
-    /**
-     * Table definition
-     *
-     * @param boolean $wants_sql
-     *
-     * @return boolean | string
-     */
     public function finish($wants_sql = false)
     {
         if ($this->_initialized == false) {
-            throw new RuckusingException(
-                sprintf("Table Definition: '%s' has not been initialized", $this->_name),
-                RuckusingException::INVALID_TABLE_DEFINITION
-            );
+            throw new RuckusingException(sprintf("Table Definition: '%s' has not been initialized", $this->_name), RuckusingException::INVALID_TABLE_DEFINITION);
         }
         if (is_array($this->_options) && array_key_exists('options', $this->_options)) {
             $opt_str = $this->_options['options'];
@@ -209,9 +119,7 @@ class TableDefinition
 
         if ($this->_auto_generate_id === true) {
             $this->_primary_keys[] = 'id';
-            $primary_id = new ColumnDefinition($this->_adapter, 'id', 'integer',
-                array('unsigned' => true, 'null' => false, 'auto_increment' => true));
-
+            $primary_id = new ColumnDefinition($this->_adapter, 'id', 'integer', array('unsigned' => true, 'null' => false, 'auto_increment' => true));
             $create_table_sql .= $primary_id->to_sql() . ",\n";
         }
 
@@ -225,32 +133,17 @@ class TableDefinition
         }
     }
 
-    //finish
-
-    /**
-     * get all columns
-     *
-     * @return string
-     */
     private function columns_to_str()
     {
-        $str = "";
         $fields = array();
         $len = count($this->_columns);
         for ($i = 0; $i < $len; $i++) {
             $c = $this->_columns[$i];
             $fields[] = $c->__toString();
         }
-
         return join(",\n", $fields);
     }
 
-    /**
-     * Init create sql
-     *
-     * @param string $name
-     * @param array $options
-     */
     private function init_sql($name, $options)
     {
         //are we forcing table creation? If so, drop it first
@@ -261,7 +154,6 @@ class TableDefinition
                 if ($e->getCode() != RuckusingException::MISSING_TABLE) {
                     throw $e;
                 }
-                //do nothing
             }
         }
         $temp = "";
