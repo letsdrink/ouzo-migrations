@@ -73,6 +73,12 @@ class Base
         return $this->table_exists($tbl);
     }
 
+    public function column_definition($column_name, $type, $options = null)
+    {
+        $col = new ColumnDefinition($this, $column_name, $type, $options);
+        return $col->__toString();
+    }
+
     protected function determine_query_type($query)
     {
         $query = strtolower(trim($query));
@@ -101,8 +107,41 @@ class Base
                 return SQL_RENAME;
             case 'set':
                 return SQL_SET;
+            case 'pragma':
+                return SQL_SHOW;
             default:
                 return SQL_UNKNOWN_QUERY_TYPE;
         }
+    }
+
+    public function create_schema_version_table()
+    {
+        if (!$this->has_table(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
+            $t = $this->create_table(RUCKUSING_TS_SCHEMA_TBL_NAME, array('id' => false));
+            $t->column('version', 'string');
+            $t->finish();
+            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
+        }
+    }
+
+    public function execute($query)
+    {
+        return $this->query($query);
+    }
+
+    public function select_all($query)
+    {
+        return $this->query($query);
+    }
+
+    public function execute_ddl($ddl)
+    {
+        $this->query($ddl);
+        return true;
+    }
+
+    public function create_table($table_name, $options = array())
+    {
+        return new TableDefinition($this, $table_name, $options);
     }
 }

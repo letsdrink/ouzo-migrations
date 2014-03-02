@@ -33,7 +33,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
 
     public function get_database_name()
     {
-        return ($this->db_info['database']);
+        return $this->db_info['database'];
     }
 
     public function supports_migrations()
@@ -70,19 +70,9 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         );
     }
 
-    public function create_schema_version_table()
-    {
-        if (!$this->has_table(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
-            $t = $this->create_table(RUCKUSING_TS_SCHEMA_TBL_NAME, array('id' => false));
-            $t->column('version', 'string');
-            $t->finish();
-            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
-        }
-    }
-
     public function start_transaction()
     {
-        if ($this->inTransaction() === false) {
+        if (!$this->inTransaction()) {
             $this->beginTransaction();
         }
     }
@@ -101,15 +91,44 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
+    private function inTransaction()
+    {
+        return $this->_in_trx;
+    }
+
+    private function beginTransaction()
+    {
+        if ($this->_in_trx === true) {
+            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
+        }
+        $this->conn->autocommit(FALSE);
+        $this->_in_trx = true;
+    }
+
+    private function commit()
+    {
+        if ($this->_in_trx === false) {
+            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
+        }
+        $this->conn->commit();
+        $this->_in_trx = false;
+    }
+
+    private function rollback()
+    {
+        if ($this->_in_trx === false) {
+            throw new OuzoMigrationsException(
+                'Transaction not started',
+                OuzoMigrationsException::QUERY_ERROR
+            );
+        }
+        $this->conn->rollback();
+        $this->_in_trx = false;
+    }
+
     public function quote_table($str)
     {
         return "`" . $str . "`";
-    }
-
-    public function column_definition($column_name, $type, $options = null)
-    {
-        $col = new ColumnDefinition($this, $column_name, $type, $options);
-        return $col->__toString();
     }
 
     public function database_exists($db)
@@ -178,11 +197,6 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return array_key_exists($tbl, $this->_tables);
     }
 
-    public function execute($query)
-    {
-        return $this->query($query);
-    }
-
     public function query($query)
     {
         $this->logger->log($query);
@@ -224,27 +238,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
-    public function select_all($query)
-    {
-        return $this->query($query);
-    }
-
-    public function execute_ddl($ddl)
-    {
-        $this->query($ddl);
-        return true;
-    }
-
     public function drop_table($tbl)
     {
         $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->identifier($tbl));
         $this->query($ddl);
         return true;
-    }
-
-    public function create_table($table_name, $options = array())
-    {
-        return new TableDefinition($this, $table_name, $options);
     }
 
     public function quote_string($str)
@@ -580,6 +578,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return $column_type_sql;
     }
 
+    public function primary_keys($table_name)
+    {
+        return array();
+    }
+
     public function add_column_options($type, $options)
     {
         $sql = "";
@@ -708,40 +711,5 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     {
         $str = trim($str);
         return substr($str, -2, 2) == "()";
-    }
-
-    private function inTransaction()
-    {
-        return $this->_in_trx;
-    }
-
-    private function beginTransaction()
-    {
-        if ($this->_in_trx === true) {
-            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        $this->conn->autocommit(FALSE);
-        $this->_in_trx = true;
-    }
-
-    private function commit()
-    {
-        if ($this->_in_trx === false) {
-            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        $this->conn->commit();
-        $this->_in_trx = false;
-    }
-
-    private function rollback()
-    {
-        if ($this->_in_trx === false) {
-            throw new OuzoMigrationsException(
-                'Transaction not started',
-                OuzoMigrationsException::QUERY_ERROR
-            );
-        }
-        $this->conn->rollback();
-        $this->_in_trx = false;
     }
 }

@@ -26,84 +26,9 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         $this->set_logger($logger);
     }
 
-    private function connect($dsn)
-    {
-        $this->db_connect($dsn);
-    }
-
-    private function db_connect($dsn)
-    {
-        if (!class_exists('SQLite3')) {
-            throw new OuzoMigrationsException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3", OuzoMigrationsException::INVALID_CONFIG);
-        }
-        $db_info = $this->get_dsn();
-        if ($db_info) {
-            $this->db_info = $db_info;
-            try {
-                $this->sqlite3 = new SQLite3($db_info['database']);
-            } catch (Exception $e) {
-                throw new OuzoMigrationsException("\n\nCould not connect to the DB, check database name\n\n", OuzoMigrationsException::INVALID_CONFIG, $e->getCode(), $e);
-            }
-            return true;
-        } else {
-            throw new OuzoMigrationsException("\n\nCould not extract DB connection information from: {$dsn}\n\n", OuzoMigrationsException::INVALID_CONFIG);
-        }
-    }
-
-    public function create_schema_version_table()
-    {
-        if (!$this->has_table(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
-            $t = $this->create_table(RUCKUSING_TS_SCHEMA_TBL_NAME, array('id' => false));
-            $t->column('version', 'string');
-            $t->finish();
-            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
-        }
-    }
-
     public function get_database_name()
     {
         return $this->db_info['database'];
-    }
-
-    public function identifier($string)
-    {
-        return '"' . $string . '"';
-    }
-
-    public function quote($value)
-    {
-        return ("'{$value}'");
-    }
-
-    public function query($query)
-    {
-        $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
-        $data = array();
-        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $SqliteResult = $this->executeQuery($query);
-            while ($row = $SqliteResult->fetchArray(SQLITE3_ASSOC)) {
-                $data[] = $row;
-            }
-            return $data;
-        } else {
-            $this->executeQuery($query);
-            if ($query_type == SQL_INSERT) {
-                return $this->sqlite3->lastInsertRowID();
-            }
-            return true;
-        }
-    }
-
-    private function executeQuery($query)
-    {
-        $SqliteResult = $this->sqlite3->query($query);
-        if ($this->isError($SqliteResult)) {
-            throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
-                OuzoMigrationsException::QUERY_ERROR
-            );
-        }
-        return $SqliteResult;
     }
 
     public function supports_migrations()
@@ -140,26 +65,9 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return $types;
     }
 
-    public function schema($output_file)
+    public function quote_table($string)
     {
-        $command = sprintf("sqlite3 '%s' .schema > '%s'", $this->db_info['database'], $output_file);
-        return system($command);
-    }
-
-    public function create_database($db, $options = array())
-    {
-        $this->log_unsupported_feature(__FUNCTION__);
-        return true;
-    }
-
-    public function execute($query)
-    {
-        return $this->query($query);
-    }
-
-    public function quote_string($str)
-    {
-        return $str;
+        return '"' . $string . '"';
     }
 
     public function database_exists($db)
@@ -168,9 +76,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return true;
     }
 
-    public function create_table($table_name, $options = array())
+    public function create_database($db, $options = array())
     {
-        return new TableDefinition($this, $table_name, $options);
+        $this->log_unsupported_feature(__FUNCTION__);
+        return true;
     }
 
     public function drop_database($databaseName)
@@ -179,9 +88,10 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return true;
     }
 
-    public function log_unsupported_feature($feature)
+    public function schema($output_file)
     {
-        $this->logger->log(sprintf("WARNING: Unsupported SQLite3 feature: %s", $feature));
+        $command = sprintf("sqlite3 '%s' .schema > '%s'", $this->db_info['database'], $output_file);
+        return system($command);
     }
 
     public function table_exists($tbl, $reload_tables = false)
@@ -191,16 +101,62 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return is_array($table) && sizeof($table) > 0;
     }
 
+    public function query($query)
+    {
+        $this->logger->log($query);
+        $query_type = $this->determine_query_type($query);
+        $data = array();
+        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
+            $SqliteResult = $this->executeQuery($query);
+            while ($row = $SqliteResult->fetchArray(SQLITE3_ASSOC)) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            $this->executeQuery($query);
+            if ($query_type == SQL_INSERT) {
+                return $this->sqlite3->lastInsertRowID();
+            }
+            return true;
+        }
+    }
+
+    public function select_one($query)
+    {
+        $this->logger->log($query);
+        $query_type = $this->determine_query_type($query);
+
+        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
+            $res = $this->executeQuery($query);
+            if ($this->isError($res)) {
+                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), OuzoMigrationsException::QUERY_ERROR);
+            }
+            return $res->fetchArray(SQLITE3_ASSOC);
+        } else {
+            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
+        }
+    }
+
     public function drop_table($table_name)
     {
-        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table_name($table_name));
+        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($table_name));
         $this->execute_ddl($ddl);
         return true;
     }
 
-    public function quote_table_name($string)
+    public function quote_string($str)
+    {
+        return $str;
+    }
+
+    public function identifier($string)
     {
         return '"' . $string . '"';
+    }
+
+    public function quote($value)
+    {
+        return ("'{$value}'");
     }
 
     public function rename_table($name, $new_name)
@@ -213,17 +169,6 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
         return $this->execute_ddl($sql);
-    }
-
-    public function rename_column($table_name, $column_name, $new_column_name)
-    {
-        $this->log_unsupported_feature(__FUNCTION__);
-        return true;
-    }
-
-    public function quote_column_name($string)
-    {
-        return '"' . $string . '"';
     }
 
     public function add_column($table_name, $column_name, $type, $options = array())
@@ -244,7 +189,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         );
         $options = array_merge($defaultOptions, $options);
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             $this->type_to_sql($type, $options)
         );
@@ -258,28 +203,45 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         $this->log_unsupported_feature(__FUNCTION__);
     }
 
+    public function rename_column($table_name, $column_name, $new_column_name)
+    {
+        $this->log_unsupported_feature(__FUNCTION__);
+        return true;
+    }
+
     public function change_column($table_name, $column_name, $type, $options = array())
     {
         $this->log_unsupported_feature(__FUNCTION__);
     }
 
-    public function remove_index($table_name, $column_name, $options = array())
+    public function column_info($table, $column)
     {
-        if (empty($table_name)) {
+        if (empty($table)) {
             throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
-        if (empty($column_name)) {
-            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        if (empty($column)) {
+            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
-        //did the user specify an index name?
-        if (is_array($options) && array_key_exists('name', $options)) {
-            $index_name = $options['name'];
-        } else {
-            $index_name = Naming::index_name($table_name, $column_name);
-        }
-        $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
 
-        return $this->execute_ddl($sql);
+        try {
+            $pragmaTable = $this->query('pragma table_info(' . $table . ')');
+            $data = array();
+
+            $pragmaTable = array_values(array_filter($pragmaTable, function ($element) use ($column) {
+                return $element['name'] == $column ? $element : false;
+            }));
+
+            if (isset($pragmaTable[0]) && is_array($pragmaTable[0])) {
+                $data['type'] = $pragmaTable[0]['type'];
+                $data['name'] = $column;
+                $data['field'] = $column;
+                $data['null'] = $pragmaTable[0]['notnull'] == 0;
+                $data['default'] = $pragmaTable[0]['dflt_value'];
+            }
+            return $data;
+        } catch (Exception $e) {
+            return null;
+        }
     }
 
     public function add_index($table_name, $column_name, $options = array())
@@ -331,6 +293,103 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return $this->execute_ddl($sql);
     }
 
+    public function remove_index($table_name, $column_name, $options = array())
+    {
+        if (empty($table_name)) {
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+        if (empty($column_name)) {
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+        //did the user specify an index name?
+        if (is_array($options) && array_key_exists('name', $options)) {
+            $index_name = $options['name'];
+        } else {
+            $index_name = Naming::index_name($table_name, $column_name);
+        }
+        $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
+
+        return $this->execute_ddl($sql);
+    }
+
+    public function has_index($table_name, $column_name, $options = array())
+    {
+        if (empty($table_name)) {
+            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+        if (empty($column_name)) {
+            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+
+        if (is_array($options) && array_key_exists('name', $options)) {
+            $index_name = $options['name'];
+        } else {
+            $index_name = Naming::index_name($table_name, $column_name);
+        }
+        $indexes = $this->indexes($table_name);
+        foreach ($indexes as $idx) {
+            if ($idx['name'] == $index_name) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function indexes($table_name)
+    {
+        $sql = sprintf("PRAGMA INDEX_LIST(%s);", $this->quote_table($table_name));
+        $result = $this->select_all($sql);
+
+        $indexes = array();
+        foreach ($result as $row) {
+            $indexes[] = array(
+                'name' => $row['name'],
+                'unique' => $row['unique'] ? true : false
+            );
+        }
+
+        return $indexes;
+    }
+
+    public function type_to_sql($type, $options = array())
+    {
+        $natives = $this->native_database_types();
+        if (!array_key_exists($type, $natives)) {
+            $error = sprintf("Error: I don't know what column type of '%s' maps to for SQLite3.", $type);
+            $error .= "\nYou provided: {$type}\n";
+            $error .= "Valid types are: \n";
+            $error .= implode(', ', array_diff(array_keys($natives), array('primary_key')));
+            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+
+        $native_type = $natives[$type];
+        $column_type_sql = $native_type['name'];
+
+        $optionsLimit = isset($options['limit']) ? $options['limit'] : null;
+        $nativeLimit = isset($native_type['limit']) ? $native_type['limit'] : null;
+        $limit = $optionsLimit ? : $nativeLimit;
+
+        if ($limit !== null) {
+            $column_type_sql .= sprintf("(%d)", $limit);
+        }
+        return $column_type_sql;
+    }
+
+    public function primary_keys($table)
+    {
+        $result = $this->query('pragma table_info(' . $table . ')');
+        $primary_keys = array();
+        foreach ($result as $row) {
+            if ($row['pk']) {
+                $primary_keys[] = array(
+                    'name' => $row['name'],
+                    'type' => $row['type']
+                );
+            }
+        }
+        return $primary_keys;
+    }
+
     public function add_column_options($type, $options, $performing_change = false)
     {
         if (!is_array($options)) {
@@ -358,80 +417,61 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return $sql;
     }
 
-    public function type_to_sql($type, $options = array())
+    public function set_current_version($version)
     {
-        $natives = $this->native_database_types();
-        if (!array_key_exists($type, $natives)) {
-            $error = sprintf("Error: I don't know what column type of '%s' maps to for SQLite3.", $type);
-            $error .= "\nYou provided: {$type}\n";
-            $error .= "Valid types are: \n";
-            $error .= implode(', ', array_diff(array_keys($natives), array('primary_key')));
-            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
-        }
-
-        $native_type = $natives[$type];
-        $column_type_sql = $native_type['name'];
-
-        $optionsLimit = isset($options['limit']) ? $options['limit'] : null;
-        $nativeLimit = isset($native_type['limit']) ? $native_type['limit'] : null;
-        $limit = $optionsLimit ? : $nativeLimit;
-
-        if ($limit !== null) {
-            $column_type_sql .= sprintf("(%d)", $limit);
-        }
-        return $column_type_sql;
+        $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
+        return $this->execute_ddl($sql);
     }
 
-    public function column_info($table, $column)
+    public function remove_version($version)
     {
-        if (empty($table)) {
-            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
+        $sql = sprintf("DELETE FROM %s WHERE version = '%s'", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
+        return $this->execute_ddl($sql);
+    }
+
+    private function connect($dsn)
+    {
+        $this->db_connect($dsn);
+    }
+
+    private function db_connect($dsn)
+    {
+        if (!class_exists('SQLite3')) {
+            throw new OuzoMigrationsException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3", OuzoMigrationsException::INVALID_CONFIG);
         }
-        if (empty($column)) {
-            throw new OuzoMigrationsException("Missing original column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
-        }
-
-        try {
-            $pragmaTable = $this->query('pragma table_info(' . $table . ')');
-            $data = array();
-
-            $pragmaTable = array_values(array_filter($pragmaTable, function ($element) use ($column) {
-                return $element['name'] == $column ? $element : false;
-            }));
-
-            if (isset($pragmaTable[0]) && is_array($pragmaTable[0])) {
-                $data['type'] = $pragmaTable[0]['type'];
-                $data['name'] = $column;
-                $data['field'] = $column;
-                $data['null'] = $pragmaTable[0]['notnull'] == 0;
-                $data['default'] = $pragmaTable[0]['dflt_value'];
+        $db_info = $this->get_dsn();
+        if ($db_info) {
+            $this->db_info = $db_info;
+            try {
+                $this->sqlite3 = new SQLite3($db_info['database']);
+            } catch (Exception $e) {
+                throw new OuzoMigrationsException("\n\nCould not connect to the DB, check database name\n\n", OuzoMigrationsException::INVALID_CONFIG, $e->getCode(), $e);
             }
-            return $data;
-        } catch (Exception $e) {
-            return null;
+            return true;
+        } else {
+            throw new OuzoMigrationsException("\n\nCould not extract DB connection information from: {$dsn}\n\n", OuzoMigrationsException::INVALID_CONFIG);
         }
     }
 
-    public function execute_ddl($ddl)
+    private function executeQuery($query)
     {
-        $this->query($ddl);
-        return true;
-    }
-
-    public function indexes($table_name)
-    {
-        $sql = sprintf("PRAGMA INDEX_LIST(%s);", $this->quote_table_name($table_name));
-        $result = $this->select_all($sql);
-
-        $indexes = array();
-        foreach ($result as $row) {
-            $indexes[] = array(
-                'name' => $row['name'],
-                'unique' => $row['unique'] ? true : false
+        $SqliteResult = $this->sqlite3->query($query);
+        if ($this->isError($SqliteResult)) {
+            throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()),
+                OuzoMigrationsException::QUERY_ERROR
             );
         }
+        return $SqliteResult;
+    }
 
-        return $indexes;
+    public function log_unsupported_feature($feature)
+    {
+        $this->logger->log(sprintf("WARNING: Unsupported SQLite3 feature: %s", $feature));
+    }
+
+    public function quote_column_name($string)
+    {
+        return '"' . $string . '"';
     }
 
     private function isError($SQLite3Result)
@@ -442,70 +482,5 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
     private function lastErrorMsg()
     {
         return $this->sqlite3->lastErrorMsg();
-    }
-
-    public function primary_keys($table)
-    {
-        $result = $this->query('pragma table_info(' . $table . ')');
-        $primary_keys = array();
-        foreach ($result as $row) {
-            if ($row['pk']) {
-                $primary_keys[] = array(
-                    'name' => $row['name'],
-                    'type' => $row['type']
-                );
-            }
-        }
-        return $primary_keys;
-    }
-
-    public function select_one($query)
-    {
-        $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
-
-        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $res = $this->executeQuery($query);
-            if ($this->isError($res)) {
-                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->lastErrorMsg()), OuzoMigrationsException::QUERY_ERROR);
-            }
-            return $res->fetchArray(SQLITE3_ASSOC);
-        } else {
-            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
-        }
-    }
-
-    public function select_all($query)
-    {
-        return $this->query($query);
-    }
-
-    public function column_definition($column_name, $type, $options = null)
-    {
-        $col = new ColumnDefinition($this, $column_name, $type, $options);
-        return $col->__toString();
-    }
-
-    public function has_index($table_name, $column_name, $options = array())
-    {
-        if (empty($table_name)) {
-            throw new OuzoMigrationsException("Missing table name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
-        }
-        if (empty($column_name)) {
-            throw new OuzoMigrationsException("Missing column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
-        }
-
-        if (is_array($options) && array_key_exists('name', $options)) {
-            $index_name = $options['name'];
-        } else {
-            $index_name = Naming::index_name($table_name, $column_name);
-        }
-        $indexes = $this->indexes($table_name);
-        foreach ($indexes as $idx) {
-            if ($idx['name'] == $index_name) {
-                return true;
-            }
-        }
-        return false;
     }
 }

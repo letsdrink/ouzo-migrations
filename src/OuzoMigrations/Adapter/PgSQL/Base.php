@@ -68,16 +68,6 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         );
     }
 
-    public function create_schema_version_table()
-    {
-        if (!$this->has_table(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
-            $t = $this->create_table(RUCKUSING_TS_SCHEMA_TBL_NAME, array('id' => false));
-            $t->column('version', 'string');
-            $t->finish();
-            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
-        }
-    }
-
     public function start_transaction()
     {
         if ($this->inTransaction() === false) {
@@ -99,37 +89,48 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
-    public function column_definition($column_name, $type, $options = null)
+    private function inTransaction()
     {
-        $col = new ColumnDefinition($this, $column_name, $type, $options);
-        return $col->__toString();
+        return $this->_in_trx;
     }
 
-    public function pk_and_sequence_for($table)
+    private function beginTransaction()
     {
-        $sql = <<<SQL
-      SELECT attr.attname, seq.relname
-      FROM pg_class      seq,
-           pg_attribute  attr,
-           pg_depend     dep,
-           pg_namespace  name,
-           pg_constraint cons
-      WHERE seq.oid           = dep.objid
-        AND seq.relkind       = 'S'
-        AND attr.attrelid     = dep.refobjid
-        AND attr.attnum       = dep.refobjsubid
-        AND attr.attrelid     = cons.conrelid
-        AND attr.attnum       = cons.conkey[1]
-        AND cons.contype      = 'p'
-        AND dep.refobjid      = '%s'::regclass
-SQL;
-        $sql = sprintf($sql, $table);
-        $result = $this->select_one($sql);
-        if ($result) {
-            return (array($result['attname'], $result['relname']));
-        } else {
-            return array();
+        if ($this->_in_trx) {
+            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
         }
+        pg_query($this->conn, "BEGIN");
+        $this->_in_trx = true;
+    }
+
+    private function commit()
+    {
+        if (!$this->_in_trx) {
+            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
+        }
+        pg_query($this->conn, "COMMIT");
+        $this->_in_trx = false;
+    }
+
+    private function rollback()
+    {
+        if (!$this->_in_trx) {
+            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
+        }
+        pg_query($this->conn, "ROLLBACK");
+        $this->_in_trx = false;
+    }
+
+    public function quote_table($string)
+    {
+        return '"' . $string . '"';
+    }
+
+    public function database_exists($db)
+    {
+        $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
+        $result = $this->select_one($sql);
+        return (count($result) == 1 && $result['datname'] == $db);
     }
 
     public function create_database($db, $options = array())
@@ -170,21 +171,41 @@ SQL;
         return $result;
     }
 
-    public function database_exists($db)
-    {
-        $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
-        $result = $this->select_one($sql);
-        return (count($result) == 1 && $result['datname'] == $db);
-    }
-
     public function drop_database($db)
     {
         if (!$this->database_exists($db)) {
             return false;
         }
-        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quote_table_name($db));
+        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quote_table($db));
         $result = $this->query($ddl);
         return $result;
+    }
+
+    public function pk_and_sequence_for($table)
+    {
+        $sql = <<<SQL
+      SELECT attr.attname, seq.relname
+      FROM pg_class      seq,
+           pg_attribute  attr,
+           pg_depend     dep,
+           pg_namespace  name,
+           pg_constraint cons
+      WHERE seq.oid           = dep.objid
+        AND seq.relkind       = 'S'
+        AND attr.attrelid     = dep.refobjid
+        AND attr.attnum       = dep.refobjsubid
+        AND attr.attrelid     = cons.conrelid
+        AND attr.attnum       = cons.conkey[1]
+        AND cons.contype      = 'p'
+        AND dep.refobjid      = '%s'::regclass
+SQL;
+        $sql = sprintf($sql, $table);
+        $result = $this->select_one($sql);
+        if ($result) {
+            return (array($result['attname'], $result['relname']));
+        } else {
+            return array();
+        }
     }
 
     public function schema($output_file)
@@ -201,11 +222,6 @@ SQL;
     {
         $this->load_tables($reload_tables);
         return array_key_exists($tbl, $this->_tables);
-    }
-
-    public function execute($query)
-    {
-        return $this->query($query);
     }
 
     public function query($query)
@@ -254,27 +270,11 @@ SQL;
         }
     }
 
-    public function select_all($query)
-    {
-        return $this->query($query);
-    }
-
-    public function execute_ddl($ddl)
-    {
-        $this->query($ddl);
-        return true;
-    }
-
     public function drop_table($tbl)
     {
-        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table_name($tbl));
+        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($tbl));
         $this->query($ddl);
         return true;
-    }
-
-    public function create_table($table_name, $options = array())
-    {
-        return new TableDefinition($this, $table_name, $options);
     }
 
     public function quote_string($string)
@@ -283,16 +283,6 @@ SQL;
     }
 
     public function identifier($string)
-    {
-        return '"' . $string . '"';
-    }
-
-    public function quote_table_name($string)
-    {
-        return '"' . $string . '"';
-    }
-
-    public function quote_column_name($string)
     {
         return '"' . $string . '"';
     }
@@ -309,6 +299,11 @@ SQL;
             // I think eventually we'll need to do more introspection and handle all possible types
             return ("'{$value}'");
         }
+    }
+
+    public function quote_column_name($string)
+    {
+        return '"' . $string . '"';
     }
 
     public function rename_table($name, $new_name)
@@ -353,7 +348,7 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             $this->type_to_sql($type, $options)
         );
@@ -365,7 +360,7 @@ SQL;
     public function remove_column($table_name, $column_name)
     {
         $sql = sprintf("ALTER TABLE %s DROP COLUMN %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name)
         );
         return $this->execute_ddl($sql);
@@ -385,7 +380,7 @@ SQL;
         $column_info = $this->column_info($table_name, $column_name);
         $column_info['type'];
         $sql = sprintf("ALTER TABLE %s RENAME COLUMN %s TO %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             $this->quote_column_name($new_column_name)
         );
@@ -417,7 +412,7 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             $this->type_to_sql($type, $options)
         );
@@ -436,7 +431,7 @@ SQL;
     private function change_column_default($table_name, $column_name, $default)
     {
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             $this->quote($default)
         );
@@ -447,7 +442,7 @@ SQL;
     {
         if (($null !== false) || ($default !== null)) {
             $sql = sprintf("UPDATE %s SET %s=%s WHERE %s IS NULL",
-                $this->quote_table_name($table_name),
+                $this->quote_table($table_name),
                 $this->quote_column_name($column_name),
                 $this->quote($default),
                 $this->quote_column_name($column_name)
@@ -455,7 +450,7 @@ SQL;
             $this->query($sql);
         }
         $sql = sprintf("ALTER TABLE %s ALTER %s %s NOT NULL",
-            $this->quote_table_name($table_name),
+            $this->quote_table($table_name),
             $this->quote_column_name($column_name),
             ($null ? 'DROP' : 'SET')
         );
@@ -480,7 +475,7 @@ SQL;
          AND a.attnum > 0 AND NOT a.attisdropped
        ORDER BY a.attnum
 SQL;
-            $sql = sprintf($sql, $this->quote_table_name($table), $column);
+            $sql = sprintf($sql, $this->quote_table($table), $column);
             $result = $this->select_one($sql);
             $data = array();
             if (is_array($result)) {
@@ -614,34 +609,6 @@ SQL;
         return $indexes;
     }
 
-    public function primary_keys($table_name)
-    {
-        $sql = <<<SQL
-      SELECT
-        pg_attribute.attname,
-        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
-      FROM pg_index, pg_class, pg_attribute
-      WHERE
-        pg_class.oid = '%s'::regclass AND
-        indrelid = pg_class.oid AND
-        pg_attribute.attrelid = pg_class.oid AND
-        pg_attribute.attnum = any(pg_index.indkey)
-        AND indisprimary
-SQL;
-        $sql = sprintf($sql, $table_name);
-        $result = $this->select_all($sql);
-
-        $primary_keys = array();
-        foreach ($result as $row) {
-            $primary_keys[] = array(
-                'name' => $row['attname'],
-                'type' => $row['format_type']
-            );
-        }
-
-        return $primary_keys;
-    }
-
     public function type_to_sql($type, $options = array())
     {
         $natives = $this->native_database_types();
@@ -712,6 +679,34 @@ SQL;
         }
 
         return $column_type_sql;
+    }
+
+    public function primary_keys($table_name)
+    {
+        $sql = <<<SQL
+      SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = '%s'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+SQL;
+        $sql = sprintf($sql, $table_name);
+        $result = $this->select_all($sql);
+
+        $primary_keys = array();
+        foreach ($result as $row) {
+            $primary_keys[] = array(
+                'name' => $row['attname'],
+                'type' => $row['format_type']
+            );
+        }
+
+        return $primary_keys;
     }
 
     public function add_column_options($type, $options, $performing_change = false)
@@ -811,37 +806,5 @@ SQL;
     {
         $str = trim($str);
         return (substr($str, -2, 2) == "()");
-    }
-
-    private function inTransaction()
-    {
-        return $this->_in_trx;
-    }
-
-    private function beginTransaction()
-    {
-        if ($this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "BEGIN");
-        $this->_in_trx = true;
-    }
-
-    private function commit()
-    {
-        if (!$this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "COMMIT");
-        $this->_in_trx = false;
-    }
-
-    private function rollback()
-    {
-        if (!$this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "ROLLBACK");
-        $this->_in_trx = false;
     }
 }
