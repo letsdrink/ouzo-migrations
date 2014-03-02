@@ -270,6 +270,11 @@ SQL;
         }
     }
 
+    public function create_table($table_name, $options = array())
+    {
+        return new TableDefinition($this, $table_name, $options);
+    }
+
     public function drop_table($tbl)
     {
         $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($tbl));

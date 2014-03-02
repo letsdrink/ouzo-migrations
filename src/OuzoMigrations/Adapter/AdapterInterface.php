@@ -23,6 +23,8 @@ interface AdapterInterface
 
     public function select_one($query);
 
+    public function create_table($table_name, $options = array());
+
     public function drop_table($tbl);
 
     public function quote_string($str);

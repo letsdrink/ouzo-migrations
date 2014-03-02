@@ -139,9 +139,4 @@ class Base
         $this->query($ddl);
         return true;
     }
-
-    public function create_table($table_name, $options = array())
-    {
-        return new TableDefinition($this, $table_name, $options);
-    }
 }

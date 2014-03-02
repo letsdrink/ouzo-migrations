@@ -238,6 +238,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
+    public function create_table($table_name, $options = array())
+    {
+        return new TableDefinition($this, $table_name, $options);
+    }
+
     public function drop_table($tbl)
     {
         $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->identifier($tbl));
@@ -583,7 +588,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         return array();
     }
 
-    public function add_column_options($type, $options)
+    public function add_column_options($type, $options, $performing_change = false)
     {
         $sql = "";
 

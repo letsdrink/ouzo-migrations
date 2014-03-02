@@ -137,6 +137,11 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
+    public function create_table($table_name, $options = array())
+    {
+        return new TableDefinition($this, $table_name, $options);
+    }
+
     public function drop_table($table_name)
     {
         $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($table_name));
