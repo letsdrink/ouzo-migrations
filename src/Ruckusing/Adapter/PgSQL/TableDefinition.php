@@ -1,114 +1,40 @@
 <?php
 namespace Ruckusing\Adapter\PgSQL;
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @subpackage   PgSQL
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+
 use Ruckusing\Adapter\ColumnDefinition;
 use Ruckusing\RuckusingException;
 
-/**
- * Ruckusing_Adapter_PgSQL_TableDefinition
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @subpackage   PgSQL
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 class TableDefinition extends \Ruckusing\Adapter\TableDefinition
 {
     /**
-     * adapter PgSQL
-     *
-     * @var _PgSQL_Base
+     * @var Base
      */
     private $_adapter;
 
-    /**
-     * Name
-     *
-     * @var string
-     */
     private $_name;
 
-    /**
-     * options
-     *
-     * @var array
-     */
     private $_options;
 
-    /**
-     * sql
-     *
-     * @var string
-     */
     private $_sql = "";
 
-    /**
-     * initialized
-     *
-     * @var boolean
-     */
     private $_initialized = false;
 
-    /**
-     * Columns
-     *
-     * @var array
-     */
     private $_columns = array();
 
-    /**
-     * Table definition
-     *
-     * @var array
-     */
     private $_table_def;
 
-    /**
-     * primary keys
-     *
-     * @var array
-     */
     private $_primary_keys = array();
 
-    /**
-     * auto generate id
-     *
-     * @var boolean
-     */
     private $_auto_generate_id = true;
 
-    /**
-     * Creates an instance of Ruckusing_PostgresTableDefinition
-     *
-     * @param _PgSQL_Base $adapter the current adapter
-     * @param string                       $name    the table name
-     * @param array                        $options
-     *
-     * @return Ruckusing_Adapter_MySQL_TableDefinition
-     */
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
         if (!($adapter instanceof Base)) {
-            throw new RuckusingException(
-                    "Invalid Postgres Adapter instance.",
-                    RuckusingException::INVALID_ADAPTER
-            );
+            throw new RuckusingException("Invalid Postgres Adapter instance.", RuckusingException::INVALID_ADAPTER);
         }
         if (!$name) {
-            throw new RuckusingException(
-                    "Invalid 'name' parameter",
-                    RuckusingException::INVALID_ARGUMENT
-            );
+            throw new RuckusingException("Invalid 'name' parameter", RuckusingException::INVALID_ARGUMENT);
         }
 
         $this->_adapter = $adapter;
@@ -129,16 +55,8 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
         }
     }
 
-    /**
-     * Create a column
-     *
-     * @param string $column_name the column name
-     * @param string $type        the column type
-     * @param array  $options
-     */
     public function column($column_name, $type, $options = array())
     {
-        //if there is already a column by the same name then silently fail and continue
         if ($this->_table_def->included($column_name) == true) {
             return;
         }
@@ -150,24 +68,12 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
                 $this->_primary_keys[] = $column_name;
             }
         }
-        /*
-         if (array_key_exists('auto_increment', $options)) {
-        if ($options['auto_increment'] == true) {
-        $column_options['auto_increment'] = true;
-        }
-        }
-        */
         $column_options = array_merge($column_options, $options);
         $column = new ColumnDefinition($this->_adapter, $column_name, $type, $column_options);
 
         $this->_columns[] = $column;
-    }//column
+    }
 
-    /**
-     * Get all primary keys
-     *
-     * @return string
-     */
     private function keys()
     {
         if (count($this->_primary_keys) > 0) {
@@ -178,26 +84,16 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
             }
             $primary_key_sql = ",\n" . $lead . implode(",", $quoted) . ")";
 
-            return($primary_key_sql);
+            return ($primary_key_sql);
         } else {
             return '';
         }
     }
 
-    /**
-     * Table definition
-     *
-     * @param boolean $wants_sql
-     *
-     * @return boolean | string
-     */
     public function finish($wants_sql = false)
     {
         if ($this->_initialized == false) {
-            throw new RuckusingException(
-                    sprintf("Table Definition: '%s' has not been initialized", $this->_name),
-                    RuckusingException::INVALID_TABLE_DEFINITION
-            );
+            throw new RuckusingException(sprintf("Table Definition: '%s' has not been initialized", $this->_name), RuckusingException::INVALID_TABLE_DEFINITION);
         }
         if (is_array($this->_options) && array_key_exists('options', $this->_options)) {
             $opt_str = $this->_options['options'];
@@ -205,7 +101,7 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
             $opt_str = null;
         }
 
-        $close_sql = sprintf(") %s;",$opt_str);
+        $close_sql = sprintf(") %s;", $opt_str);
         $create_table_sql = $this->_sql;
 
         if ($this->_auto_generate_id === true) {
@@ -224,30 +120,17 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
         }
     }
 
-    /**
-     * get all columns
-     *
-     * @return string
-     */
     private function columns_to_str()
     {
-        $str = "";
         $fields = array();
         $len = count($this->_columns);
         for ($i = 0; $i < $len; $i++) {
             $c = $this->_columns[$i];
             $fields[] = $c->__toString();
         }
-
         return join(",\n", $fields);
     }
 
-    /**
-     * Init create sql
-     *
-     * @param string $name
-     * @param array  $options
-     */
     private function init_sql($name, $options)
     {
         //are we forcing table creation? If so, drop it first
@@ -258,7 +141,6 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
                 if ($e->getCode() != RuckusingException::MISSING_TABLE) {
                     throw $e;
                 }
-                //do nothing
             }
         }
         $temp = "";
