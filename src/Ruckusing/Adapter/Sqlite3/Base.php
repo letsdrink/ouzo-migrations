@@ -1,16 +1,7 @@
 <?php
 namespace Ruckusing\Adapter\Sqlite3;
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @subpackage Sqlite3
- * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
- * @author    Piotr Olaszewski <piotroo89 % gmail dot com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 
+use Exception;
 use Ruckusing\Adapter\AdapterInterface;
 use Ruckusing\Adapter\ColumnDefinition;
 use Ruckusing\RuckusingException;
@@ -19,22 +10,13 @@ use SQLite3;
 
 define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
 
-/**
- * _Sqlite3_Base
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @subpackage   Sqlite3
- * @author    Piotr Olaszewski <piotroo89 % gmail dot com>
- * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
 {
     /**
      * @var SQLite3
      */
     private $sqlite3;
+
     private $db_info;
 
     public function __construct($dsn, $logger)
@@ -52,9 +34,7 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
     private function db_connect($dsn)
     {
         if (!class_exists('SQLite3')) {
-            throw new RuckusingException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3",
-                RuckusingException::INVALID_CONFIG
-            );
+            throw new RuckusingException("\nIt appears you have not compiled PHP with SQLite3 support: missing class SQLite3", RuckusingException::INVALID_CONFIG);
         }
         $db_info = $this->get_dsn();
         if ($db_info) {
@@ -62,14 +42,11 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
             try {
                 $this->sqlite3 = new SQLite3($db_info['database']);
             } catch (Exception $e) {
-                throw new RuckusingException("\n\nCould not connect to the DB, check database name\n\n",
-                    RuckusingException::INVALID_CONFIG, $e->getCode(), $e);
+                throw new RuckusingException("\n\nCould not connect to the DB, check database name\n\n", RuckusingException::INVALID_CONFIG, $e->getCode(), $e);
             }
             return true;
         } else {
-            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n",
-                RuckusingException::INVALID_CONFIG
-            );
+            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n", RuckusingException::INVALID_CONFIG);
         }
     }
 
@@ -208,16 +185,9 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
         return $this->query($query);
     }
 
-    /**
-     * Quote a raw string.
-     *
-     * @param string $str Raw string
-     *
-     * @return string
-     */
     public function quote_string($str)
     {
-
+        return $str;
     }
 
     public function database_exists($db)

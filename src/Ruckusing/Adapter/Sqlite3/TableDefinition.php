@@ -1,32 +1,13 @@
 <?php
 namespace Ruckusing\Adapter\Sqlite3;
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Ruckusing_Adapter
- * @subpackage   Sqlite3
- * @author    Piotr Olaszewski <piotroo89 % gmail dot com>
- * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+
 use Ruckusing\Adapter\ColumnDefinition;
 use Ruckusing\RuckusingException;
 
-/**
- * Ruckusing_Adapter_Sqlite3_TableDefinition
- *
- * @category Ruckusing
- * @package  Ruckusing_Adapter
- * @subpackage   Sqlite3
- * @author    Piotr Olaszewski <piotroo89 % gmail dot com>
- * @author    Andrzej Oczkowicz <andrzejoczkowicz % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 class TableDefinition extends \Ruckusing\Adapter\TableDefinition
 {
     /**
-     * @var _Sqlite3_Base
+     * @var Base
      */
     private $_adapter;
     private $_name;
