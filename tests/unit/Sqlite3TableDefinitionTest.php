@@ -1,8 +1,8 @@
 <?php
 
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\Adapter\Sqlite3\TableDefinition;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\Adapter\Sqlite3\TableDefinition;
+use OuzoMigrations\Util\Logger;
 
 class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 {
@@ -23,7 +23,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\Sqlite3\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\Sqlite3\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
     }
 
@@ -55,7 +55,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_limit()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -69,7 +69,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_not_null()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -84,7 +84,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_column_definition_with_default_value()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -99,7 +99,7 @@ class Sqlite3TableDefinitionTest extends PHPUnit_Framework_TestCase
 
     public function test_multiple_primary_keys()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));

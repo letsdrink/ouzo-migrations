@@ -1,7 +1,7 @@
 <?php
-namespace Ruckusing\Adapter;
+namespace OuzoMigrations\Adapter;
 
-use Ruckusing\RuckusingException;
+use OuzoMigrations\RuckusingException;
 
 class TableDefinition
 {

@@ -1,14 +1,16 @@
 <?php
-namespace Ruckusing\Adapter\PgSQL;
+namespace OuzoMigrations\Adapter\MySQL;
 
-use Ruckusing\Adapter\AdapterInterface;
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Naming;
+use Exception;
+use mysqli;
+use OuzoMigrations\Adapter\AdapterInterface;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Naming;
 
-define('PG_MAX_IDENTIFIER_LENGTH', 64);
+define('MYSQL_MAX_IDENTIFIER_LENGTH', 64);
 
-class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
+class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
 {
     public $db_info;
 
@@ -31,7 +33,7 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
 
     public function get_database_name()
     {
-        return $this->db_info['database'];
+        return ($this->db_info['database']);
     }
 
     public function supports_migrations()
@@ -42,29 +44,29 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
     public function native_database_types()
     {
         return array(
-            'primary_key' => array('name' => 'serial'),
-            'string' => array('name' => 'varchar', 'limit' => 255),
-            'text' => array('name' => 'text'),
-            'tinytext' => array('name' => 'text'),
-            'mediumtext' => array('name' => 'text'),
-            'integer' => array('name' => 'integer'),
-            'tinyinteger' => array('name' => 'smallint'),
-            'smallinteger' => array('name' => 'smallint'),
-            'mediuminteger' => array('name' => 'integer'),
-            'biginteger' => array('name' => 'bigint'),
-            'float' => array('name' => 'float'),
-            'decimal' => array('name' => 'decimal', 'scale' => 0, 'precision' => 10),
-            'datetime' => array('name' => 'timestamp'),
-            'timestamp' => array('name' => 'timestamp'),
-            'time' => array('name' => 'time'),
-            'date' => array('name' => 'date'),
-            'binary' => array('name' => 'bytea'),
-            'tinybinary' => array('name' => "bytea"),
-            'mediumbinary' => array('name' => "bytea"),
-            'longbinary' => array('name' => "bytea"),
-            'boolean' => array('name' => 'boolean'),
-            'tsvector' => array('name' => 'tsvector'),
-            'uuid' => array('name' => 'uuid'),
+            'primary_key' => array('name' => 'integer', 'limit' => 11, 'null' => false),
+            'string' => array('name' => "varchar", 'limit' => 255),
+            'text' => array('name' => "text"),
+            'tinytext' => array('name' => "tinytext"),
+            'mediumtext' => array('name' => 'mediumtext'),
+            'integer' => array('name' => "int", 'limit' => 11),
+            'tinyinteger' => array('name' => "tinyint"),
+            'smallinteger' => array('name' => "smallint"),
+            'mediuminteger' => array('name' => "mediumint"),
+            'biginteger' => array('name' => "bigint"),
+            'float' => array('name' => "float"),
+            'decimal' => array('name' => "decimal", 'scale' => 0, 'precision' => 10),
+            'datetime' => array('name' => "datetime"),
+            'timestamp' => array('name' => "timestamp"),
+            'time' => array('name' => "time"),
+            'date' => array('name' => "date"),
+            'binary' => array('name' => "blob"),
+            'tinybinary' => array('name' => "tinyblob"),
+            'mediumbinary' => array('name' => "mediumblob"),
+            'longbinary' => array('name' => "longblob"),
+            'boolean' => array('name' => "tinyint", 'limit' => 1),
+            'enum' => array('name' => "enum", 'values' => array()),
+            'uuid' => array('name' => "char", 'limit' => 36),
         );
     }
 
@@ -99,82 +101,39 @@ class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
         }
     }
 
+    public function quote_table($str)
+    {
+        return "`" . $str . "`";
+    }
+
     public function column_definition($column_name, $type, $options = null)
     {
         $col = new ColumnDefinition($this, $column_name, $type, $options);
         return $col->__toString();
     }
 
-    public function pk_and_sequence_for($table)
-    {
-        $sql = <<<SQL
-      SELECT attr.attname, seq.relname
-      FROM pg_class      seq,
-           pg_attribute  attr,
-           pg_depend     dep,
-           pg_namespace  name,
-           pg_constraint cons
-      WHERE seq.oid           = dep.objid
-        AND seq.relkind       = 'S'
-        AND attr.attrelid     = dep.refobjid
-        AND attr.attnum       = dep.refobjsubid
-        AND attr.attrelid     = cons.conrelid
-        AND attr.attnum       = cons.conkey[1]
-        AND cons.contype      = 'p'
-        AND dep.refobjid      = '%s'::regclass
-SQL;
-        $sql = sprintf($sql, $table);
-        $result = $this->select_one($sql);
-        if ($result) {
-            return (array($result['attname'], $result['relname']));
-        } else {
-            return array();
-        }
-    }
-
-    public function create_database($db, $options = array())
-    {
-        $was_in_transaction = false;
-        if ($this->inTransaction()) {
-            $this->commit_transaction();
-            $was_in_transaction = true;
-        }
-
-        if (!array_key_exists('encoding', $options)) {
-            $options['encoding'] = 'utf8';
-        }
-        $ddl = sprintf("CREATE DATABASE %s", $this->identifier($db));
-        if (array_key_exists('owner', $options)) {
-            $ddl .= " OWNER = \"{$options['owner']}\"";
-        }
-        if (array_key_exists('template', $options)) {
-            $ddl .= " TEMPLATE = \"{$options['template']}\"";
-        }
-        if (array_key_exists('encoding', $options)) {
-            $ddl .= " ENCODING = '{$options['encoding']}'";
-        }
-        if (array_key_exists('tablespace', $options)) {
-            $ddl .= " TABLESPACE = \"{$options['tablespace']}\"";
-        }
-        if (array_key_exists('connection_limit', $options)) {
-            $connlimit = intval($options['connection_limit']);
-            $ddl .= " CONNECTION LIMIT = {$connlimit}";
-        }
-        $result = $this->query($ddl);
-
-        if ($was_in_transaction) {
-            $this->start_transaction();
-            $was_in_transaction = false;
-        }
-
-        return $result;
-    }
-
     public function database_exists($db)
     {
-        $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
-        $result = $this->select_one($sql);
-        return (count($result) == 1 && $result['datname'] == $db);
+        $ddl = "SHOW DATABASES";
+        $result = $this->select_all($ddl);
+        if (count($result) == 0) {
+            return false;
+        }
+        foreach ($result as $dbrow) {
+            if ($dbrow['Database'] == $db) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public function create_database($db)
+    {
+        if ($this->database_exists($db)) {
+            return false;
+        }
+        $ddl = sprintf("CREATE DATABASE %s", $this->identifier($db));
+        return $this->query($ddl);
     }
 
     public function drop_database($db)
@@ -182,19 +141,35 @@ SQL;
         if (!$this->database_exists($db)) {
             return false;
         }
-        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quote_table_name($db));
-        $result = $this->query($ddl);
-        return $result;
+        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->identifier($db));
+        return $this->query($ddl);
     }
 
     public function schema($output_file)
     {
-        $command = sprintf("pg_dump -U %s -Fp -s -f '%s' %s",
-            $this->db_info['user'],
-            $output_file,
-            $this->db_info['database']
-        );
-        return system($command);
+        $final = "";
+        $views = '';
+        $this->load_tables(true);
+        foreach ($this->_tables as $tbl => $idx) {
+            if ($tbl == 'schema_info') {
+                continue;
+            }
+            $stmt = sprintf("SHOW CREATE TABLE %s", $this->identifier($tbl));
+            $result = $this->query($stmt);
+
+            if (is_array($result) && count($result) == 1) {
+                $row = $result[0];
+                if (count($row) == 2) {
+                    if (isset($row['Create Table'])) {
+                        $final .= $row['Create Table'] . ";\n\n";
+                    } elseif (isset($row['Create View'])) {
+                        $views .= $row['Create View'] . ";\n\n";
+                    }
+                }
+            }
+        }
+        $data = $final . $views;
+        return file_put_contents($output_file, $data, LOCK_EX);
     }
 
     public function table_exists($tbl, $reload_tables = false)
@@ -214,26 +189,21 @@ SQL;
         $query_type = $this->determine_query_type($query);
         $data = array();
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $res = pg_query($this->conn, $query);
+            $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error), RuckusingException::QUERY_ERROR);
             }
-            while ($row = pg_fetch_assoc($res)) {
+            while ($row = $res->fetch_assoc()) {
                 $data[] = $row;
             }
             return $data;
         } else {
-            $res = pg_query($this->conn, $query);
+            $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error), RuckusingException::QUERY_ERROR);
             }
-            $returning_regex = '/ RETURNING \"(.+)\"$/';
-            $matches = array();
-            if (preg_match($returning_regex, $query, $matches)) {
-                if (count($matches) == 2) {
-                    $returning_column_value = pg_fetch_result($res, 0, $matches[1]);
-                    return ($returning_column_value);
-                }
+            if ($query_type == SQL_INSERT) {
+                return $this->conn->insert_id;
             }
             return true;
         }
@@ -244,11 +214,11 @@ SQL;
         $this->logger->log($query);
         $query_type = $this->determine_query_type($query);
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $res = pg_query($this->conn, $query);
+            $res = $this->conn->query($query);
             if ($this->isError($res)) {
-                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), RuckusingException::QUERY_ERROR);
+                throw new RuckusingException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, $this->conn->error), RuckusingException::QUERY_ERROR);
             }
-            return pg_fetch_assoc($res);
+            return $res->fetch_assoc();
         } else {
             throw new RuckusingException("Query for select_one() is not one of SELECT or SHOW: $query", RuckusingException::QUERY_ERROR);
         }
@@ -267,7 +237,7 @@ SQL;
 
     public function drop_table($tbl)
     {
-        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table_name($tbl));
+        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->identifier($tbl));
         $this->query($ddl);
         return true;
     }
@@ -277,38 +247,19 @@ SQL;
         return new TableDefinition($this, $table_name, $options);
     }
 
-    public function quote_string($string)
+    public function quote_string($str)
     {
-        return pg_escape_string($string);
+        return $this->conn->real_escape_string($str);
     }
 
-    public function identifier($string)
+    public function identifier($str)
     {
-        return '"' . $string . '"';
-    }
-
-    public function quote_table_name($string)
-    {
-        return '"' . $string . '"';
-    }
-
-    public function quote_column_name($string)
-    {
-        return '"' . $string . '"';
+        return "`" . $str . "`";
     }
 
     public function quote($value)
     {
-        $type = gettype($value);
-        if ($type == "double") {
-            return ("'{$value}'");
-        } elseif ($type == "integer") {
-            return ("'{$value}'");
-        } else {
-            // TODO: this global else is probably going to be problematic.
-            // I think eventually we'll need to do more introspection and handle all possible types
-            return ("'{$value}'");
-        }
+        return $this->quote_string($value);
     }
 
     public function rename_table($name, $new_name)
@@ -319,16 +270,8 @@ SQL;
         if (empty($new_name)) {
             throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
-        $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
-        $this->execute_ddl($sql);
-        $pk_and_sequence_for = $this->pk_and_sequence_for($new_name);
-        if (!empty($pk_and_sequence_for)) {
-            list($pk, $seq) = $pk_and_sequence_for;
-            if ($seq == "{$name}_{$pk}_seq") {
-                $new_seq = "{$new_name}_{$pk}_seq";
-                $this->execute_ddl("ALTER TABLE $seq RENAME TO $new_seq");
-            }
-        }
+        $sql = sprintf("RENAME TABLE %s TO %s", $this->identifier($name), $this->identifier($new_name));
+        return $this->execute_ddl($sql);
     }
 
     public function add_column($table_name, $column_name, $type, $options = array())
@@ -342,7 +285,7 @@ SQL;
         if (empty($type)) {
             throw new RuckusingException("Missing type parameter", RuckusingException::INVALID_ARGUMENT);
         }
-        //default types
+
         if (!array_key_exists('limit', $options)) {
             $options['limit'] = null;
         }
@@ -352,22 +295,14 @@ SQL;
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name),
-            $this->type_to_sql($type, $options)
-        );
+        $sql = sprintf("ALTER TABLE %s ADD `%s` %s", $this->identifier($table_name), $column_name, $this->type_to_sql($type, $options));
         $sql .= $this->add_column_options($type, $options);
-
         return $this->execute_ddl($sql);
     }
 
     public function remove_column($table_name, $column_name)
     {
-        $sql = sprintf("ALTER TABLE %s DROP COLUMN %s",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name)
-        );
+        $sql = sprintf("ALTER TABLE %s DROP COLUMN %s", $this->identifier($table_name), $this->identifier($column_name));
         return $this->execute_ddl($sql);
     }
 
@@ -383,12 +318,13 @@ SQL;
             throw new RuckusingException("Missing new column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         $column_info = $this->column_info($table_name, $column_name);
-        $column_info['type'];
-        $sql = sprintf("ALTER TABLE %s RENAME COLUMN %s TO %s",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name),
-            $this->quote_column_name($new_column_name)
-        );
+        $current_type = $column_info['type'];
+        $sql = sprintf("ALTER TABLE %s CHANGE %s %s %s",
+            $this->identifier($table_name),
+            $this->identifier($column_name),
+            $this->identifier($new_column_name), $current_type);
+
+        $sql .= $this->add_column_options($current_type, $column_info);
         return $this->execute_ddl($sql);
     }
 
@@ -406,7 +342,6 @@ SQL;
 
         $this->column_info($table_name, $column_name);
 
-        //default types
         if (!array_key_exists('limit', $options)) {
             $options['limit'] = null;
         }
@@ -416,50 +351,9 @@ SQL;
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name),
-            $this->type_to_sql($type, $options)
-        );
-        $sql .= $this->add_column_options($type, $options, true);
-
-        if (array_key_exists('default', $options)) {
-            $this->change_column_default($table_name, $column_name, $options['default']);
-        }
-        if (array_key_exists('null', $options)) {
-            $default = array_key_exists('default', $options) ? $options['default'] : null;
-            $this->change_column_null($table_name, $column_name, $options['null'], $default);
-        }
+        $sql = sprintf("ALTER TABLE `%s` CHANGE `%s` `%s` %s", $table_name, $column_name, $column_name, $this->type_to_sql($type, $options));
+        $sql .= $this->add_column_options($type, $options);
         return $this->execute_ddl($sql);
-    }
-
-    private function change_column_default($table_name, $column_name, $default)
-    {
-        $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name),
-            $this->quote($default)
-        );
-        $this->execute_ddl($sql);
-    }
-
-    private function change_column_null($table_name, $column_name, $null, $default = null)
-    {
-        if (($null !== false) || ($default !== null)) {
-            $sql = sprintf("UPDATE %s SET %s=%s WHERE %s IS NULL",
-                $this->quote_table_name($table_name),
-                $this->quote_column_name($column_name),
-                $this->quote($default),
-                $this->quote_column_name($column_name)
-            );
-            $this->query($sql);
-        }
-        $sql = sprintf("ALTER TABLE %s ALTER %s %s NOT NULL",
-            $this->quote_table_name($table_name),
-            $this->quote_column_name($column_name),
-            ($null ? 'DROP' : 'SET')
-        );
-        $this->query($sql);
     }
 
     public function column_info($table, $column)
@@ -471,27 +365,12 @@ SQL;
             throw new RuckusingException("Missing original column name parameter", RuckusingException::INVALID_ARGUMENT);
         }
         try {
-            $sql = <<<SQL
-      SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
-        FROM pg_attribute a LEFT JOIN pg_attrdef d
-          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
-       WHERE a.attrelid = '%s'::regclass
-         AND a.attname = '%s'
-         AND a.attnum > 0 AND NOT a.attisdropped
-       ORDER BY a.attnum
-SQL;
-            $sql = sprintf($sql, $this->quote_table_name($table), $column);
+            $sql = sprintf("SHOW FULL COLUMNS FROM %s LIKE '%s'", $this->identifier($table), $column);
             $result = $this->select_one($sql);
-            $data = array();
             if (is_array($result)) {
-                $data['type'] = $result['format_type'];
-                $data['name'] = $column;
-                $data['field'] = $column;
-                $data['null'] = $result['attnotnull'] == 'f';
-                $data['default'] = $result['adsrc'];
+                $result = array_change_key_case($result, CASE_LOWER);
             }
-
-            return $data;
+            return $result;
         } catch (Exception $e) {
             return null;
         }
@@ -511,7 +390,6 @@ SQL;
         } else {
             $unique = false;
         }
-
         //did the user specify an index name?
         if (is_array($options) && array_key_exists('name', $options)) {
             $index_name = $options['name'];
@@ -519,8 +397,8 @@ SQL;
             $index_name = Naming::index_name($table_name, $column_name);
         }
 
-        if (strlen($index_name) > PG_MAX_IDENTIFIER_LENGTH) {
-            $msg = "The auto-generated index name is too long for Postgres (max is 64 chars). ";
+        if (strlen($index_name) > MYSQL_MAX_IDENTIFIER_LENGTH) {
+            $msg = "The auto-generated index name is too long for MySQL (max is 64 chars). ";
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
             $msg .= " this custom name in a drop_index() - if you have one.";
@@ -533,14 +411,13 @@ SQL;
         }
         $cols = array();
         foreach ($column_names as $name) {
-            $cols[] = $this->quote_column_name($name);
+            $cols[] = $this->identifier($name);
         }
         $sql = sprintf("CREATE %sINDEX %s ON %s(%s)",
             $unique ? "UNIQUE " : "",
-            $this->quote_column_name($index_name),
-            $this->quote_column_name($table_name),
-            join(", ", $cols)
-        );
+            $index_name,
+            $this->identifier($table_name),
+            join(", ", $cols));
 
         return $this->execute_ddl($sql);
     }
@@ -559,8 +436,7 @@ SQL;
         } else {
             $index_name = Naming::index_name($table_name, $column_name);
         }
-        $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
-
+        $sql = sprintf("DROP INDEX %s ON %s", $this->identifier($index_name), $this->identifier($table_name));
         return $this->execute_ddl($sql);
     }
 
@@ -589,64 +465,26 @@ SQL;
 
     public function indexes($table_name)
     {
-        $sql = <<<SQL
-       SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
-       FROM pg_class t
-       INNER JOIN pg_index d ON t.oid = d.indrelid
-       INNER JOIN pg_class i ON d.indexrelid = i.oid
-       WHERE i.relkind = 'i'
-         AND d.indisprimary = 'f'
-         AND t.relname = '%s'
-         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
-      ORDER BY i.relname
-SQL;
-        $sql = sprintf($sql, $table_name);
+        $sql = sprintf("SHOW KEYS FROM %s", $this->identifier($table_name));
         $result = $this->select_all($sql);
-
         $indexes = array();
+        $cur_idx = null;
         foreach ($result as $row) {
-            $indexes[] = array(
-                'name' => $row['relname'],
-                'unique' => $row['indisunique'] == 't' ? true : false
-            );
+            //skip primary
+            if ($row['Key_name'] == 'PRIMARY') {
+                continue;
+            }
+            $cur_idx = $row['Key_name'];
+            $indexes[] = array('name' => $row['Key_name'], 'unique' => (int)$row['Non_unique'] == 0 ? true : false);
         }
-
         return $indexes;
-    }
-
-    public function primary_keys($table_name)
-    {
-        $sql = <<<SQL
-      SELECT
-        pg_attribute.attname,
-        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
-      FROM pg_index, pg_class, pg_attribute
-      WHERE
-        pg_class.oid = '%s'::regclass AND
-        indrelid = pg_class.oid AND
-        pg_attribute.attrelid = pg_class.oid AND
-        pg_attribute.attnum = any(pg_index.indkey)
-        AND indisprimary
-SQL;
-        $sql = sprintf($sql, $table_name);
-        $result = $this->select_all($sql);
-
-        $primary_keys = array();
-        foreach ($result as $row) {
-            $primary_keys[] = array(
-                'name' => $row['attname'],
-                'type' => $row['format_type']
-            );
-        }
-
-        return $primary_keys;
     }
 
     public function type_to_sql($type, $options = array())
     {
         $natives = $this->native_database_types();
         if (!array_key_exists($type, $natives)) {
-            $error = sprintf("Error: I dont know what column type of '%s' maps to for Postgres.", $type);
+            $error = sprintf("Error:I dont know what column type of '%s' maps to for MySQL.", $type);
             $error .= "\nYou provided: {$type}\n";
             $error .= "Valid types are: \n";
             $types = array_keys($natives);
@@ -671,6 +509,9 @@ SQL;
         }
         if (isset($options['limit'])) {
             $limit = $options['limit'];
+        }
+        if (isset($options['values'])) {
+            $values = $options['values'];
         }
 
         $native_type = $natives[$type];
@@ -699,10 +540,36 @@ SQL;
                     throw new RuckusingException("Error adding decimal column: precision cannot be empty if scale is specified", RuckusingException::INVALID_ARGUMENT);
                 }
             }
-            //pre
-        }
-        // integer columns dont support limit (sizing)
-        if ($native_type['name'] != "integer") {
+            //precision
+        } elseif ($type == "float") {
+            //ignore limit, use precison and scale
+            if ($precision == null && array_key_exists('precision', $native_type)) {
+                $precision = $native_type['precision'];
+            }
+            if ($scale == null && array_key_exists('scale', $native_type)) {
+                $scale = $native_type['scale'];
+            }
+            if ($precision != null) {
+                if (is_int($scale)) {
+                    $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
+                } else {
+                    $column_type_sql .= sprintf("(%d)", $precision);
+                }
+                //scale
+            } else {
+                if ($scale) {
+                    throw new RuckusingException("Error adding float column: precision cannot be empty if scale is specified", RuckusingException::INVALID_ARGUMENT);
+                }
+            }
+            //precision
+        } elseif ($type == "enum") {
+            if (empty($values)) {
+                throw new RuckusingException("Error adding enum column: there must be at least one value defined", RuckusingException::INVALID_ARGUMENT);
+            } else {
+                $column_type_sql .= sprintf("('%s')", implode("','", array_map(array($this, 'quote_string'), $values)));
+            }
+        } else {
+            //not a decimal column
             if ($limit == null && array_key_exists('limit', $native_type)) {
                 $limit = $native_type['limit'];
             }
@@ -714,29 +581,55 @@ SQL;
         return $column_type_sql;
     }
 
-    public function add_column_options($type, $options, $performing_change = false)
+    public function add_column_options($type, $options)
     {
         $sql = "";
 
         if (!is_array($options)) {
             return $sql;
         }
-        if (!$performing_change) {
-            if (array_key_exists('default', $options) && $options['default'] !== null) {
-                if (is_int($options['default'])) {
-                    $default_format = '%d';
-                } elseif (is_bool($options['default'])) {
-                    $default_format = "'%d'";
-                } else {
-                    $default_format = "'%s'";
-                }
-                $default_value = sprintf($default_format, $options['default']);
-                $sql .= sprintf(" DEFAULT %s", $default_value);
+
+        if (array_key_exists('unsigned', $options) && $options['unsigned'] === true) {
+            $sql .= ' UNSIGNED';
+        }
+
+        if (array_key_exists('character', $options)) {
+            $sql .= sprintf(" CHARACTER SET %s", $this->identifier($options['character']));
+        }
+        if (array_key_exists('collate', $options)) {
+            $sql .= sprintf(" COLLATE %s", $this->identifier($options['collate']));
+        }
+
+        if (array_key_exists('auto_increment', $options) && $options['auto_increment'] === true) {
+            $sql .= ' auto_increment';
+        }
+
+        if (array_key_exists('default', $options) && $options['default'] !== null) {
+            if ($this->is_sql_method_call($options['default'])) {
+                //$default_value = $options['default'];
+                throw new RuckusingException("MySQL does not support function calls as default values, constants only.", RuckusingException::INVALID_ARGUMENT);
             }
 
-            if (array_key_exists('null', $options) && $options['null'] === false) {
-                $sql .= " NOT NULL";
+            if (is_int($options['default'])) {
+                $default_format = '%d';
+            } elseif (is_bool($options['default'])) {
+                $default_format = "'%d'";
+            } else {
+                $default_format = "'%s'";
             }
+            $default_value = sprintf($default_format, $options['default']);
+
+            $sql .= sprintf(" DEFAULT %s", $default_value);
+        }
+
+        if (array_key_exists('null', $options) && ($options['null'] === false || $options['null'] === 'NO')) {
+            $sql .= " NOT NULL";
+        }
+        if (array_key_exists('comment', $options)) {
+            $sql .= sprintf(" COMMENT '%s'", $this->quote_string($options['comment']));
+        }
+        if (array_key_exists('after', $options)) {
+            $sql .= sprintf(" AFTER %s", $this->identifier($options['after']));
         }
         return $sql;
     }
@@ -765,26 +658,32 @@ SQL;
 
     private function db_connect($dsn)
     {
-        if (!function_exists('pg_connect')) {
-            throw new RuckusingException("\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()", RuckusingException::INVALID_CONFIG);
-        }
         $db_info = $this->get_dsn();
         if ($db_info) {
             $this->db_info = $db_info;
-            $conninfo = sprintf('host=%s port=%s dbname=%s user=%s password=%s',
-                $db_info['host'],
-                (!empty($db_info['port']) ? $db_info['port'] : '5432'),
-                $db_info['database'],
-                $db_info['user'],
-                $db_info['password']
-            );
-            $this->conn = pg_connect($conninfo);
-            if ($this->conn === FALSE) {
+            //we might have a port
+            if (empty($db_info['port'])) {
+                $db_info['port'] = 3306;
+            }
+            if (empty($db_info['socket'])) {
+                $db_info['socket'] = @ini_get('mysqli.default_socket');
+            }
+            if (empty($db_info['charset'])) {
+                $db_info['charset'] = "utf8";
+            }
+            $this->conn = new mysqli($db_info['host'], $db_info['user'], $db_info['password'], '', $db_info['port'], $db_info['socket']); //db name leaved for selection
+            if ($this->conn->connect_error) {
                 throw new RuckusingException("\n\nCould not connect to the DB, check host / user / password\n\n", RuckusingException::INVALID_CONFIG);
+            }
+            if (!$this->conn->select_db($db_info['database'])) {
+                throw new RuckusingException("\n\nCould not select the DB " . $db_info['database'] . ", check permissions on host " . $db_info['host'] . " \n\n", RuckusingException::INVALID_CONFIG);
+            }
+            if (!$this->conn->set_charset($db_info['charset'])) {
+                throw new RuckusingException("\n\nCould not set charset " . $db_info['charset'] . " \n\n", RuckusingException::INVALID_CONFIG);
             }
             return true;
         } else {
-            throw new RuckusingException("\n\nCould not extract DB connection information from: {$dsn}\n\n", RuckusingException::INVALID_CONFIG);
+            throw new RuckusingException("\n\nCould not extract DB connection information from: " . implode(' ', $dsn) . "\n\n", RuckusingException::INVALID_CONFIG);
         }
     }
 
@@ -797,10 +696,9 @@ SQL;
     {
         if ($this->_tables_loaded == false || $reload) {
             $this->_tables = array(); //clear existing structure
-            $sql = "SELECT tablename FROM pg_tables WHERE schemaname = ANY (current_schemas(false))";
-
-            $res = pg_query($this->conn, $sql);
-            while ($row = pg_fetch_row($res)) {
+            $query = "SHOW TABLES";
+            $res = $this->conn->query($query);
+            while ($row = $res->fetch_row()) {
                 $table = $row[0];
                 $this->_tables[$table] = true;
             }
@@ -813,6 +711,7 @@ SQL;
         $match = array();
         preg_match('/^(\w)*/i', $query, $match);
         $type = $match[0];
+
         switch ($type) {
             case 'select':
                 return SQL_SELECT;
@@ -842,7 +741,7 @@ SQL;
     private function is_sql_method_call($str)
     {
         $str = trim($str);
-        return (substr($str, -2, 2) == "()");
+        return substr($str, -2, 2) == "()";
     }
 
     private function inTransaction()
@@ -852,28 +751,31 @@ SQL;
 
     private function beginTransaction()
     {
-        if ($this->_in_trx) {
+        if ($this->_in_trx === true) {
             throw new RuckusingException('Transaction already started', RuckusingException::QUERY_ERROR);
         }
-        pg_query($this->conn, "BEGIN");
+        $this->conn->autocommit(FALSE);
         $this->_in_trx = true;
     }
 
     private function commit()
     {
-        if (!$this->_in_trx) {
+        if ($this->_in_trx === false) {
             throw new RuckusingException('Transaction not started', RuckusingException::QUERY_ERROR);
         }
-        pg_query($this->conn, "COMMIT");
+        $this->conn->commit();
         $this->_in_trx = false;
     }
 
     private function rollback()
     {
-        if (!$this->_in_trx) {
-            throw new RuckusingException('Transaction not started', RuckusingException::QUERY_ERROR);
+        if ($this->_in_trx === false) {
+            throw new RuckusingException(
+                'Transaction not started',
+                RuckusingException::QUERY_ERROR
+            );
         }
-        pg_query($this->conn, "ROLLBACK");
+        $this->conn->rollback();
         $this->_in_trx = false;
     }
 }

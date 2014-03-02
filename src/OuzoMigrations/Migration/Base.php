@@ -1,5 +1,5 @@
 <?php
-namespace Ruckusing\Migration;
+namespace OuzoMigrations\Migration;
 /**
  * Ruckusing
  *
@@ -8,7 +8,7 @@ namespace Ruckusing\Migration;
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-use Ruckusing\RuckusingException;
+use OuzoMigrations\RuckusingException;
 
 /**
  * Base
@@ -62,7 +62,7 @@ class Base
      */
     public function set_adapter($adapter)
     {
-        if (!($adapter instanceof \Ruckusing\Adapter\Base)) {
+        if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
             throw new RuckusingException(
                     'Adapter must be implement Base!',
                     RuckusingException::INVALID_ADAPTER

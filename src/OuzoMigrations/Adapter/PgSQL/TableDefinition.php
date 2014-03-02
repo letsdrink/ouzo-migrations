@@ -1,10 +1,10 @@
 <?php
-namespace Ruckusing\Adapter\PgSQL;
+namespace OuzoMigrations\Adapter\PgSQL;
 
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\RuckusingException;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\RuckusingException;
 
-class TableDefinition extends \Ruckusing\Adapter\TableDefinition
+class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
 {
     /**
      * @var Base
@@ -41,7 +41,7 @@ class TableDefinition extends \Ruckusing\Adapter\TableDefinition
         $this->_name = $name;
         $this->_options = $options;
         $this->init_sql($name, $options);
-        $this->_table_def = new \Ruckusing\Adapter\TableDefinition($this->_adapter, $this->_options);
+        $this->_table_def = new \OuzoMigrations\Adapter\TableDefinition($this->_adapter, $this->_options);
 
         if (array_key_exists('id', $options)) {
             if (is_bool($options['id']) && $options['id'] == false) {

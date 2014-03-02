@@ -1,5 +1,5 @@
 <?php
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Util\Logger;
 
 class BaseMigrationTest extends PHPUnit_Framework_TestCase
 {
@@ -17,7 +17,7 @@ class BaseMigrationTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\MySQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
     }
 

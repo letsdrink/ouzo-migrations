@@ -1,5 +1,5 @@
 <?php
-namespace Ruckusing\Task;
+namespace OuzoMigrations\Task;
 /**
  * Ruckusing
  *
@@ -9,7 +9,7 @@ namespace Ruckusing\Task;
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
 
-use Ruckusing\RuckusingException;
+use OuzoMigrations\RuckusingException;
 
 define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Task');
 
@@ -51,7 +51,7 @@ class Manager
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof \Ruckusing\Adapter\Base)) {
+        if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
             throw new RuckusingException(
                     'Adapter must be implement Base!',
                     RuckusingException::INVALID_ADAPTER

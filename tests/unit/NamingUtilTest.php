@@ -1,5 +1,5 @@
 <?php
-use Ruckusing\Util\Naming;
+use OuzoMigrations\Util\Naming;
 
 /**
  * Implementation of NamingUtilTest.

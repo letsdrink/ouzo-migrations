@@ -1,5 +1,5 @@
 <?php
-namespace Ruckusing;
+namespace OuzoMigrations;
 
 use Exception;
 

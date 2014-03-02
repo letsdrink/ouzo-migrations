@@ -1,9 +1,9 @@
 <?php
-namespace Ruckusing;
+namespace OuzoMigrations;
 
 use Ouzo\Utilities\Arrays;
-use Ruckusing\Task\Manager;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Task\Manager;
+use OuzoMigrations\Util\Logger;
 
 class FrameworkRunner
 {
@@ -34,8 +34,8 @@ class FrameworkRunner
 
     public function __construct($config, $argv)
     {
-        set_error_handler(array('\Ruckusing\RuckusingException', 'errorHandler'), E_ALL);
-        set_exception_handler(array('\Ruckusing\RuckusingException', 'exceptionHandler'));
+        set_error_handler(array('\OuzoMigrations\RuckusingException', 'errorHandler'), E_ALL);
+        set_exception_handler(array('\OuzoMigrations\RuckusingException', 'exceptionHandler'));
 
         $this->_config = $config;
 
@@ -45,7 +45,7 @@ class FrameworkRunner
 
         $this->initialize_logger();
 
-        $this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'Ruckusing' . DIRECTORY_SEPARATOR . 'Adapter');
+        $this->load_all_adapters(RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRECTORY_SEPARATOR . 'OuzoMigrations' . DIRECTORY_SEPARATOR . 'Adapter');
 
         $this->initialize_db();
 
@@ -297,16 +297,16 @@ class FrameworkRunner
         $adapter_class = null;
         switch ($db_type) {
             case 'mysql':
-                $adapter_class = "\\Ruckusing\\Adapter\\MySQL\\Base";
+                $adapter_class = "\\OuzoMigrations\\Adapter\\MySQL\\Base";
                 break;
             case 'mssql':
-                $adapter_class = "\\Ruckusing\\Adapter\\MSSQL\\Base";
+                $adapter_class = "\\OuzoMigrations\\Adapter\\MSSQL\\Base";
                 break;
             case 'pgsql':
-                $adapter_class = "\\Ruckusing\\Adapter\\PgSQL\\Base";
+                $adapter_class = "\\OuzoMigrations\\Adapter\\PgSQL\\Base";
                 break;
             case 'sqlite':
-                $adapter_class = "\\Ruckusing\\Adapter\\Sqlite3\\Base";
+                $adapter_class = "\\OuzoMigrations\\Adapter\\Sqlite3\\Base";
                 break;
         }
         return $adapter_class;

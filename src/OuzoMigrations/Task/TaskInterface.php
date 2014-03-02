@@ -1,5 +1,5 @@
 <?php
-namespace Ruckusing\Task;
+namespace OuzoMigrations\Task;
 /**
  * Ruckusing
  *

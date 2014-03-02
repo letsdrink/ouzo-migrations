@@ -1,7 +1,7 @@
 <?php
-namespace Ruckusing\Util;
+namespace OuzoMigrations\Util;
 
-use Ruckusing\RuckusingException;
+use OuzoMigrations\RuckusingException;
 
 class Logger
 {

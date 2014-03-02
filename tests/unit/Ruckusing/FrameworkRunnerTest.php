@@ -1,5 +1,5 @@
 <?php
-use Ruckusing\FrameworkRunner;
+use OuzoMigrations\FrameworkRunner;
 
 class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Ruckusing\RuckusingException
+     * @expectedException \OuzoMigrations\RuckusingException
      */
     public function shouldThrowExceptionWhenNotFoundEnvInConfig()
     {
@@ -50,7 +50,7 @@ class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Ruckusing\RuckusingException
+     * @expectedException \OuzoMigrations\RuckusingException
      */
     public function shouldThrowExceptionWhenNotFoundDbDirInConfig()
     {
@@ -64,7 +64,7 @@ class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Ruckusing\RuckusingException
+     * @expectedException \OuzoMigrations\RuckusingException
      */
     public function shouldThrowExceptionWhenNotFoundLogDirInConfig()
     {
@@ -78,7 +78,7 @@ class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Ruckusing\RuckusingException
+     * @expectedException \OuzoMigrations\RuckusingException
      */
     public function shouldThrowExceptionWhenNotFoundMigrationsDirInConfig()
     {
@@ -92,7 +92,7 @@ class FrameworkRunnerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
-     * @expectedException \Ruckusing\RuckusingException
+     * @expectedException \OuzoMigrations\RuckusingException
      */
     public function shouldThrowExceptionWhenNotFoundMigrationsTaskOptionsInConfig()
     {

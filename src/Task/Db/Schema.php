@@ -9,9 +9,9 @@ namespace Task\Db;
  * @author    Cody Caughlan <codycaughlan % gmail . com>
  * @link      https://github.com/ruckus/ruckusing-migrations
  */
-use Ruckusing\RuckusingException;
-use Ruckusing\Task\Base;
-use Ruckusing\Task\TaskInterface;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Task\Base;
+use OuzoMigrations\Task\TaskInterface;
 
 /**
  * Task_DB_Schema

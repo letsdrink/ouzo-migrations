@@ -1,7 +1,7 @@
 <?php
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\Adapter\MySQL\TableDefinition;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\Adapter\MySQL\TableDefinition;
+use OuzoMigrations\Util\Logger;
 
 /**
  * Implementation of MySQLTableDefinitionTest
@@ -29,7 +29,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\MySQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
     }
 
@@ -107,7 +107,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_limit()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -124,7 +124,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_not_null()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -142,7 +142,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_default_value()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -160,7 +160,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_multiple_primary_keys()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));
@@ -184,7 +184,7 @@ class MySQLTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_custom_primary_key_with_auto_increment()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));

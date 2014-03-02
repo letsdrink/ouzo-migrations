@@ -1,7 +1,7 @@
 <?php
-use Ruckusing\Adapter\Sqlite3\TableDefinition;
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Adapter\Sqlite3\TableDefinition;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Logger;
 
 /**
  * @category Ruckusing_Tests
@@ -28,7 +28,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
 
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\Sqlite3\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\Sqlite3\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
         $this->adapter->query('DROP TABLE IF EXISTS test');
         $this->adapter->query('CREATE TABLE test(id int)');
@@ -189,7 +189,7 @@ class Sqlite3AdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_index_name_too_long_throws_exception()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         try {
             srand();
             $table_name = "users_" . rand(0, 1000000);

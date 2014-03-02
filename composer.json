@@ -4,7 +4,7 @@
     "minimum-stability": "dev",
     "autoload": {
         "psr-0": {
-            "Ruckusing\\": "src/",
+            "OuzoMigrations\\": "src/",
             "Task\\": "src/"
         }
     },

@@ -1,6 +1,6 @@
 <?php
-use Ruckusing\FrameworkRunner;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\FrameworkRunner;
+use OuzoMigrations\Util\Logger;
 
 /**
  * Implementation of TaskManagerTest.
@@ -28,7 +28,7 @@ class TaskManagerTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\MySQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
 
         $this->framework = new FrameworkRunner($ruckusing_config, array('ENV=mysql_test'));

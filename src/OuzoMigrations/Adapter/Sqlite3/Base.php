@@ -1,16 +1,16 @@
 <?php
-namespace Ruckusing\Adapter\Sqlite3;
+namespace OuzoMigrations\Adapter\Sqlite3;
 
 use Exception;
-use Ruckusing\Adapter\AdapterInterface;
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Naming;
+use OuzoMigrations\Adapter\AdapterInterface;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Naming;
 use SQLite3;
 
 define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
 
-class Base extends \Ruckusing\Adapter\Base implements AdapterInterface
+class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
 {
     /**
      * @var SQLite3

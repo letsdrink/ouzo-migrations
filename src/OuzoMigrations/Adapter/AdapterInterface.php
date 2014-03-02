@@ -1,5 +1,5 @@
 <?php
-namespace Ruckusing\Adapter;
+namespace OuzoMigrations\Adapter;
 
 interface AdapterInterface
 {

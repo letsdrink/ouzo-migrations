@@ -1,7 +1,7 @@
 <?php
-use Ruckusing\Adapter\MySQL\TableDefinition;
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Adapter\MySQL\TableDefinition;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Logger;
 
 class MySQLAdapterTest extends PHPUnit_Framework_TestCase
 {
@@ -21,7 +21,7 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\MySQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\MySQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
     }
 
@@ -132,7 +132,7 @@ class MySQLAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_index_name_too_long_throws_exception()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         try {
             srand();
             $table_name = "users_" . rand(0, 1000000);

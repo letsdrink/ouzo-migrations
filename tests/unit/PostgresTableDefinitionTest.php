@@ -1,6 +1,6 @@
 <?php
-use Ruckusing\Adapter\ColumnDefinition;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\Adapter\ColumnDefinition;
+use OuzoMigrations\Util\Logger;
 
 /**
  * Implementation of PostgresTableDefinitionTest.
@@ -28,7 +28,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\PgSQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\PgSQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T'));
     }
 
@@ -106,7 +106,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_limit()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -123,7 +123,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_not_null()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -141,7 +141,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_column_definition_with_default_value()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name);
@@ -159,7 +159,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_multiple_primary_keys()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));
@@ -190,7 +190,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_custom_primary_key_with_auto_increment()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         $ts = time();
         $table_name = "users_$ts";
         $table = $bm->create_table($table_name, array('id' => false));
@@ -214,7 +214,7 @@ class PostgresTableDefinitionTest extends PHPUnit_Framework_TestCase
      */
     public function test_generate_table_without_primary_key()
     {
-        $t1 = new \Ruckusing\Adapter\PgSQL\TableDefinition($this->adapter, "users", array('id' => false));
+        $t1 = new \OuzoMigrations\Adapter\PgSQL\TableDefinition($this->adapter, "users", array('id' => false));
         $t1->column("first_name", "string");
         $t1->column("last_name", "string", array('limit' => 32));
         $actual = $t1->finish();

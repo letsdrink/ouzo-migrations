@@ -1,8 +1,8 @@
 <?php
-namespace Ruckusing\Adapter;
+namespace OuzoMigrations\Adapter;
 
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Logger;
 
 define('SQL_UNKNOWN_QUERY_TYPE', 1);
 define('SQL_SELECT', 2);

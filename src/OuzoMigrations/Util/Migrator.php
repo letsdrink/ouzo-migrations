@@ -1,8 +1,8 @@
 <?php
-namespace Ruckusing\Util;
+namespace OuzoMigrations\Util;
 
-use Ruckusing\Adapter\Base;
-use Ruckusing\RuckusingException;
+use OuzoMigrations\Adapter\Base;
+use OuzoMigrations\RuckusingException;
 
 class Migrator
 {

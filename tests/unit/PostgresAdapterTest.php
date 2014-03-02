@@ -1,6 +1,6 @@
 <?php
-use Ruckusing\RuckusingException;
-use Ruckusing\Util\Logger;
+use OuzoMigrations\RuckusingException;
+use OuzoMigrations\Util\Logger;
 
 /**
  * Implementation of PostgresAdapterTest.
@@ -29,7 +29,7 @@ class PostgresAdapterTest extends PHPUnit_Framework_TestCase
         //setup our log
         $logger = Logger::instance(RUCKUSING_BASE . '/tests/logs/test.log');
 
-        $this->adapter = new \Ruckusing\Adapter\PgSQL\Base($test_db, $logger);
+        $this->adapter = new \OuzoMigrations\Adapter\PgSQL\Base($test_db, $logger);
         $this->adapter->logger->log("Test run started: " . date('Y-m-d g:ia T') );
     }//setUp()
 
@@ -114,7 +114,7 @@ class PostgresAdapterTest extends PHPUnit_Framework_TestCase
         //first make sure the table does not exist
         $users = $this->adapter->has_table('users', true);
         $this->assertEquals(false, $users);
-        $t1 = new \Ruckusing\Adapter\PgSQL\TableDefinition($this->adapter, "users");
+        $t1 = new \OuzoMigrations\Adapter\PgSQL\TableDefinition($this->adapter, "users");
         $t1->column("email", "string", array('limit' => 20));
         $sql = $t1->finish();
 
@@ -166,7 +166,7 @@ class PostgresAdapterTest extends PHPUnit_Framework_TestCase
      */
     public function test_index_name_too_long_throws_exception()
     {
-        $bm = new \Ruckusing\Migration\Base($this->adapter);
+        $bm = new \OuzoMigrations\Migration\Base($this->adapter);
         try {
             srand();
             $table_name = "users_" . rand(0, 1000000);
@@ -191,7 +191,7 @@ class PostgresAdapterTest extends PHPUnit_Framework_TestCase
     public function test_custom_primary_key_1()
     {
         $this->drop_table('users');
-        $t1 = new \Ruckusing\Adapter\PgSQL\TableDefinition($this->adapter, "users", array('id' => true) );
+        $t1 = new \OuzoMigrations\Adapter\PgSQL\TableDefinition($this->adapter, "users", array('id' => true) );
         $t1->column("user_id", "integer", array("primary_key" => true));
         $table_create_sql = $t1->finish(true);
         $this->drop_table('users');
