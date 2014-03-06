@@ -1,54 +1,19 @@
 <?php
+namespace Task\Db;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Task
- * @subpackage Db
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Task_DB_Setup.
- * This is a generic task which initializes a table to hold migration version information.
- * This task is non-destructive and will only create the table if it does not already exist, otherwise
- * no other actions are performed.
- *
- * @category Ruckusing
- * @package  Task
- * @subpackage Db
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Task_Db_Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Setup extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
 {
     /**
-     * Current Adapter
-     *
-     * @var Base
+     * @var \OuzoMigrations\Adapter\Base
      */
     private $_adapter = null;
 
-    /**
-     * Creates an instance of Task_DB_Setup
-     *
-     * @param Base $adapter The current adapter being used
-     *
-     * @return Task_DB_Setup
-     */
     public function __construct($adapter)
     {
         parent::__construct($adapter);
         $this->_adapter = $adapter;
     }
 
-    /**
-     * Primary task entry point
-     *
-     * @param array $args The current supplied options.
-     */
     public function execute($args)
     {
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
@@ -66,14 +31,9 @@ class Task_Db_Setup extends Ruckusing_Task_Base implements Ruckusing_Task_Interf
         return $output;
     }
 
-    /**
-     * Return the usage of the task
-     *
-     * @return string
-     */
     public function help()
     {
-        $output =<<<USAGE
+        $output = <<<USAGE
 
 \tTask: db:setup
 

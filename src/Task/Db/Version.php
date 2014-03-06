@@ -1,52 +1,19 @@
 <?php
+namespace Task\Db;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Task
- * @subpackage Db
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-
-/**
- * Task_DB_Version.
- * This task retrieves the current version of the schema.
- *
- * @category Ruckusing
- * @package  Task
- * @subpackage Db
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
-class Task_Db_Version extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Version extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
 {
     /**
-     * Current Adapter
-     *
-     * @var Base
+     * @var \OuzoMigrations\Adapter\Base
      */
     private $_adapter = null;
 
-    /**
-     * Creates an instance of Task_DB_Version
-     *
-     * @param Base $adapter The current adapter being used
-     *
-     * @return Task_DB_Version
-     */
     public function __construct($adapter)
     {
         parent::__construct($adapter);
         $this->_adapter = $adapter;
     }
 
-    /**
-     * Primary task entry point
-     *
-     * @param array $args The current supplied options.
-     */
     public function execute($args)
     {
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
@@ -78,11 +45,6 @@ class Task_Db_Version extends Ruckusing_Task_Base implements Ruckusing_Task_Inte
         return $output;
     }
 
-    /**
-     * Return the usage of the task
-     *
-     * @return string
-     */
     public function help()
     {
         $output =<<<USAGE

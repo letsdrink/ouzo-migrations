@@ -1,63 +1,25 @@
 <?php
 namespace Task\Db;
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Task
- * @subpackage Db
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\Base;
 use OuzoMigrations\Task\TaskInterface;
 
-/**
- * Task_DB_Schema
- * generic task which dumps the schema of the DB
- * as a text file.
- *
- * @category Ruckusing
- * @package  Task
- * @subpackage Db
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
 class Schema extends Base implements TaskInterface
 {
     /**
-     * Current Adapter
-     *
-     * @var Base
+     * @var \OuzoMigrations\Adapter\Base
      */
     private $_adapter = null;
 
-    /**
-     * Return executed string
-     *
-     * @var string
-     */
     private $_return = '';
 
-    /**
-     * Creates an instance of Task_DB_Schema
-     *
-     * @param Base $adapter The current adapter being used
-     *
-     * @return Task_DB_Schema
-     */
     public function __construct($adapter)
     {
         parent::__construct($adapter);
         $this->_adapter = $adapter;
     }
 
-    /**
-     * Primary task entry point
-     *
-     * @param array $args The current supplied options.
-     */
     public function execute($args)
     {
         $this->_return .= "Started: " . date('Y-m-d g:ia T') . "\n\n";
@@ -72,11 +34,6 @@ class Schema extends Base implements TaskInterface
         return $this->_return;
     }
 
-    /**
-     * Get the db dir, check and create the db dir if it doesn't exists
-     *
-     * @return string
-     */
     private function db_dir()
     {
         // create the db directory if it doesnt exist
@@ -92,25 +49,15 @@ class Schema extends Base implements TaskInterface
 
         //check to make sure our destination directory is writable
         if (!is_writable($db_directory)) {
-            throw new OuzoMigrationsException(
-                    "ERROR: DB Schema directory '"
-                    . $db_directory
-                    . "' is not writable by the current user. Check permissions and try again.\n",
-                    OuzoMigrationsException::INVALID_DB_DIR
-            );
+            throw new OuzoMigrationsException("ERROR: DB Schema directory '" . $db_directory . "' is not writable by the current user. Check permissions and try again.\n", OuzoMigrationsException::INVALID_DB_DIR);
         }
 
         return $db_directory;
     }
 
-    /**
-     * Return the usage of the task
-     *
-     * @return string
-     */
     public function help()
     {
-        $output =<<<USAGE
+        $output = <<<USAGE
 
 \tTask: db:schema
 
@@ -127,5 +74,4 @@ USAGE;
 
         return $output;
     }
-
 }

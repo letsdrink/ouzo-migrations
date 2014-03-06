@@ -1944,3 +1944,2029 @@ Mar 06 15:35:40 [info] pragma table_info(users)
 Mar 06 15:35:40 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
 Mar 06 15:35:40 [info] DROP TABLE IF EXISTS "users"
 Mar 06 15:35:40 [info] Test run started: 2014-03-06 3:35pm CET
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] CREATE INDEX my_special_index ON `users`(`name`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP INDEX `my_special_index` ON `users`
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `schema_migrations` (
+`version` varchar(255))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] CREATE UNIQUE INDEX idx_schema_migrations_version ON `schema_migrations`(`version`)
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `schema_migrations`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`name` varchar(20),
+ PRIMARY KEY (`id`)) Engine=InnoDB DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] CREATE DATABASE `test_db`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] DROP DATABASE IF EXISTS `test_db`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] CREATE DATABASE `test_db`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] DROP DATABASE IF EXISTS `test_db`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_128773` (
+`somecolumnthatiscrazylong` int(11),
+`anothercolumnthatiscrazylongrodeclown` int(11))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_128773`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:33 [info] RENAME TABLE `users` TO `users_new`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_new`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20) DEFAULT 'abc' NOT NULL);
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] ALTER TABLE `users` CHANGE `name` `new_name` varchar(20) DEFAULT 'abc' NOT NULL COMMENT ''
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'new_name'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `fav_color` varchar(32)
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'fav_color'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `latitude` decimal(10, 2)
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'latitude'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `age` int(11) UNSIGNED
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'age'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `weight` bigint(20)
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'weight'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `shortcode` varchar(255) COLLATE `utf8_bin`
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'shortcode'
+Mar 06 15:44:33 [info] ALTER TABLE `users` ADD `highschool` varchar(255) CHARACTER SET `latin1`
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'highschool'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] ALTER TABLE `users` DROP COLUMN `name`
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] ALTER TABLE `users` CHANGE `name` `name` varchar(128) DEFAULT 'abc'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] ALTER TABLE `users` CHANGE `name` `name` varchar(128) COLLATE `ascii_bin` DEFAULT 'abc'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3), title varchar(20) );
+Mar 06 15:44:33 [info] CREATE INDEX idx_users_name ON `users`(`name`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] CREATE UNIQUE INDEX idx_users_age ON `users`(`age`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] CREATE INDEX index_on_super_title ON `users`(`title`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] CREATE INDEX idx_users_name_and_age ON `users`(`name`, `age`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP INDEX `idx_users_name_and_age` ON `users`
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] CREATE INDEX idx_users_name ON `users`(`name`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP INDEX `idx_users_name` ON `users`
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:33 [info] CREATE INDEX my_special_index ON `users`(`name`)
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP INDEX `my_special_index` ON `users`
+Mar 06 15:44:33 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] SHOW DATABASES
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_1394117073` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17),
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'username'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_1394117073`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_1394117073` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17) NOT NULL,
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'username'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_1394117073`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_1394117073` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17) DEFAULT 'thor',
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'username'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_1394117073`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_1394117073` (
+`user_id` int(11) UNSIGNED,
+`username` varchar(255),
+ PRIMARY KEY (`user_id`,`username`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'user_id'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'username'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'id'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_1394117073`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users_1394117073` (
+`user_id` int(11) UNSIGNED auto_increment,
+ PRIMARY KEY (`user_id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'user_id'
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users_1394117073` LIKE 'id'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users_1394117073`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] CREATE TABLE `users` (
+`first_name` varchar(255),
+`last_name` varchar(32)) Engine=InnoDB DEFAULT CHARSET=latin1;
+Mar 06 15:44:33 [info] SHOW FULL COLUMNS FROM `users` LIKE 'id'
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:33 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:33 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:33 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:33 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:33 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'animals'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE "schema_migrations" (
+"version" varchar(255)) ;
+Mar 06 15:44:34 [info] CREATE UNIQUE INDEX "idx_schema_migrations_version" ON "schema_migrations"("version")
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "schema_migrations"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:34 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE "users" (
+"id" serial,
+"email" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE DATABASE "test_db" ENCODING = 'utf8'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] CREATE INDEX my_special_index ON `users`(`name`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP INDEX `my_special_index` ON `users`
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `schema_migrations` (
+`version` varchar(255))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] CREATE UNIQUE INDEX idx_schema_migrations_version ON `schema_migrations`(`version`)
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `schema_migrations`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`name` varchar(20),
+ PRIMARY KEY (`id`)) Engine=InnoDB DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] CREATE DATABASE `test_db`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] DROP DATABASE IF EXISTS `test_db`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] CREATE DATABASE `test_db`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] DROP DATABASE IF EXISTS `test_db`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_866005` (
+`somecolumnthatiscrazylong` int(11),
+`anothercolumnthatiscrazylongrodeclown` int(11))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_866005`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:34 [info] RENAME TABLE `users` TO `users_new`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_new`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20) DEFAULT 'abc' NOT NULL);
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] ALTER TABLE `users` CHANGE `name` `new_name` varchar(20) DEFAULT 'abc' NOT NULL COMMENT ''
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'new_name'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20) );
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `fav_color` varchar(32)
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'fav_color'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `latitude` decimal(10, 2)
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'latitude'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `age` int(11) UNSIGNED
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'age'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `weight` bigint(20)
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'weight'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `shortcode` varchar(255) COLLATE `utf8_bin`
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'shortcode'
+Mar 06 15:44:34 [info] ALTER TABLE `users` ADD `highschool` varchar(255) CHARACTER SET `latin1`
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'highschool'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] ALTER TABLE `users` DROP COLUMN `name`
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] ALTER TABLE `users` CHANGE `name` `name` varchar(128) DEFAULT 'abc'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] ALTER TABLE `users` CHANGE `name` `name` varchar(128) COLLATE `ascii_bin` DEFAULT 'abc'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'name'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3), title varchar(20) );
+Mar 06 15:44:34 [info] CREATE INDEX idx_users_name ON `users`(`name`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] CREATE UNIQUE INDEX idx_users_age ON `users`(`age`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] CREATE INDEX index_on_super_title ON `users`(`title`)
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'db_does_not_exist'
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] DROP DATABASE IF EXISTS "test_db"
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] CREATE INDEX idx_users_name_and_age ON `users`(`name`, `age`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP INDEX `idx_users_name_and_age` ON `users`
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] CREATE INDEX idx_users_name ON `users`(`name`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP INDEX `idx_users_name` ON `users`
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` ( name varchar(20), age int(3) );
+Mar 06 15:44:34 [info] CREATE INDEX my_special_index ON `users`(`name`)
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP INDEX `my_special_index` ON `users`
+Mar 06 15:44:34 [info] SHOW KEYS FROM `users`
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SHOW DATABASES
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_1394117074` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17),
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'username'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_1394117074`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_1394117074` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17) NOT NULL,
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'username'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_1394117074`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_1394117074` (
+`id` int(11) UNSIGNED auto_increment NOT NULL,
+`username` varchar(17) DEFAULT 'thor',
+ PRIMARY KEY (`id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'username'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_1394117074`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_1394117074` (
+`user_id` int(11) UNSIGNED,
+`username` varchar(255),
+ PRIMARY KEY (`user_id`,`username`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'user_id'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'username'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'id'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_1394117074`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users_1394117074` (
+`user_id` int(11) UNSIGNED auto_increment,
+ PRIMARY KEY (`user_id`))  DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'user_id'
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users_1394117074` LIKE 'id'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users_1394117074`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE DATABASE "test_db" ENCODING = 'utf8'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE `users` (
+`first_name` varchar(255),
+`last_name` varchar(32)) Engine=InnoDB DEFAULT CHARSET=latin1;
+Mar 06 15:44:34 [info] SHOW FULL COLUMNS FROM `users` LIKE 'id'
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS `users`
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:34 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:34 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'animals'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE "schema_migrations" (
+"version" varchar(255)) ;
+Mar 06 15:44:34 [info] CREATE UNIQUE INDEX "idx_schema_migrations_version" ON "schema_migrations"("version")
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "schema_migrations"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:34 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE TABLE "users" (
+"id" serial,
+"email" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:34 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:34 [info] CREATE DATABASE "test_db" ENCODING = 'utf8'
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] DROP DATABASE IF EXISTS "test_db"
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:34 [info] DROP DATABASE IF EXISTS "test_db"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE DATABASE "test_db" ENCODING = 'utf8'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_964432" (
+"somecolumnthatiscrazylong" integer,
+"anothercolumnthatiscrazylongrodeclown" integer) ;
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_964432"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME TO "users_new"
+Mar 06 15:44:35 [info]       SELECT attr.attname, seq.relname
+      FROM pg_class      seq,
+           pg_attribute  attr,
+           pg_depend     dep,
+           pg_namespace  name,
+           pg_constraint cons
+      WHERE seq.oid           = dep.objid
+        AND seq.relkind       = 'S'
+        AND attr.attrelid     = dep.refobjid
+        AND attr.attnum       = dep.refobjsubid
+        AND attr.attrelid     = cons.conrelid
+        AND attr.attnum       = cons.conkey[1]
+        AND cons.contype      = 'p'
+        AND dep.refobjid      = 'users_new'::regclass
+Mar 06 15:44:35 [info] ALTER TABLE users_id_seq RENAME TO users_new_id_seq
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME COLUMN "name" TO "new_name"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'new_name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "fav_color" varchar(32)
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'fav_color'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "latitude" decimal(10, 2)
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'latitude'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "age" integer
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'age'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "weight" bigint
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'weight'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" DROP COLUMN "name"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ALTER COLUMN "name" SET DEFAULT 'abc'
+Mar 06 15:44:35 [info] ALTER TABLE "users" ALTER COLUMN "name" TYPE varchar(128)
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"title" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] CREATE UNIQUE INDEX "idx_users_age" ON "users"("age")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] CREATE INDEX "index_on_super_title" ON "users"("title")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "index_on_super_title"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name_and_age" ON "users"("name", "age")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name_and_age"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "my_special_index" ON "users"("name")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "my_special_index"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Taco', 32) RETURNING "id"
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Bumblebee', 76) RETURNING "id"
+Mar 06 15:44:35 [info] SELECT * FROM users ORDER BY name ASC
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Taco', 32) RETURNING "id"
+Mar 06 15:44:35 [info] SELECT * FROM users WHERE name = 'Taco'
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17) NOT NULL,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17) DEFAULT 'thor',
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"user_id" integer,
+"username" varchar(255),
+ PRIMARY KEY ("user_id","username")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'user_id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users_1394117075'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"user_id" integer,
+ PRIMARY KEY ("user_id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'user_id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users_1394117075'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"first_name" varchar(255),
+"last_name" varchar(32)) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Taco', 32)
+Mar 06 15:44:35 [info] SELECT * FROM users WHERE name = 'Taco'
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] INSERT INTO test(id) VALUES(1)
+Mar 06 15:44:35 [info] SELECT id FROM test LIMIT 1
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="test";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="not_existing_table";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] DROP DATABASE IF EXISTS "test_db"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test1234
+Mar 06 15:44:35 [info] ALTER TABLE "test" RENAME TO "test1234"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="test";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="test1234";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test1234
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] ALTER TABLE "test" ADD COLUMN "name" varchar(10)
+Mar 06 15:44:35 [info] pragma table_info(test)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] CREATE TABLE animals (id integer primary key, name varchar(32))
+Mar 06 15:44:35 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("animals");
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] CREATE TABLE "schema_migrations" (
+"version" varchar(255)) ;
+Mar 06 15:44:35 [info] CREATE UNIQUE INDEX "idx_schema_migrations_version" ON "schema_migrations"("version")
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "schema_migrations"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:35 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="unknown_table";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"email" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_147115" (
+"somecolumnthatiscrazylong" integer,
+"anothercolumnthatiscrazylongrodeclown" integer) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_147115"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_623201" (
+"somecolumnthatiscrazylong" integer,
+"anothercolumnthatiscrazylongrodeclown" integer) ;
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_623201"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME TO "users_new"
+Mar 06 15:44:35 [info]       SELECT attr.attname, seq.relname
+      FROM pg_class      seq,
+           pg_attribute  attr,
+           pg_depend     dep,
+           pg_namespace  name,
+           pg_constraint cons
+      WHERE seq.oid           = dep.objid
+        AND seq.relkind       = 'S'
+        AND attr.attrelid     = dep.refobjid
+        AND attr.attnum       = dep.refobjsubid
+        AND attr.attrelid     = cons.conrelid
+        AND attr.attnum       = cons.conkey[1]
+        AND cons.contype      = 'p'
+        AND dep.refobjid      = 'users_new'::regclass
+Mar 06 15:44:35 [info] ALTER TABLE users_id_seq RENAME TO users_new_id_seq
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME COLUMN "name" TO "new_name"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'new_name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "fav_color" varchar(32)
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'fav_color'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "latitude" decimal(10, 2)
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'latitude'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "age" integer
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'age'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "weight" bigint
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'weight'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" DROP COLUMN "name"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users_new";
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME TO "users_new"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users_new";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] ALTER TABLE "users" ALTER COLUMN "name" SET DEFAULT 'abc'
+Mar 06 15:44:35 [info] ALTER TABLE "users" ALTER COLUMN "name" TYPE varchar(128)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'name'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"title" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] CREATE UNIQUE INDEX "idx_users_age" ON "users"("age")
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] CREATE INDEX "index_on_super_title" ON "users"("title")
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "fav_color" varchar(32)
+Mar 06 15:44:35 [info] DROP INDEX "index_on_super_title"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "latitude" decimal
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "age" integer(2)
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "weight" bigint
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name_and_age" ON "users"("name", "age")
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name_and_age"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE INDEX "my_special_index" ON "users"("name")
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP INDEX "my_special_index"
+Mar 06 15:44:35 [info]        SELECT distinct i.relname, d.indisunique, d.indkey, pg_get_indexdef(d.indexrelid), t.oid
+       FROM pg_class t
+       INNER JOIN pg_index d ON t.oid = d.indrelid
+       INNER JOIN pg_class i ON d.indexrelid = i.oid
+       WHERE i.relkind = 'i'
+         AND d.indisprimary = 'f'
+         AND t.relname = 'users'
+         AND i.relnamespace IN (SELECT oid FROM pg_namespace WHERE nspname = ANY (current_schemas(false)) )
+      ORDER BY i.relname
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"title" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Taco', 32) RETURNING "id"
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Bumblebee', 76) RETURNING "id"
+Mar 06 15:44:35 [info] SELECT * FROM users ORDER BY name ASC
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" serial,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] CREATE UNIQUE INDEX "idx_users_age" ON "users"("age")
+Mar 06 15:44:35 [info] INSERT INTO users (name, age) VALUES ('Taco', 32) RETURNING "id"
+Mar 06 15:44:35 [info] SELECT * FROM users WHERE name = 'Taco'
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT datname FROM pg_database WHERE datname = 'test_db'
+Mar 06 15:44:35 [info] CREATE INDEX "index_on_super_title" ON "users"("title")
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP INDEX "index_on_super_title"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17) NOT NULL,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" serial,
+"username" varchar(17) DEFAULT 'thor',
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"user_id" integer,
+"username" varchar(255),
+ PRIMARY KEY ("user_id","username")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name_and_age" ON "users"("name", "age")
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'user_id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'username'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users_1394117075'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name_and_age"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"user_id" integer,
+ PRIMARY KEY ("user_id")) ;
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'user_id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users_1394117075'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users_1394117075"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"first_name" varchar(255),
+"last_name" varchar(32)) ;
+Mar 06 15:44:35 [info]       SELECT a.attname, format_type(a.atttypid, a.atttypmod), d.adsrc, a.attnotnull
+        FROM pg_attribute a LEFT JOIN pg_attrdef d
+          ON a.attrelid = d.adrelid AND a.attnum = d.adnum
+       WHERE a.attrelid = '"users"'::regclass
+         AND a.attname = 'id'
+         AND a.attnum > 0 AND NOT a.attisdropped
+       ORDER BY a.attnum
+Mar 06 15:44:35 [info]       SELECT
+        pg_attribute.attname,
+        format_type(pg_attribute.atttypid, pg_attribute.atttypmod)
+      FROM pg_index, pg_class, pg_attribute
+      WHERE
+        pg_class.oid = 'users'::regclass AND
+        indrelid = pg_class.oid AND
+        pg_attribute.attrelid = pg_class.oid AND
+        pg_attribute.attnum = any(pg_index.indkey)
+        AND indisprimary
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] CREATE TABLE animals (id integer primary key, name varchar(32))
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" integer,
+"username" varchar(17),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" integer,
+"username" varchar(17) NOT NULL,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("animals");
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"id" integer,
+"username" varchar(17) DEFAULT 'thor',
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] pragma table_info(users_1394117075)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_1394117075"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users_1394117075" (
+"user_id" integer,
+"username" varchar(255),
+ PRIMARY KEY ("user_id","username")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"first_name" varchar(255),
+"last_name" varchar(32)) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] CREATE TABLE animals (id serial primary key, name varchar(32))
+Mar 06 15:44:35 [info] CREATE INDEX idx_animals_on_name ON animals(name)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "animals"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="unknown_table";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"email" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users_424631" (
+"somecolumnthatiscrazylong" integer,
+"anothercolumnthatiscrazylongrodeclown" integer) ;
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_424631"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users_new";
+Mar 06 15:44:35 [info] ALTER TABLE "users" RENAME TO "users_new"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users_new";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users_new"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "fav_color" varchar(32)
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "latitude" decimal
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "age" integer(2)
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] ALTER TABLE "users" ADD COLUMN "weight" bigint
+Mar 06 15:44:35 [info] pragma table_info(users)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"title" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] CREATE UNIQUE INDEX "idx_users_age" ON "users"("age")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] CREATE INDEX "index_on_super_title" ON "users"("title")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] DROP INDEX "index_on_super_title"
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name_and_age" ON "users"("name", "age")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name_and_age"
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "idx_users_name" ON "users"("name")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] DROP INDEX "idx_users_name"
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:35 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:35 [info] CREATE INDEX "my_special_index" ON "users"("name")
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] DROP INDEX "my_special_index"
+Mar 06 15:44:35 [info] PRAGMA INDEX_LIST("users");
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:35 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:35 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:35 [info] CREATE TABLE test(id int)
+Mar 06 15:44:36 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:36 [info] INSERT INTO users (name, age) VALUES ('Taco', 32)
+Mar 06 15:44:36 [info] INSERT INTO users (name, age) VALUES ('Bumblebee', 76)
+Mar 06 15:44:36 [info] SELECT * FROM users ORDER BY name ASC
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS test
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] CREATE TABLE "users_1394117076" (
+"id" integer,
+"username" varchar(17),
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users_1394117076"
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] CREATE TABLE "users_1394117076" (
+"id" integer,
+"username" varchar(17) NOT NULL,
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users_1394117076"
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] CREATE TABLE "users_1394117076" (
+"id" integer,
+"username" varchar(17) DEFAULT 'thor',
+ PRIMARY KEY ("id")) ;
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users_1394117076"
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] CREATE TABLE "users_1394117076" (
+"user_id" integer,
+"username" varchar(255),
+ PRIMARY KEY ("user_id","username")) ;
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] pragma table_info(users_1394117076)
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users_1394117076"
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 15:44:36 [info] CREATE TABLE "users" (
+"first_name" varchar(255),
+"last_name" varchar(32)) ;
+Mar 06 15:44:36 [info] pragma table_info(users)
+Mar 06 15:44:36 [info] pragma table_info(users)
+Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users"
+Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET

@@ -1,52 +1,23 @@
 <?php
+namespace Task\Db;
 
-/**
- * Ruckusing
- *
- * @category  Ruckusing
- * @package   Task
- * @subpackage Db
- * @author    Cody Caughlan <codycaughlan % gmail . com>
- * @link      https://github.com/ruckus/ruckusing-migrations
- */
+use OuzoMigrations\OuzoMigrationsException;
+use OuzoMigrations\Util\Migrator;
+use OuzoMigrations\Util\Naming;
 
-/**
- * Task_DB_Generate
- * generic task which acts as a Generator for migrations.
- *
- * @category Ruckusing
- * @package  Task
- * @subpackage Db
- * @author   Cody Caughlan <codycaughlan % gmail . com>
- * @author   Salimane Adjao Moustapha <me@salimane.com>
- */
-class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Interface
+class Generate extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
 {
     /**
-     * Current Adapter
-     *
-     * @var Base
+     * @var \OuzoMigrations\Adapter\AdapterInterface
      */
     private $_adapter = null;
 
-    /**
-     * Creates an instance of Task_DB_Generate
-     *
-     * @param Base $adapter The current adapter being used
-     *
-     * @return Task_DB_Generate
-     */
     public function __construct($adapter)
     {
         parent::__construct($adapter);
         $this->_adapter = $adapter;
     }
 
-    /**
-     * Primary task entry point
-     *
-     * @param array $args The current supplied options.
-     */
     public function execute($args)
     {
         $output = '';
@@ -60,8 +31,7 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
                 return $output;
             }
             $migration_name = $cargs['name'];
-        }
-        // Add NAME= parameter for db:generate
+        } // Add NAME= parameter for db:generate
         else {
             $migration_name = $args['name'];
         }
@@ -85,27 +55,19 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
         }
 
         //generate a complete migration file
-        $next_version = Ruckusing_Util_Migrator::generate_timestamp();
-        $class = Ruckusing_Util_Naming::camelcase($migration_name);
+        $next_version = Migrator::generate_timestamp();
+        $class = Naming::camelcase($migration_name);
         $all_dirs = $framework->migrations_directories();
 
         if ($re = self::classNameIsDuplicated($class, $all_dirs)) {
-            throw new RuckusingException(
-                    "This migration name is already used in the \"$re\" directory. Please, choose another name.",
-                    RuckusingException::INVALID_ARGUMENT
-            );
+            throw new OuzoMigrationsException("This migration name is already used in the \"$re\" directory. Please, choose another name.", OuzoMigrationsException::INVALID_ARGUMENT);
         }
 
         $file_name = $next_version . '_' . $class . '.php';
 
         //check to make sure our destination directory is writable
         if (!is_writable($migrations_dir)) {
-            throw new RuckusingException(
-                    "ERROR: migration directory '"
-                    . $migrations_dir
-                    . "' is not writable by the current user. Check permissions and try again.",
-                    RuckusingException::INVALID_MIGRATION_DIR
-            );
+            throw new OuzoMigrationsException("ERROR: migration directory '" . $migrations_dir . "' is not writable by the current user. Check permissions and try again.", OuzoMigrationsException::INVALID_MIGRATION_DIR);
         }
 
         //write it out!
@@ -113,10 +75,7 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
         $template_str = self::get_template($class);
         $file_result = file_put_contents($full_path, $template_str);
         if ($file_result === FALSE) {
-            throw new RuckusingException(
-                    "Error writing to migrations directory/file. Do you have sufficient privileges?",
-                    RuckusingException::INVALID_MIGRATION_DIR
-            );
+            throw new OuzoMigrationsException("Error writing to migrations directory/file. Do you have sufficient privileges?", OuzoMigrationsException::INVALID_MIGRATION_DIR);
         } else {
             $output .= "\n\tCreated migration: {$file_name}\n\n";
         }
@@ -124,13 +83,6 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
         return $output;
     }
 
-    /**
-     * Parse command line arguments.
-     *
-     * @param array $argv The current supplied command line arguments.
-     *
-     * @return array ('name' => 'name')
-     */
     public function parse_args($argv)
     {
         foreach ($argv as $i => $arg) {
@@ -143,37 +95,21 @@ class Task_Db_Generate extends Ruckusing_Task_Base implements Ruckusing_Task_Int
             return array();
         }
         $migration_name = $argv[2];
-
         return array('name' => $migration_name);
     }
 
-    /**
-     * Indicate if a class name is already used
-     *
-     * @param string $classname      The class name to test
-     * @param string $migrationsDirs The array with directories of migration files (in simplest case - just array with one element)
-     *
-     * @return bool
-     */
-    public static function classNameIsDuplicated($classname, $migrationsDirs)
+    public static function classNameIsDuplicated($className, $migrationsDirs)
     {
-        $migrationFiles = Ruckusing_Util_Migrator::get_migration_files($migrationsDirs, 'up');
-        $classname = strtolower($classname);
+        $migrationFiles = Migrator::get_migration_files($migrationsDirs, 'up');
+        $className = strtolower($className);
         foreach ($migrationFiles as $file) {
-            if (strtolower($file['class']) == $classname) {
+            if (strtolower($file['class']) == $className) {
                 return $file['module'];
             }
         }
-
         return false;
     }
 
-    /**
-     * generate a migration template string
-     *
-     * @param  string $klass class name to create
-     * @return string
-     */
     public static function get_template($klass)
     {
         $template = <<<TPL
@@ -195,14 +131,9 @@ TPL;
         return $template;
     }
 
-    /**
-     * Return the usage of the task
-     *
-     * @return string
-     */
     public function help()
     {
-        $output =<<<USAGE
+        $output = <<<USAGE
 
 \tTask: db:generate <migration name>
 
@@ -219,5 +150,4 @@ USAGE;
 
         return $output;
     }
-
 }
