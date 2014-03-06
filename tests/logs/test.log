@@ -3970,3 +3970,20 @@ Mar 06 15:44:36 [info] pragma table_info(users)
 Mar 06 15:44:36 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
 Mar 06 15:44:36 [info] DROP TABLE IF EXISTS "users"
 Mar 06 15:44:36 [info] Test run started: 2014-03-06 3:44pm CET
+Mar 06 21:38:20 [info] Test run started: 2014-03-06 9:38pm CET
+Mar 06 21:38:20 [info] DROP TABLE IF EXISTS test
+Mar 06 21:38:20 [info] CREATE TABLE test(id int)
+Mar 06 21:38:20 [info] CREATE TABLE "users" (
+"id" integer,
+"name" varchar(20),
+"age" integer,
+ PRIMARY KEY ("id")) ;
+Mar 06 21:38:20 [info] INSERT INTO users (name, age) VALUES ('Taco', 32)
+Mar 06 21:38:20 [info] SELECT * FROM users WHERE name = 'Taco'
+Mar 06 21:38:20 [info] DROP TABLE IF EXISTS "users"
+Mar 06 21:38:21 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="users";
+Mar 06 21:38:21 [info] SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name="schema_migrations";
+Mar 06 21:38:21 [info] DROP TABLE IF EXISTS test
+Mar 06 21:38:21 [info] Test run started: 2014-03-06 9:38pm CET
+Mar 06 21:38:21 [info] DROP TABLE IF EXISTS test
+Mar 06 21:38:21 [info] CREATE TABLE test(id int)

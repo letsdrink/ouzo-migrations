@@ -1,6 +1,8 @@
 <?php
 namespace OuzoMigrations\Util;
 
+use Ouzo\Utilities\Arrays;
+use Ouzo\Utilities\Strings;
 use OuzoMigrations\OuzoMigrationsException;
 
 class Naming
@@ -27,17 +29,6 @@ class Naming
         $parts = explode(":", $task);
 
         return self::CLASS_NS_PREFIX . ucfirst($parts[0]) . '_' . ucfirst($parts[1]);
-    }
-
-    public static function class_from_file_name($file_name)
-    {
-        $file_name = str_replace(array('/', '\\'), DIRECTORY_SEPARATOR, $file_name);
-
-        $parts = explode(DIRECTORY_SEPARATOR, $file_name);
-        $namespace = $parts[count($parts) - 2];
-        $file_name = substr($parts[count($parts) - 1], 0, -4);
-
-        return self::CLASS_NS_PREFIX . ucfirst($namespace) . '_' . ucfirst($file_name);
     }
 
     public static function class_from_migration_file($file_name)
@@ -84,5 +75,23 @@ class Naming
     {
         $underscored = preg_replace('/\W/', '_', $str);
         return preg_replace('/\_{2,}/', '_', $underscored);
+    }
+
+    public static function generateMigrationClassName($fileName)
+    {
+        return Strings::underscoreToCamelCase($fileName);
+    }
+
+    public static function generateMigrationFileName($fileName)
+    {
+        $timestamp = Migrator::generate_timestamp();
+        $name = self::generateMigrationClassName($fileName);
+        return $timestamp . '_' . $name . '.php';
+    }
+
+    public static function classFromFileToName($fileName)
+    {
+        $parts = explode('_', $fileName);
+        return Strings::remove(Arrays::getValue($parts, 1), '.php');
     }
 }

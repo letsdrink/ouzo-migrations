@@ -92,7 +92,7 @@ class Manager
                     continue;
                 }
                 require_once $task_dir . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . $file;
-                $className = Naming::class_from_file_name($task_dir . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . $file);
+                $className = Naming::classFromFileToName($task_dir . DIRECTORY_SEPARATOR . $namespace . DIRECTORY_SEPARATOR . $file);
                 $task_name = Naming::task_from_class_name($className);
 
                 $this->register_task($task_name, new $className($this->get_adapter()));

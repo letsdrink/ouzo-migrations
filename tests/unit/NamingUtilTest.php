@@ -36,7 +36,7 @@ class NamingUtilTest extends PHPUnit_Framework_TestCase
     public function test_class_name_from_file_name()
     {
         $klass = RUCKUSING_TEST_HOME . '/dummy/Task/Db/Setup.php';
-        $this->assertEquals('Task_Db_Setup', Naming::class_from_file_name($klass));
+        $this->assertEquals('Task_Db_Setup', Naming::classFromFileToName($klass));
     }
 
     /**
@@ -45,7 +45,7 @@ class NamingUtilTest extends PHPUnit_Framework_TestCase
     public function test_class_name_from_file_name_with_combined_directory_separators()
     {
         $klass = RUCKUSING_TEST_HOME . '/dummy/Task\Db\Setup.php';
-        $this->assertEquals('Task_Db_Setup', Naming::class_from_file_name($klass));
+        $this->assertEquals('Task_Db_Setup', Naming::classFromFileToName($klass));
     }
 
     /**
@@ -54,7 +54,7 @@ class NamingUtilTest extends PHPUnit_Framework_TestCase
     public function test_class_name_from_string()
     {
         $klass = 'Task/Db/Schema.php';
-        $this->assertEquals('Task_Db_Schema', Naming::class_from_file_name($klass));
+        $this->assertEquals('Task_Db_Schema', Naming::classFromFileToName($klass));
     }
 
     /**
