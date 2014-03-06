@@ -7,17 +7,10 @@ use OuzoMigrations\OuzoMigrationsException;
 class Migrator
 {
     /**
-     * adapter
-     *
      * @var Base
      */
     private $_adapter = null;
 
-    /**
-     * migrations
-     *
-     * @var array
-     */
     private $_migrations = array();
 
     public function __construct($adapter)
@@ -40,17 +33,8 @@ class Migrator
         return $this;
     }
 
-    /**
-     * Return the max version number from the DB, or "0" in the case of no versions available.
-     * We must use strings because our date/timestamp when treated as an integer would cause overflow.
-     *
-     * @return string
-     */
     public function get_max_version()
     {
-        // We only want one row but we cannot assume that we are using MySQL and use a LIMIT statement
-        // as it is not part of the SQL standard. Thus we have to select all rows and use PHP to return
-        // the record we need
         $versions_nested = $this->_adapter->select_all(sprintf("SELECT version FROM %s", RUCKUSING_TS_SCHEMA_TBL_NAME));
         $versions = array();
         foreach ($versions_nested as $v) {
@@ -65,20 +49,6 @@ class Migrator
         }
     }
 
-    /**
-     * This methods calculates the actual set of migrations that should be performed, taking into account
-     * the current version, the target version and the direction (up/down). When going up this method will
-     * skip migrations that have not been executed, when going down this method will only include migrations
-     * that have been executed.
-     *
-     * @param array $directories the migration dirs
-     * @param string $direction up/down
-     * @param string $destination the version to migrate to
-     * @param boolean $use_cache the current logger
-     *
-     * @throws \Ruckusing\RuckusingException
-     * @return array
-     */
     public function get_runnable_migrations($directories, $direction, $destination = null, $use_cache = true)
     {
         // cache migration lookups and early return if we've seen this requested set
@@ -156,17 +126,6 @@ class Migrator
         return $this->executed_migrations();
     }
 
-    /**
-     * Return a set of migration files, according to the given direction.
-     * If nested, then return a complex array with the migration parts broken up into parts
-     * which make analysis much easier.
-     *
-     * @param array $directories the migration dirs
-     * @param string $direction the direction  up/down
-     *
-     * @throws \Ruckusing\RuckusingException
-     * @return array
-     */
     public static function get_migration_files($directories, $direction)
     {
         $valid_files = array();
@@ -216,15 +175,6 @@ class Migrator
         return $files;
     }
 
-    /**
-     * Find the specified structure (representing a migration) that matches the given version
-     *
-     * @param array $migrations the list of migrations
-     * @param string $version the version being searched
-     * @param boolean $only_index whether to only return the index of the version
-     *
-     * @return null | integer | array
-     */
     public function find_version($migrations, $version, $only_index = false)
     {
         $len = count($migrations);
@@ -245,11 +195,6 @@ class Migrator
         return strcmp($a["name"], $b["name"]);
     }
 
-    /**
-     * Query the database and return a list of migration versions that *have* been executed
-     *
-     * @return array
-     */
     private function executed_migrations()
     {
         $query_sql = sprintf('SELECT version FROM %s', RUCKUSING_TS_SCHEMA_TBL_NAME);
