@@ -1,22 +1,23 @@
 <?php
 namespace Task\Db;
 
+use OuzoMigrations\Task\TaskInterface;
 use OuzoMigrations\Util\Migrator;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
-class Status extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
+class StatusTask implements TaskInterface
 {
-    /**
-     * @var \OuzoMigrations\Adapter\Base
-     */
-    private $_adapter = null;
-
-    public function __construct($adapter)
+    function __construct(InputInterface $input, OutputInterface $output)
     {
-        parent::__construct($adapter);
-        $this->_adapter = $adapter;
     }
 
-    public function execute($args)
+    public function execute()
+    {
+
+    }
+
+    public function exec($args)
     {
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:status]: \n";
@@ -55,7 +56,7 @@ class Status extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\T
 
     public function help()
     {
-        $output =<<<USAGE
+        $output = <<<USAGE
 
 \tTask: db:status
 
