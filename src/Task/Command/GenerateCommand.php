@@ -19,13 +19,7 @@ class GenerateCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        $migrationFileName = $input->getArgument('migration_file_name');
-        $module = $input->getArgument('module');
-
-        $generateTask = new GenerateTask($output);
-        $generateTask->execute(array(
-            'migration_file_name' => $migrationFileName,
-            'module' => $module
-        ));
+        $generateTask = new GenerateTask($input, $output);
+        $generateTask->execute();
     }
 }

@@ -2,7 +2,6 @@
 namespace Task\Db;
 
 use Ouzo\Config;
-use Ouzo\Utilities\Arrays;
 use Ouzo\Utilities\Path;
 use Ouzo\Utilities\Strings;
 use OuzoMigrations\OuzoMigrationsException;
@@ -10,6 +9,7 @@ use OuzoMigrations\Task\TaskInterface;
 use OuzoMigrations\Util\Naming;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class GenerateTask implements TaskInterface
@@ -18,10 +18,31 @@ class GenerateTask implements TaskInterface
      * @var OutputInterface
      */
     private $_output;
+    private $_migrationFileName;
+    private $_module;
 
-    function __construct(OutputInterface $output)
+    public $migrationsDir;
+
+    function __construct(InputInterface $input, OutputInterface $output)
     {
+        $this->_migrationFileName = $input->getArgument('migration_file_name');
+        $this->_module = $input->getArgument('module') ? : 'default';
         $this->_output = $output;
+
+        $this->_className = Naming::generateMigrationClassName($this->_migrationFileName);
+        $this->_fileName = Naming::generateMigrationFileName($this->_migrationFileName);
+
+        $this->migrationsDir = Config::getValue('migrations_dir', $this->_module);
+    }
+
+    public function getClassName()
+    {
+        return $this->_className;
+    }
+
+    public function getFileName()
+    {
+        return $this->_fileName;
     }
 
     private function _writeln($message)
@@ -29,46 +50,42 @@ class GenerateTask implements TaskInterface
         $this->_output->writeln($message);
     }
 
-    public function execute(array $arguments)
+    public function execute()
     {
-        $migrationFileName = Arrays::getValue($arguments, 'migration_file_name');
-        $module = Arrays::getValue($arguments, 'module', 'default');
-        $className = Naming::generateMigrationClassName($migrationFileName);
-        $fileName = Naming::generateMigrationFileName($migrationFileName);
-        $migrationsDir = Config::getValue('migrations_dir', $module);
+        $this->_checkAndCreateMigrationsDir();
+        $this->_isMigrationExists();
+        $this->_isWritableMigrationsDir();
 
-        $this->_checkAndCreateMigrationsDir($migrationsDir);
-        $this->_isMigrationExists($className, $migrationsDir);
-        $this->_isWritableMigrationsDir($migrationsDir);
-
-        $this->_createMigrationFile($className, $migrationsDir, $fileName);
+        $this->_createMigrationFile();
     }
 
-    private function _isMigrationExists($className, $migrationsDir)
+    private function _isMigrationExists()
     {
-        $directory = new RecursiveDirectoryIterator($migrationsDir);
+        $className = $this->getClassName();
+        $directory = new RecursiveDirectoryIterator($this->migrationsDir);
         $iterator = new RecursiveIteratorIterator($directory);
         foreach ($iterator as $file) {
             $searchClass = Naming::classFromFileToName($file->getFilename());
             if (Strings::equalsIgnoreCase($searchClass, $className)) {
-                throw new GenerateException("This migration name is already used in the {$migrationsDir} directory. Please, choose another name.", OuzoMigrationsException::INVALID_ARGUMENT);
+                throw new GenerateException("This migration name is already used in the {$this->migrationsDir} directory. Please, choose another name.", OuzoMigrationsException::INVALID_ARGUMENT);
             }
         }
     }
 
-    private function _isWritableMigrationsDir($migrationsDir)
+    private function _isWritableMigrationsDir()
     {
-        if (!is_writable($migrationsDir)) {
-            throw new GenerateException("Migration directory {$migrationsDir} is not writable by the current user. Check permissions and try again.", OuzoMigrationsException::INVALID_MIGRATION_DIR);
+        if (!is_writable($this->migrationsDir)) {
+            throw new GenerateException("Migration directory {$this->migrationsDir} is not writable by the current user. Check permissions and try again.", OuzoMigrationsException::INVALID_MIGRATION_DIR);
         }
     }
 
-    private function _checkAndCreateMigrationsDir($migrationsDir)
+    private function _checkAndCreateMigrationsDir()
     {
+        $migrationsDir = $this->migrationsDir;
         if (!is_dir($migrationsDir)) {
             $this->_writeln("\tMigrations directory <info>{$migrationsDir}</info> doesn't exist, attempting to create.");
-            if (mkdir($migrationsDir, 0755, true) === FALSE) {
-                $this->_writeln("\t<error>Unable to create migrations directory at {$migrationsDir}, check permissions?</error>");
+            if (!mkdir($migrationsDir, 0755, true)) {
+                throw new GenerateException("Unable to create migrations directory at {$migrationsDir}, check permissions?", OuzoMigrationsException::INVALID_MIGRATION_DIR);
             } else {
                 $this->_writeln("\tCreated migrations dir: <info>OK</info>.");
             }
@@ -82,11 +99,15 @@ class GenerateTask implements TaskInterface
         return str_replace('{{className}}', $className, $file);
     }
 
-    private function _createMigrationFile($className, $migrationsDir, $fileName)
+    private function _createMigrationFile()
     {
+        $className = $this->getClassName();
+        $fileName = $this->getFileName();
+
         $classStub = $this->_classStub($className);
-        $path = Path::join($migrationsDir, $fileName);
-        if (!file_put_contents($path, $classStub)) {
+        $path = Path::join($this->migrationsDir, $fileName);
+        $fo = fopen($path, "w");
+        if (!fwrite($fo, $classStub)) {
             throw new GenerateException("Error writing to migrations directory/file. Do you have sufficient privileges?", OuzoMigrationsException::INVALID_MIGRATION_DIR);
         } else {
             $this->_writeln("\tCreated migration: <info>{$fileName}</info>.");
