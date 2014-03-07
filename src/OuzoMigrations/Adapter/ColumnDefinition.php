@@ -6,7 +6,7 @@ use OuzoMigrations\OuzoMigrationsException;
 class ColumnDefinition
 {
     /**
-     * @var Base
+     * @var AdapterBase
      */
     private $_adapter;
 
@@ -20,7 +20,7 @@ class ColumnDefinition
 
     public function __construct($adapter, $name, $type, $options = array())
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof AdapterBase)) {
             throw new OuzoMigrationsException('Invalid Adapter instance.', OuzoMigrationsException::INVALID_ADAPTER);
         }
         if (empty($name) || !is_string($name)) {

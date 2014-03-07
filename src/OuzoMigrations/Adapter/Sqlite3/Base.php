@@ -10,7 +10,7 @@ use SQLite3;
 
 define('SQLITE3_MAX_IDENTIFIER_LENGTH', 64);
 
-class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
+class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements AdapterInterface
 {
     /**
      * @var SQLite3
@@ -137,7 +137,7 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
         }
     }
 
-    public function create_table($table_name, $options = array())
+    public function createTable($table_name, $options = array())
     {
         return new TableDefinition($this, $table_name, $options);
     }

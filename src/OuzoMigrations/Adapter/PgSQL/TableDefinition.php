@@ -7,7 +7,7 @@ use OuzoMigrations\OuzoMigrationsException;
 class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
 {
     /**
-     * @var Base
+     * @var AdapterPgSQL
      */
     private $_adapter;
 
@@ -30,7 +30,7 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
     public function __construct($adapter, $name, $options = array())
     {
         //sanity check
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof AdapterPgSQL)) {
             throw new OuzoMigrationsException("Invalid Postgres Adapter instance.", OuzoMigrationsException::INVALID_ADAPTER);
         }
         if (!$name) {

@@ -4,6 +4,7 @@ use Ouzo\Config;
 use Ouzo\Utilities\Path;
 use Symfony\Component\Console\Application;
 use Task\Command\GenerateCommand;
+use Task\Command\MigrateCommand;
 use Task\Command\StatusCommand;
 
 define("OUZO_BASE", __DIR__);
@@ -18,4 +19,5 @@ Config::registerConfig(new DatabaseConfig());
 $application = new Application('Ouzo Migrations', '1.0');
 $application->add(new GenerateCommand());
 $application->add(new StatusCommand());
+$application->add(new MigrateCommand());
 $application->run();

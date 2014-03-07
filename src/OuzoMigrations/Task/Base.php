@@ -12,7 +12,7 @@ class Base
     private $_framework;
 
     /**
-     * @var \OuzoMigrations\Adapter\Base
+     * @var \OuzoMigrations\Adapter\AdapterBase
      */
     private $_adapter;
 
@@ -41,7 +41,7 @@ class Base
 
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
+        if (!($adapter instanceof \OuzoMigrations\Adapter\AdapterBase)) {
             throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
@@ -50,7 +50,7 @@ class Base
     }
 
     /**
-     * @return \OuzoMigrations\Adapter\Base
+     * @return \OuzoMigrations\Adapter\AdapterBase
      */
     public function get_adapter()
     {

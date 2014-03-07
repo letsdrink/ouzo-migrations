@@ -4,7 +4,7 @@ namespace Task\Db;
 class Version extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
 {
     /**
-     * @var \OuzoMigrations\Adapter\Base
+     * @var \OuzoMigrations\Adapter\AdapterBase
      */
     private $_adapter = null;
 

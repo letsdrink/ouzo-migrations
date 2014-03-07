@@ -3,6 +3,8 @@ namespace OuzoMigrations\Adapter;
 
 interface AdapterInterface
 {
+    public function createTable($table_name, $options = array());
+
     public function get_database_name();
 
     public function supports_migrations();
@@ -22,8 +24,6 @@ interface AdapterInterface
     public function table_exists($tbl);
 
     public function select_one($query);
-
-    public function create_table($table_name, $options = array());
 
     public function drop_table($tbl);
 

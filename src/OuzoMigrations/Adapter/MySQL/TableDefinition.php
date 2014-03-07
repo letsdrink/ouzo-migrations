@@ -7,7 +7,7 @@ use OuzoMigrations\OuzoMigrationsException;
 class TableDefinition
 {
     /**
-     * @var Base
+     * @var AdapterBase
      */
     private $_adapter;
 
@@ -29,7 +29,7 @@ class TableDefinition
 
     public function __construct($adapter, $name, $options = array())
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof AdapterBase)) {
             throw new OuzoMigrationsException("Invalid MySQL Adapter instance.", OuzoMigrationsException::INVALID_ADAPTER);
         }
         if (!$name) {

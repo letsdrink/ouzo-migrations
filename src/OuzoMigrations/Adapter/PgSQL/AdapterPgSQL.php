@@ -1,14 +1,14 @@
 <?php
 namespace OuzoMigrations\Adapter\PgSQL;
 
-use OuzoMigrations\Adapter\AdapterInterface;
-use OuzoMigrations\Adapter\ColumnDefinition;
+use Ouzo\Utilities\Arrays;
+use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
 
 define('PG_MAX_IDENTIFIER_LENGTH', 64);
 
-class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
+class AdapterPgSQL extends AdapterBase
 {
     public $db_info;
 
@@ -16,17 +16,29 @@ class Base extends \OuzoMigrations\Adapter\Base implements AdapterInterface
 
     private $_tables = array();
 
-    private $_tables_loaded = false;
-
     private $_version = '1.0';
 
     private $_in_trx = false;
 
-    public function __construct($dsn, $logger)
+    public function tableExists($tableName)
     {
-        parent::__construct($dsn);
-        $this->connect($dsn);
-        $this->set_logger($logger);
+        $this->loadTables();
+        return Arrays::keyExists($this->_tables, $tableName);
+    }
+
+    private function loadTables()
+    {
+        $this->_tables = array();
+        $sql = "SELECT tablename FROM pg_tables WHERE schemaname = ANY (current_schemas(false))";
+        foreach($this->_dbHandle->query($sql) as $row) {
+            $table = $row['tablename'];
+            $this->_tables[$table] = true;
+        }
+    }
+
+    public function createTable($table_name, $options = array())
+    {
+        return new TableDefinition($this, $table_name, $options);
     }
 
     public function get_database_name()
@@ -218,12 +230,6 @@ SQL;
         return system($command);
     }
 
-    public function table_exists($tbl, $reload_tables = false)
-    {
-        $this->load_tables($reload_tables);
-        return array_key_exists($tbl, $this->_tables);
-    }
-
     public function query($query)
     {
         $this->logger->log($query);
@@ -268,11 +274,6 @@ SQL;
         } else {
             throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
         }
-    }
-
-    public function create_table($table_name, $options = array())
-    {
-        return new TableDefinition($this, $table_name, $options);
     }
 
     public function drop_table($tbl)
@@ -791,20 +792,6 @@ SQL;
     private function isError($o)
     {
         return $o === FALSE;
-    }
-
-    private function load_tables($reload = true)
-    {
-        if ($this->_tables_loaded == false || $reload) {
-            $this->_tables = array(); //clear existing structure
-            $sql = "SELECT tablename FROM pg_tables WHERE schemaname = ANY (current_schemas(false))";
-
-            $res = pg_query($this->conn, $sql);
-            while ($row = pg_fetch_row($res)) {
-                $table = $row[0];
-                $this->_tables[$table] = true;
-            }
-        }
     }
 
     private function is_sql_method_call($str)

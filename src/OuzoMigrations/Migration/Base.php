@@ -22,7 +22,7 @@ class Base
 
     public function set_adapter($adapter)
     {
-        if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
+        if (!($adapter instanceof \OuzoMigrations\Adapter\AdapterBase)) {
             throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
@@ -86,7 +86,7 @@ class Base
 
     public function create_table($table_name, $options = array())
     {
-        return $this->_adapter->create_table($table_name, $options);
+        return $this->_adapter->createTable($table_name, $options);
     }
 
     public function execute($query)

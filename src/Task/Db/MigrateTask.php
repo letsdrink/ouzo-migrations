@@ -2,40 +2,68 @@
 namespace Task\Db;
 
 use Exception;
+use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
-use OuzoMigrations\Util\Migrator;
+use OuzoMigrations\Task\TaskInterface;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 define('STYLE_REGULAR', 1);
 define('STYLE_OFFSET', 2);
 
-class Task_Db_Migrate extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
+class MigrateTask implements TaskInterface
 {
+    const OUZO_MIGRATIONS_SCHEMA_TABLE_NAME = 'schema_migrations';
+
+    private $_output;
     /**
-     * @var Migrator
+     * @var AdapterBase
      */
-    private $_migrator_util = null;
+    private $_adapter;
 
-    /**
-     * @var \OuzoMigrations\Adapter\Base
-     */
-    private $_adapter = null;
-
-    private $_migratorDirs = null;
-
-    private $_task_args = array();
-
-    private $_debug = false;
-
-    private $_return = '';
-
-    public function __construct($adapter)
+    function __construct(InputInterface $input, OutputInterface $output)
     {
-        parent::__construct($adapter);
-        $this->_adapter = $adapter;
-        $this->_migrator_util = new Migrator($this->_adapter);
+        $this->_output = $output;
     }
 
-    public function execute($args)
+    public function setAdapter(AdapterBase $adapter)
+    {
+        $this->_adapter = $adapter;
+    }
+
+    private function _writeln($message)
+    {
+        $this->_output->writeln($message);
+    }
+
+    public function execute()
+    {
+        $this->_writeln("<info>[db:migrate]</info>");
+
+        $this->_checkMigrationTableAndCreate();
+
+    }
+
+    private function _checkMigrationTableAndCreate()
+    {
+        $schemaTable = $this->_adapter->hasTable(self::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME);
+        if (!$schemaTable) {
+            $this->_writeln("\t<info>Schema version table does not exist.</info> Auto-creating.");
+            $this->_createSchemaTable();
+        }
+    }
+
+    private function _createSchemaTable()
+    {
+        try {
+            $this->_writeln("\tCreating schema version table: <info>" . self::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME . "</info>.");
+            $this->_adapter->createSchemaVersionTable();
+        } catch (Exception $e) {
+            throw new OuzoMigrationsException("Error auto-creating 'schema_info' table: " . $e->getMessage(), OuzoMigrationsException::MIGRATION_FAILED);
+        }
+    }
+
+    public function exec($args)
     {
         if (!$this->_adapter->supports_migrations()) {
             throw new OuzoMigrationsException("This database does not support migrations.", OuzoMigrationsException::MIGRATION_NOT_SUPPORTED);
@@ -240,44 +268,10 @@ class Task_Db_Migrate extends \OuzoMigrations\Task\Base implements \OuzoMigratio
     {
         try {
             $this->_return .= sprintf("\n\tCreating schema version table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME . "\n\n");
-            $this->_adapter->create_schema_version_table();
+            $this->_adapter->createSchemaVersionTable();
             return true;
         } catch (Exception $e) {
             throw new OuzoMigrationsException("\nError auto-creating 'schema_info' table: " . $e->getMessage() . "\n\n", OuzoMigrationsException::MIGRATION_FAILED);
         }
-    }
-
-    public function help()
-    {
-        $output = <<<USAGE
-
-\tTask: db:migrate [VERSION]
-
-\tThe primary purpose of the framework is to run migrations, and the
-\texecution of migrations is all handled by just a regular ol' task.
-
-\tVERSION can be specified to go up (or down) to a specific
-\tversion, based on the current version. If not specified,
-\tall migrations greater than the current database version
-\twill be executed.
-
-\tExample A: The database is fresh and empty, assuming there
-\tare 5 actual migrations, but only the first two should be run.
-
-\t\tphp {$_SERVER['argv'][0]} db:migrate VERSION=20101006114707
-
-\tExample B: The current version of the DB is 20101006114707
-\tand we want to go down to 20100921114643
-
-\t\tphp {$_SERVER['argv'][0]} db:migrate VERSION=20100921114643
-
-\tExample C: You can also use relative number of revisions
-\t(positive migrate up, negative migrate down).
-
-\t\tphp {$_SERVER['argv'][0]} db:migrate VERSION=-2
-
-USAGE;
-
-        return $output;
     }
 }

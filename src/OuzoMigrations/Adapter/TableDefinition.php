@@ -8,13 +8,13 @@ class TableDefinition
     private $_columns = array();
 
     /**
-     * @var Base
+     * @var AdapterBase
      */
     private $_adapter;
 
     public function __construct($adapter)
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof AdapterBase)) {
             throw new OuzoMigrationsException('Invalid Adapter instance.', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;

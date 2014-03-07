@@ -1,13 +1,13 @@
 <?php
 namespace OuzoMigrations\Util;
 
-use OuzoMigrations\Adapter\Base;
+use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 
 class Migrator
 {
     /**
-     * @var Base
+     * @var AdapterBase
      */
     private $_adapter = null;
 
@@ -25,7 +25,7 @@ class Migrator
      */
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof Base)) {
+        if (!($adapter instanceof AdapterBase)) {
             throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;

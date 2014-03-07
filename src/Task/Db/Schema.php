@@ -8,7 +8,7 @@ use OuzoMigrations\Task\TaskInterface;
 class Schema extends Base implements TaskInterface
 {
     /**
-     * @var \OuzoMigrations\Adapter\Base
+     * @var \OuzoMigrations\Adapter\AdapterBase
      */
     private $_adapter = null;
 

@@ -18,7 +18,6 @@ class StatusCommand extends Command
 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-        print_r($input->getOption('display'));
         $generateTask = new StatusTask($input, $output);
         $generateTask->execute();
     }

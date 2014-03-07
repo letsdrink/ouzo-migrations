@@ -13,7 +13,7 @@ class FrameworkRunner
     public $logger;
 
     /**
-     * @var Adapter\Base
+     * @var Adapter\AdapterBase
      */
 
     private $_adapter = null;
@@ -83,7 +83,7 @@ class FrameworkRunner
     }
 
     /**
-     * @return Adapter\Base
+     * @return Adapter\AdapterBase
      */
     public function get_adapter()
     {
@@ -206,7 +206,7 @@ class FrameworkRunner
     public function update_schema_for_timestamps()
     {
         //only create the table if it doesnt already exist
-        $this->_adapter->create_schema_version_table();
+        $this->_adapter->createSchemaVersionTable();
         //insert all existing records into our new table
         $migrator_util = new Ruckusing_Util_Migrator($this->_adapter);
         $files = $migrator_util->get_migration_files($this->migrations_directories(), 'up');
@@ -322,7 +322,7 @@ class FrameworkRunner
             if ($f == '.' || $f == ".." || !is_dir($adapter_dir . DIRECTORY_SEPARATOR . $f)) {
                 continue;
             }
-            $adapter_class_path = $adapter_dir . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . 'Base.php';
+            $adapter_class_path = $adapter_dir . DIRECTORY_SEPARATOR . $f . DIRECTORY_SEPARATOR . 'AdapterPgSql.php';
             if (file_exists($adapter_class_path)) {
                 require_once $adapter_class_path;
             }

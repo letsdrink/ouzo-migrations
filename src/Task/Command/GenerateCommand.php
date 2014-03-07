@@ -12,7 +12,7 @@ class GenerateCommand extends Command
     protected function configure()
     {
         $this->setName('db:generate')
-            ->setDescription('GenerateCommand migration file')
+            ->setDescription('Generate migration file')
             ->addArgument('migration_file_name', InputArgument::REQUIRED, 'Migration file name.')
             ->addArgument('module', InputArgument::OPTIONAL, 'Module name defined in config.');
     }

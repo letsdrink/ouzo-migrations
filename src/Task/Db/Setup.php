@@ -4,7 +4,7 @@ namespace Task\Db;
 class Setup extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\TaskInterface
 {
     /**
-     * @var \OuzoMigrations\Adapter\Base
+     * @var \OuzoMigrations\Adapter\AdapterBase
      */
     private $_adapter = null;
 
@@ -21,7 +21,7 @@ class Setup extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\Ta
         //it doesnt exist, create it
         if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
             $output .= sprintf("\tCreating table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME);
-            $this->_adapter->create_schema_version_table();
+            $this->_adapter->createSchemaVersionTable();
             $output .= "\n\tDone.\n";
         } else {
             $output .= sprintf("\tNOTICE: table '%s' already exists. Nothing to do.", RUCKUSING_TS_SCHEMA_TBL_NAME);

@@ -9,7 +9,7 @@ define('RUCKUSING_TASK_DIR', RUCKUSING_BASE . DIRECTORY_SEPARATOR . 'src' . DIRE
 class Manager
 {
     /**
-     * @var \OuzoMigrations\Adapter\Base
+     * @var \OuzoMigrations\Adapter\AdapterBase
      */
     private $_adapter;
 
@@ -22,7 +22,7 @@ class Manager
 
     public function setAdapter($adapter)
     {
-        if (!($adapter instanceof \OuzoMigrations\Adapter\Base)) {
+        if (!($adapter instanceof \OuzoMigrations\Adapter\AdapterBase)) {
             throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
         }
         $this->_adapter = $adapter;
