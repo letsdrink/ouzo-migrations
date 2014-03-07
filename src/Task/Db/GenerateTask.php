@@ -85,29 +85,27 @@ class GenerateTask implements TaskInterface
         if (!is_dir($migrationsDir)) {
             $this->_writeln("\tMigrations directory <info>{$migrationsDir}</info> doesn't exist, attempting to create.");
             if (!mkdir($migrationsDir, 0755, true)) {
-                throw new GenerateException("Unable to create migrations directory at {$migrationsDir}, check permissions?", OuzoMigrationsException::INVALID_MIGRATION_DIR);
+                throw new GenerateException("Unable to create migrations directory at {$migrationsDir}, check permissions.", OuzoMigrationsException::INVALID_MIGRATION_DIR);
             } else {
                 $this->_writeln("\tCreated migrations dir: <info>OK</info>.");
             }
         }
     }
 
-    private function _classStub($className)
+    private function _classStub()
     {
         $path = Path::join(__DIR__, 'stubs', 'migration_file.stub');
         $file = file_get_contents($path);
-        return str_replace('{{className}}', $className, $file);
+        return str_replace('{{className}}', $this->getClassName(), $file);
     }
 
     private function _createMigrationFile()
     {
-        $className = $this->getClassName();
         $fileName = $this->getFileName();
 
-        $classStub = $this->_classStub($className);
+        $classStub = $this->_classStub();
         $path = Path::join($this->migrationsDir, $fileName);
-        $fo = fopen($path, "w");
-        if (!fwrite($fo, $classStub)) {
+        if (!file_put_contents($path, $classStub)) {
             throw new GenerateException("Error writing to migrations directory/file. Do you have sufficient privileges?", OuzoMigrationsException::INVALID_MIGRATION_DIR);
         } else {
             $this->_writeln("\tCreated migration: <info>{$fileName}</info>.");

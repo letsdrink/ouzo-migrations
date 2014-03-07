@@ -96,7 +96,7 @@ OUTPUT;
         $generateTask->execute();
 
         //then
-        $expeced = <<<TEMPLATE
+        $expected = <<<TEMPLATE
 <?php
 class {$generateTask->getClassName()}
 {
@@ -112,7 +112,7 @@ class {$generateTask->getClassName()}
 }
 TEMPLATE;
         $actual = file_get_contents(Path::join($generateTask->migrationsDir, $generateTask->getFileName()));
-        $this->assertEquals($expeced, $actual);
+        $this->assertEquals($expected, $actual);
         DeleteDirectory::recursive($generateTask->migrationsDir);
     }
 }
