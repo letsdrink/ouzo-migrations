@@ -6,6 +6,16 @@ class DatabaseConfig
     public function getConfig()
     {
         return array(
+            'db' => array(
+                'development' => array(
+                    'type' => 'pgsql',
+                    'host' => 'localhost',
+                    'port' => 5432,
+                    'database' => 'ouzo_migrations',
+                    'user' => 'postgres',
+                    'password' => '',
+                )
+            ),
             'migrations_dir' => array('default' => Path::join(OUZO_BASE, 'migrations'))
         );
     }
@@ -29,8 +39,8 @@ return array(
             'host' => 'localhost',
             'port' => 5432,
             'database' => 'ruckusing_migrations_test',
-            'user' => 'db_user',
-            'password' => 'dbuser123',
+            'user' => 'postgres',
+            'password' => '',
             //'directory' => 'custom_name',
 
         ),
@@ -40,7 +50,7 @@ return array(
             'port' => 3306,
             'database' => 'ruckusing_migrations_test',
             'user' => 'root',
-            'password' => 'piotr0987',
+            'password' => '',
             //'directory' => 'custom_name',
             //'socket' => '/var/run/mysqld/mysqld.sock'
         ),
