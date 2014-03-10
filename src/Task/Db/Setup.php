@@ -19,7 +19,7 @@ class Setup extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\Ta
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:setup]: \n";
         //it doesnt exist, create it
-        if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
+        if (!$this->_adapter->tableExists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
             $output .= sprintf("\tCreating table: %s", RUCKUSING_TS_SCHEMA_TBL_NAME);
             $this->_adapter->createSchemaVersionTable();
             $output .= "\n\tDone.\n";

@@ -11,47 +11,38 @@ define('PG_MAX_IDENTIFIER_LENGTH', 64);
 class AdapterPgSQL extends AdapterBase
 {
     public $db_info;
-
     public $conn;
 
     private $_tables = array();
-
     private $_version = '1.0';
 
-    private $_in_trx = false;
+    public function createTable($tableName, array $options = array())
+    {
+        return new TableDefinition($this, $tableName, $options);
+    }
 
     public function tableExists($tableName)
     {
-        $this->loadTables();
+        $this->_loadTables();
         return Arrays::keyExists($this->_tables, $tableName);
     }
 
-    private function loadTables()
+    private function _loadTables()
     {
         $this->_tables = array();
         $sql = "SELECT tablename FROM pg_tables WHERE schemaname = ANY (current_schemas(false))";
-        foreach($this->_dbHandle->query($sql) as $row) {
+        foreach ($this->_dbHandle->query($sql) as $row) {
             $table = $row['tablename'];
             $this->_tables[$table] = true;
         }
     }
 
-    public function createTable($table_name, $options = array())
-    {
-        return new TableDefinition($this, $table_name, $options);
-    }
-
-    public function get_database_name()
-    {
-        return $this->db_info['database'];
-    }
-
-    public function supports_migrations()
+    public function supportsMigrations()
     {
         return true;
     }
 
-    public function native_database_types()
+    public function nativeDatabaseTypes()
     {
         return array(
             'primary_key' => array('name' => 'serial'),
@@ -80,59 +71,6 @@ class AdapterPgSQL extends AdapterBase
         );
     }
 
-    public function start_transaction()
-    {
-        if ($this->inTransaction() === false) {
-            $this->beginTransaction();
-        }
-    }
-
-    public function commit_transaction()
-    {
-        if ($this->inTransaction()) {
-            $this->commit();
-        }
-    }
-
-    public function rollback_transaction()
-    {
-        if ($this->inTransaction()) {
-            $this->rollback();
-        }
-    }
-
-    private function inTransaction()
-    {
-        return $this->_in_trx;
-    }
-
-    private function beginTransaction()
-    {
-        if ($this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction already started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "BEGIN");
-        $this->_in_trx = true;
-    }
-
-    private function commit()
-    {
-        if (!$this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "COMMIT");
-        $this->_in_trx = false;
-    }
-
-    private function rollback()
-    {
-        if (!$this->_in_trx) {
-            throw new OuzoMigrationsException('Transaction not started', OuzoMigrationsException::QUERY_ERROR);
-        }
-        pg_query($this->conn, "ROLLBACK");
-        $this->_in_trx = false;
-    }
-
     public function quote_table($string)
     {
         return '"' . $string . '"';
@@ -149,7 +87,7 @@ class AdapterPgSQL extends AdapterBase
     {
         $was_in_transaction = false;
         if ($this->inTransaction()) {
-            $this->commit_transaction();
+            $this->commitTransaction();
             $was_in_transaction = true;
         }
 
@@ -176,7 +114,7 @@ class AdapterPgSQL extends AdapterBase
         $result = $this->query($ddl);
 
         if ($was_in_transaction) {
-            $this->start_transaction();
+            $this->startTransaction();
             $was_in_transaction = false;
         }
 
@@ -232,7 +170,6 @@ SQL;
 
     public function query($query)
     {
-        $this->logger->log($query);
         $query_type = $this->determine_query_type($query);
         $data = array();
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
@@ -245,7 +182,7 @@ SQL;
             }
             return $data;
         } else {
-            $res = pg_query($this->conn, $query);
+            $res = $this->_dbHandle->query($query);
             if ($this->isError($res)) {
                 throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
             }
@@ -617,7 +554,7 @@ SQL;
 
     public function type_to_sql($type, $options = array())
     {
-        $natives = $this->native_database_types();
+        $natives = $this->nativeDatabaseTypes();
         if (!array_key_exists($type, $natives)) {
             $error = sprintf("Error: I dont know what column type of '%s' maps to for Postgres.", $type);
             $error .= "\nYou provided: {$type}\n";
@@ -759,44 +696,8 @@ SQL;
         return "Base, version " . $this->_version;
     }
 
-    private function connect($dsn)
-    {
-        $this->db_connect($dsn);
-    }
-
-    private function db_connect($dsn)
-    {
-        if (!function_exists('pg_connect')) {
-            throw new OuzoMigrationsException("\nIt appears you have not compiled PHP with Postgres support: missing function pg_connect()", OuzoMigrationsException::INVALID_CONFIG);
-        }
-        $db_info = $this->get_dsn();
-        if ($db_info) {
-            $this->db_info = $db_info;
-            $conninfo = sprintf('host=%s port=%s dbname=%s user=%s password=%s',
-                $db_info['host'],
-                (!empty($db_info['port']) ? $db_info['port'] : '5432'),
-                $db_info['database'],
-                $db_info['user'],
-                $db_info['password']
-            );
-            $this->conn = pg_connect($conninfo);
-            if ($this->conn === FALSE) {
-                throw new OuzoMigrationsException("\n\nCould not connect to the DB, check host / user / password\n\n", OuzoMigrationsException::INVALID_CONFIG);
-            }
-            return true;
-        } else {
-            throw new OuzoMigrationsException("\n\nCould not extract DB connection information from: {$dsn}\n\n", OuzoMigrationsException::INVALID_CONFIG);
-        }
-    }
-
     private function isError($o)
     {
         return $o === FALSE;
-    }
-
-    private function is_sql_method_call($str)
-    {
-        $str = trim($str);
-        return (substr($str, -2, 2) == "()");
     }
 }

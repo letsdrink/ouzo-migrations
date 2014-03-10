@@ -18,7 +18,7 @@ class Version extends \OuzoMigrations\Task\Base implements \OuzoMigrations\Task\
     {
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:version]: \n";
-        if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
+        if (!$this->_adapter->tableExists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
             //it doesnt exist, create it
             $output .= "\tSchema version table (" . RUCKUSING_TS_SCHEMA_TBL_NAME . ") does not exist. Do you need to run 'db:setup'?";
         } else {

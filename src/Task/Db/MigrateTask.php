@@ -41,7 +41,6 @@ class MigrateTask implements TaskInterface
         $this->_writeln("<info>[db:migrate]</info>");
 
         $this->_checkMigrationTableAndCreate();
-
     }
 
     private function _checkMigrationTableAndCreate()
@@ -65,7 +64,7 @@ class MigrateTask implements TaskInterface
 
     public function exec($args)
     {
-        if (!$this->_adapter->supports_migrations()) {
+        if (!$this->_adapter->supportsMigrations()) {
             throw new OuzoMigrationsException("This database does not support migrations.", OuzoMigrationsException::MIGRATION_NOT_SUPPORTED);
         }
         $this->_task_args = $args;
@@ -205,7 +204,7 @@ class MigrateTask implements TaskInterface
                     $this->_migrator_util->resolve_current_version($file['version'], $target_method);
                     $this->_adapter->commit_transaction();
                 } catch (OuzoMigrationsException $e) {
-                    $this->_adapter->rollback_transaction();
+                    $this->_adapter->rollbackTransaction();
                     //wrap the caught exception in our own
                     throw new OuzoMigrationsException(sprintf("%s - %s", $file['class'], $e->getMessage()), OuzoMigrationsException::MIGRATION_FAILED);
                 }
@@ -240,7 +239,7 @@ class MigrateTask implements TaskInterface
 
     private function verify_environment()
     {
-        if (!$this->_adapter->table_exists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
+        if (!$this->_adapter->tableExists(RUCKUSING_TS_SCHEMA_TBL_NAME)) {
             $this->_return .= "\n\tSchema version table does not exist. Auto-creating.";
             $this->auto_create_schema_info_table();
         }

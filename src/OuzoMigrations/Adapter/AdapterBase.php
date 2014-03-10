@@ -2,6 +2,7 @@
 namespace OuzoMigrations\Adapter;
 
 use Ouzo\Utilities\Arrays;
+use OuzoMigrations\OuzoMigrationsException;
 use PDO;
 use Task\Db\MigrateTask;
 
@@ -17,16 +18,19 @@ define('SQL_SHOW', 256);
 define('SQL_RENAME', 512);
 define('SQL_SET', 1024);
 
-class AdapterBase implements AdapterInterface
+abstract class AdapterBase implements AdapterInterface
 {
     /**
      * @var PDO
      */
     protected $_dbHandle;
 
+    private $_databaseName;
+
     public function __construct($params)
     {
         $this->_dbHandle = $this->_createPdo($params);
+        $this->_databaseName = $params['database'];
     }
 
     private function _createPdo($params)
@@ -51,18 +55,13 @@ class AdapterBase implements AdapterInterface
         return $this->tableExists($tableName);
     }
 
-    public function tableExists($tableName)
-    {
-        return false;
-    }
-
     public function createSchemaVersionTable()
     {
         if (!$this->hasTable(MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME)) {
             $table = $this->createTable(MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME, array('id' => false));
             $table->column('version', 'string');
             $table->finish();
-            $this->add_index(RUCKUSING_TS_SCHEMA_TBL_NAME, 'version', array('unique' => true));
+            $this->add_index(MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME, 'version', array('unique' => true));
         }
     }
 
@@ -123,20 +122,39 @@ class AdapterBase implements AdapterInterface
         return true;
     }
 
-    public function get_database_name()
+    public function getDatabaseName()
     {
-
+        return $this->_databaseName;
     }
 
-    public function supports_migrations()
+    public function startTransaction()
     {
-
+        if (!$this->_dbHandle->inTransaction()) {
+            $this->_dbHandle->beginTransaction();
+        }
     }
 
-    public function native_database_types()
+    public function commitTransaction()
     {
-
+        if ($this->_dbHandle->inTransaction()) {
+            $this->_dbHandle->commit();
+        }
     }
+
+    public function rollbackTransaction()
+    {
+        if ($this->_dbHandle->inTransaction()) {
+            $this->_dbHandle->rollBack();
+        }
+    }
+
+    abstract public function createTable($tableName, array $options);
+
+    abstract public function tableExists($tableName);
+
+    abstract public function supportsMigrations();
+
+    abstract public function nativeDatabaseTypes();
 
     public function quote_table($table)
     {
@@ -163,19 +181,9 @@ class AdapterBase implements AdapterInterface
 
     }
 
-    public function table_exists($tbl)
-    {
-
-    }
-
     public function select_one($query)
     {
 
-    }
-
-    public function createTable($table_name, $options = array())
-    {
-        return null;
     }
 
     public function drop_table($tbl)
@@ -277,4 +285,8 @@ class AdapterBase implements AdapterInterface
     {
 
     }
+}
+
+class AdapterBaseException extends OuzoMigrationsException
+{
 }

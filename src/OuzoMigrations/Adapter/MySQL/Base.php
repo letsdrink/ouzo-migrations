@@ -31,17 +31,17 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         $this->set_logger($logger);
     }
 
-    public function get_database_name()
+    public function getDatabaseName()
     {
         return $this->db_info['database'];
     }
 
-    public function supports_migrations()
+    public function supportsMigrations()
     {
         return true;
     }
 
-    public function native_database_types()
+    public function nativeDatabaseTypes()
     {
         return array(
             'primary_key' => array('name' => 'integer', 'limit' => 11, 'null' => false),
@@ -84,7 +84,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         }
     }
 
-    public function rollback_transaction()
+    public function rollbackTransaction()
     {
         if ($this->inTransaction()) {
             $this->rollback();
@@ -191,7 +191,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return file_put_contents($output_file, $data, LOCK_EX);
     }
 
-    public function table_exists($tbl, $reload_tables = false)
+    public function tableExists($tbl, $reload_tables = false)
     {
         $this->load_tables($reload_tables);
         return array_key_exists($tbl, $this->_tables);
@@ -484,7 +484,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
 
     public function type_to_sql($type, $options = array())
     {
-        $natives = $this->native_database_types();
+        $natives = $this->nativeDatabaseTypes();
         if (!array_key_exists($type, $natives)) {
             $error = sprintf("Error:I dont know what column type of '%s' maps to for MySQL.", $type);
             $error .= "\nYou provided: {$type}\n";

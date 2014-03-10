@@ -26,17 +26,17 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         $this->set_logger($logger);
     }
 
-    public function get_database_name()
+    public function getDatabaseName()
     {
         return $this->db_info['database'];
     }
 
-    public function supports_migrations()
+    public function supportsMigrations()
     {
         return true;
     }
 
-    public function native_database_types()
+    public function nativeDatabaseTypes()
     {
         $types = array(
             'primary_key' => array('name' => 'integer'),
@@ -94,7 +94,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return system($command);
     }
 
-    public function table_exists($tbl, $reload_tables = false)
+    public function tableExists($tbl, $reload_tables = false)
     {
         $query = sprintf("SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name=%s;", $this->quote_column_name($tbl));
         $table = $this->select_one($query);
@@ -358,7 +358,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
 
     public function type_to_sql($type, $options = array())
     {
-        $natives = $this->native_database_types();
+        $natives = $this->nativeDatabaseTypes();
         if (!array_key_exists($type, $natives)) {
             $error = sprintf("Error: I don't know what column type of '%s' maps to for SQLite3.", $type);
             $error .= "\nYou provided: {$type}\n";
