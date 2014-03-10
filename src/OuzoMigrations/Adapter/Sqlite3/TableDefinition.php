@@ -4,7 +4,7 @@ namespace OuzoMigrations\Adapter\Sqlite3;
 use OuzoMigrations\Adapter\ColumnDefinition;
 use OuzoMigrations\OuzoMigrationsException;
 
-class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
+class TableDefinition extends \OuzoMigrations\Adapter\TableDefinitionBase
 {
     /**
      * @var AdapterBase
@@ -33,7 +33,7 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinition
         $this->_name = $name;
         $this->_options = $options;
         $this->init_sql($name, $options);
-        $this->_table_def = new \OuzoMigrations\Adapter\TableDefinition($this->_adapter, $this->_options);
+        $this->_table_def = new \OuzoMigrations\Adapter\TableDefinitionBase($this->_adapter, $this->_options);
 
         if (array_key_exists('id', $options)) {
             if (is_bool($options['id']) && $options['id'] == false) {

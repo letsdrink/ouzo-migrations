@@ -14,6 +14,15 @@ class DatabaseConfig
                     'database' => 'ouzo_migrations',
                     'user' => 'postgres',
                     'password' => '',
+                ),
+                'pg_test' => array(
+                    'type' => 'pgsql',
+                    'host' => 'localhost',
+                    'port' => 5432,
+                    'database' => 'ouzo_migrations_test',
+                    'user' => 'postgres',
+                    'password' => ''
+
                 )
             ),
             'migrations_dir' => array('default' => Path::join(OUZO_BASE, 'migrations'))

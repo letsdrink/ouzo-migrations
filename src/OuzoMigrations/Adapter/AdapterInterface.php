@@ -11,13 +11,17 @@ interface AdapterInterface
 
     public function nativeDatabaseTypes();
 
-    public function quote_table($table);
+    public function quoteTable($table);
 
-    public function database_exists($db);
+    public function quoteString($string);
 
-    public function create_database($db);
+    public function quote($value);
 
-    public function drop_database($db);
+    public function databaseExists($db);
+
+    public function createDatabase($db);
+
+    public function dropDatabase($db);
 
     public function schema($output_file);
 
@@ -25,11 +29,7 @@ interface AdapterInterface
 
     public function drop_table($tbl);
 
-    public function quote_string($str);
-
     public function identifier($str);
-
-    public function quote($value);
 
     public function rename_table($name, $new_name);
 

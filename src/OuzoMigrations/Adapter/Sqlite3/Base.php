@@ -65,24 +65,24 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $types;
     }
 
-    public function quote_table($string)
+    public function quoteTable($string)
     {
         return '"' . $string . '"';
     }
 
-    public function database_exists($db)
+    public function databaseExists($db)
     {
         $this->log_unsupported_feature(__FUNCTION__);
         return true;
     }
 
-    public function create_database($db, $options = array())
+    public function createDatabase($db, $options = array())
     {
         $this->log_unsupported_feature(__FUNCTION__);
         return true;
     }
 
-    public function drop_database($databaseName)
+    public function dropDatabase($databaseName)
     {
         $this->log_unsupported_feature(__FUNCTION__);
         return true;
@@ -144,14 +144,14 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
 
     public function drop_table($table_name)
     {
-        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($table_name));
+        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quoteTable($table_name));
         $this->execute_ddl($ddl);
         return true;
     }
 
-    public function quote_string($str)
+    public function quoteString($string)
     {
-        return $str;
+        return $string;
     }
 
     public function identifier($string)
@@ -194,7 +194,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         );
         $options = array_merge($defaultOptions, $options);
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-            $this->quote_table($table_name),
+            $this->quoteTable($table_name),
             $this->quote_column_name($column_name),
             $this->type_to_sql($type, $options)
         );
@@ -342,7 +342,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
 
     public function indexes($table_name)
     {
-        $sql = sprintf("PRAGMA INDEX_LIST(%s);", $this->quote_table($table_name));
+        $sql = sprintf("PRAGMA INDEX_LIST(%s);", $this->quoteTable($table_name));
         $result = $this->select_all($sql);
 
         $indexes = array();

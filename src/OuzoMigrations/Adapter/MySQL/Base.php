@@ -126,12 +126,12 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         $this->_in_trx = false;
     }
 
-    public function quote_table($str)
+    public function quoteTable($str)
     {
         return "`" . $str . "`";
     }
 
-    public function database_exists($db)
+    public function databaseExists($db)
     {
         $ddl = "SHOW DATABASES";
         $result = $this->select_all($ddl);
@@ -146,18 +146,18 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return false;
     }
 
-    public function create_database($db)
+    public function createDatabase($db)
     {
-        if ($this->database_exists($db)) {
+        if ($this->databaseExists($db)) {
             return false;
         }
         $ddl = sprintf("CREATE DATABASE %s", $this->identifier($db));
         return $this->query($ddl);
     }
 
-    public function drop_database($db)
+    public function dropDatabase($db)
     {
-        if (!$this->database_exists($db)) {
+        if (!$this->databaseExists($db)) {
             return false;
         }
         $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->identifier($db));
@@ -250,9 +250,9 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return true;
     }
 
-    public function quote_string($str)
+    public function quoteString($string)
     {
-        return $this->conn->real_escape_string($str);
+        return $this->conn->real_escape_string($string);
     }
 
     public function identifier($str)
@@ -262,7 +262,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
 
     public function quote($value)
     {
-        return $this->quote_string($value);
+        return $this->quoteString($value);
     }
 
     public function rename_table($name, $new_name)
@@ -568,7 +568,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             if (empty($values)) {
                 throw new OuzoMigrationsException("Error adding enum column: there must be at least one value defined", OuzoMigrationsException::INVALID_ARGUMENT);
             } else {
-                $column_type_sql .= sprintf("('%s')", implode("','", array_map(array($this, 'quote_string'), $values)));
+                $column_type_sql .= sprintf("('%s')", implode("','", array_map(array($this, 'quoteString'), $values)));
             }
         } else {
             //not a decimal column
@@ -633,7 +633,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             $sql .= " NOT NULL";
         }
         if (array_key_exists('comment', $options)) {
-            $sql .= sprintf(" COMMENT '%s'", $this->quote_string($options['comment']));
+            $sql .= sprintf(" COMMENT '%s'", $this->quoteString($options['comment']));
         }
         if (array_key_exists('after', $options)) {
             $sql .= sprintf(" AFTER %s", $this->identifier($options['after']));

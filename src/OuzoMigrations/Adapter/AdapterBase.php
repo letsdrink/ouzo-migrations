@@ -127,7 +127,7 @@ abstract class AdapterBase implements AdapterInterface
         return $this->_databaseName;
     }
 
-    public function startTransaction()
+    public function beginTransaction()
     {
         if (!$this->_dbHandle->inTransaction()) {
             $this->_dbHandle->beginTransaction();
@@ -156,22 +156,20 @@ abstract class AdapterBase implements AdapterInterface
 
     abstract public function nativeDatabaseTypes();
 
-    public function quote_table($table)
-    {
+    abstract public function quoteTable($table);
 
-    }
+    abstract public function quoteString($string);
 
-    public function database_exists($db)
-    {
+    abstract public function quote($value);
 
-    }
+    //FIXME: check is required?
+    //abstract public function quoteColumnName($column);
 
-    public function create_database($db)
-    {
+    abstract public function databaseExists($db);
 
-    }
+    abstract public function createDatabase($db);
 
-    public function drop_database($db)
+    public function dropDatabase($db)
     {
 
     }
@@ -191,17 +189,7 @@ abstract class AdapterBase implements AdapterInterface
 
     }
 
-    public function quote_string($str)
-    {
-
-    }
-
     public function identifier($str)
-    {
-
-    }
-
-    public function quote($value)
     {
 
     }

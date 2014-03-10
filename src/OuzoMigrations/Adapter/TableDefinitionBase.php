@@ -3,7 +3,7 @@ namespace OuzoMigrations\Adapter;
 
 use OuzoMigrations\OuzoMigrationsException;
 
-class TableDefinition
+class TableDefinitionBase
 {
     private $_columns = array();
 

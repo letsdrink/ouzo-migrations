@@ -6,10 +6,10 @@ use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
 
-define('PG_MAX_IDENTIFIER_LENGTH', 64);
-
 class AdapterPgSQL extends AdapterBase
 {
+    const PG_MAX_IDENTIFIER_LENGTH = 64;
+
     public $db_info;
     public $conn;
 
@@ -18,7 +18,7 @@ class AdapterPgSQL extends AdapterBase
 
     public function createTable($tableName, array $options = array())
     {
-        return new TableDefinition($this, $tableName, $options);
+        return new TableDefinitionPgSQL($this, $tableName, $options);
     }
 
     public function tableExists($tableName)
@@ -71,19 +71,43 @@ class AdapterPgSQL extends AdapterBase
         );
     }
 
-    public function quote_table($string)
+    public function quoteTable($string)
     {
         return '"' . $string . '"';
     }
 
-    public function database_exists($db)
+    public function quoteString($string)
+    {
+        return pg_escape_string($string);
+    }
+
+    public function quote($value)
+    {
+        $type = gettype($value);
+        if ($type == "double") {
+            return ("'{$value}'");
+        } elseif ($type == "integer") {
+            return ("'{$value}'");
+        } else {
+            // TODO: this global else is probably going to be problematic.
+            // I think eventually we'll need to do more introspection and handle all possible types
+            return ("'{$value}'");
+        }
+    }
+
+    public function quoteColumnName($column)
+    {
+        return '"' . $column . '"';
+    }
+
+    public function databaseExists($db)
     {
         $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
         $result = $this->select_one($sql);
         return (count($result) == 1 && $result['datname'] == $db);
     }
 
-    public function create_database($db, $options = array())
+    public function createDatabase($db, $options = array())
     {
         $was_in_transaction = false;
         if ($this->inTransaction()) {
@@ -114,19 +138,19 @@ class AdapterPgSQL extends AdapterBase
         $result = $this->query($ddl);
 
         if ($was_in_transaction) {
-            $this->startTransaction();
+            $this->beginTransaction();
             $was_in_transaction = false;
         }
 
         return $result;
     }
 
-    public function drop_database($db)
+    public function dropDatabase($db)
     {
-        if (!$this->database_exists($db)) {
+        if (!$this->databaseExists($db)) {
             return false;
         }
-        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quote_table($db));
+        $ddl = sprintf("DROP DATABASE IF EXISTS %s", $this->quoteTable($db));
         $result = $this->query($ddl);
         return $result;
     }
@@ -215,36 +239,12 @@ SQL;
 
     public function drop_table($tbl)
     {
-        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quote_table($tbl));
+        $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quoteTable($tbl));
         $this->query($ddl);
         return true;
     }
 
-    public function quote_string($string)
-    {
-        return pg_escape_string($string);
-    }
-
     public function identifier($string)
-    {
-        return '"' . $string . '"';
-    }
-
-    public function quote($value)
-    {
-        $type = gettype($value);
-        if ($type == "double") {
-            return ("'{$value}'");
-        } elseif ($type == "integer") {
-            return ("'{$value}'");
-        } else {
-            // TODO: this global else is probably going to be problematic.
-            // I think eventually we'll need to do more introspection and handle all possible types
-            return ("'{$value}'");
-        }
-    }
-
-    public function quote_column_name($string)
     {
         return '"' . $string . '"';
     }
@@ -291,8 +291,8 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name),
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name),
             $this->type_to_sql($type, $options)
         );
         $sql .= $this->add_column_options($type, $options);
@@ -303,8 +303,8 @@ SQL;
     public function remove_column($table_name, $column_name)
     {
         $sql = sprintf("ALTER TABLE %s DROP COLUMN %s",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name)
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name)
         );
         return $this->execute_ddl($sql);
     }
@@ -323,9 +323,9 @@ SQL;
         $column_info = $this->column_info($table_name, $column_name);
         $column_info['type'];
         $sql = sprintf("ALTER TABLE %s RENAME COLUMN %s TO %s",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name),
-            $this->quote_column_name($new_column_name)
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name),
+            $this->quoteColumnName($new_column_name)
         );
         return $this->execute_ddl($sql);
     }
@@ -355,8 +355,8 @@ SQL;
             $options['scale'] = null;
         }
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name),
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name),
             $this->type_to_sql($type, $options)
         );
         $sql .= $this->add_column_options($type, $options, true);
@@ -374,8 +374,8 @@ SQL;
     private function change_column_default($table_name, $column_name, $default)
     {
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s SET DEFAULT %s",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name),
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name),
             $this->quote($default)
         );
         $this->execute_ddl($sql);
@@ -385,16 +385,16 @@ SQL;
     {
         if (($null !== false) || ($default !== null)) {
             $sql = sprintf("UPDATE %s SET %s=%s WHERE %s IS NULL",
-                $this->quote_table($table_name),
-                $this->quote_column_name($column_name),
+                $this->quoteTable($table_name),
+                $this->quoteColumnName($column_name),
                 $this->quote($default),
-                $this->quote_column_name($column_name)
+                $this->quoteColumnName($column_name)
             );
             $this->query($sql);
         }
         $sql = sprintf("ALTER TABLE %s ALTER %s %s NOT NULL",
-            $this->quote_table($table_name),
-            $this->quote_column_name($column_name),
+            $this->quoteTable($table_name),
+            $this->quoteColumnName($column_name),
             ($null ? 'DROP' : 'SET')
         );
         $this->query($sql);
@@ -418,7 +418,7 @@ SQL;
          AND a.attnum > 0 AND NOT a.attisdropped
        ORDER BY a.attnum
 SQL;
-            $sql = sprintf($sql, $this->quote_table($table), $column);
+            $sql = sprintf($sql, $this->quoteTable($table), $column);
             $result = $this->select_one($sql);
             $data = array();
             if (is_array($result)) {
@@ -457,7 +457,7 @@ SQL;
             $index_name = Naming::index_name($table_name, $column_name);
         }
 
-        if (strlen($index_name) > PG_MAX_IDENTIFIER_LENGTH) {
+        if (strlen($index_name) > self::PG_MAX_IDENTIFIER_LENGTH) {
             $msg = "The auto-generated index name is too long for Postgres (max is 64 chars). ";
             $msg .= "Considering using 'name' option parameter to specify a custom name for this index.";
             $msg .= " Note: you will also need to specify";
@@ -471,12 +471,12 @@ SQL;
         }
         $cols = array();
         foreach ($column_names as $name) {
-            $cols[] = $this->quote_column_name($name);
+            $cols[] = $this->quoteColumnName($name);
         }
         $sql = sprintf("CREATE %sINDEX %s ON %s(%s)",
             $unique ? "UNIQUE " : "",
-            $this->quote_column_name($index_name),
-            $this->quote_column_name($table_name),
+            $this->quoteColumnName($index_name),
+            $this->quoteColumnName($table_name),
             join(", ", $cols)
         );
 
@@ -497,7 +497,7 @@ SQL;
         } else {
             $index_name = Naming::index_name($table_name, $column_name);
         }
-        $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
+        $sql = sprintf("DROP INDEX %s", $this->quoteColumnName($index_name));
 
         return $this->execute_ddl($sql);
     }

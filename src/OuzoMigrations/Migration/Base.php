@@ -36,12 +36,12 @@ class Base
 
     public function create_database($name, $options = null)
     {
-        return $this->_adapter->create_database($name, $options);
+        return $this->_adapter->createDatabase($name, $options);
     }
 
     public function drop_database($name)
     {
-        return $this->_adapter->drop_database($name);
+        return $this->_adapter->dropDatabase($name);
     }
 
     public function drop_table($tbl)
@@ -112,6 +112,6 @@ class Base
 
     public function quote_string($str)
     {
-        return $this->_adapter->quote_string($str);
+        return $this->_adapter->quoteString($str);
     }
 }
