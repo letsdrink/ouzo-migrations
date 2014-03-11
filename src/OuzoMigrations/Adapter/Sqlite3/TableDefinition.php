@@ -106,7 +106,7 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinitionBase
         if ($this->_auto_generate_id === true) {
             $this->_primary_keys[] = 'id';
             $primary_id = new ColumnDefinition($this->_adapter, 'id', 'primary_key');
-            $create_table_sql .= $primary_id->to_sql() . ",\n";
+            $create_table_sql .= $primary_id->toSql() . ",\n";
         }
 
         $create_table_sql .= $this->columns_to_str();
@@ -115,7 +115,7 @@ class TableDefinition extends \OuzoMigrations\Adapter\TableDefinitionBase
         if ($wants_sql) {
             return $create_table_sql;
         } else {
-            return $this->_adapter->execute_ddl($create_table_sql);
+            return $this->_adapter->executeDdl($create_table_sql);
         }
     }
 

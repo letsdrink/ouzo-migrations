@@ -6,20 +6,20 @@ use OuzoMigrations\OuzoMigrationsException;
 use PDO;
 use Task\Db\MigrateTask;
 
-define('SQL_UNKNOWN_QUERY_TYPE', 1);
-define('SQL_SELECT', 2);
-define('SQL_INSERT', 4);
-define('SQL_UPDATE', 8);
-define('SQL_DELETE', 16);
-define('SQL_ALTER', 32);
-define('SQL_DROP', 64);
-define('SQL_CREATE', 128);
-define('SQL_SHOW', 256);
-define('SQL_RENAME', 512);
-define('SQL_SET', 1024);
-
 abstract class AdapterBase implements AdapterInterface
 {
+    const SQL_UNKNOWN_QUERY_TYPE = 1;
+    const SQL_SELECT = 2;
+    const SQL_INSERT = 4;
+    const SQL_UPDATE = 8;
+    const SQL_DELETE = 16;
+    const SQL_ALTER = 32;
+    const SQL_DROP = 64;
+    const SQL_CREATE = 128;
+    const SQL_SHOW = 256;
+    const SQL_RENAME = 512;
+    const SQL_SET = 1024;
+
     /**
      * @var PDO
      */
@@ -71,7 +71,10 @@ abstract class AdapterBase implements AdapterInterface
         return $col->__toString();
     }
 
-    protected function determine_query_type($query)
+    /**
+     * @SuppressWarnings(PHPMD)
+     */
+    protected function determineQueryType($query)
     {
         $query = strtolower(trim($query));
         $match = array();
@@ -80,29 +83,28 @@ abstract class AdapterBase implements AdapterInterface
 
         switch ($type) {
             case 'select':
-                return SQL_SELECT;
+                return self::SQL_SELECT;
             case 'update':
-                return SQL_UPDATE;
+                return self::SQL_UPDATE;
             case 'delete':
-                return SQL_DELETE;
+                return self::SQL_DELETE;
             case 'insert':
-                return SQL_INSERT;
+                return self::SQL_INSERT;
             case 'alter':
-                return SQL_ALTER;
+                return self::SQL_ALTER;
             case 'drop':
-                return SQL_DROP;
+                return self::SQL_DROP;
             case 'create':
-                return SQL_CREATE;
+                return self::SQL_CREATE;
             case 'show':
-                return SQL_SHOW;
-            case 'rename':
-                return SQL_RENAME;
-            case 'set':
-                return SQL_SET;
             case 'pragma':
-                return SQL_SHOW;
+                return self::SQL_SHOW;
+            case 'rename':
+                return self::SQL_RENAME;
+            case 'set':
+                return self::SQL_SET;
             default:
-                return SQL_UNKNOWN_QUERY_TYPE;
+                return self::SQL_UNKNOWN_QUERY_TYPE;
         }
     }
 
@@ -116,10 +118,9 @@ abstract class AdapterBase implements AdapterInterface
         return $this->query($query);
     }
 
-    public function execute_ddl($ddl)
+    public function executeDdl($ddl)
     {
-        $this->query($ddl);
-        return true;
+        return $this->query($ddl);
     }
 
     public function getDatabaseName()
@@ -169,10 +170,15 @@ abstract class AdapterBase implements AdapterInterface
 
     abstract public function createDatabase($db);
 
-    public function dropDatabase($db)
-    {
+    abstract public function dropDatabase($db);
 
-    }
+    abstract public function identifier($string);
+
+    abstract public function typeToSql($type, $options = array());
+
+    abstract public function addColumnOptions($type, $options);
+
+    abstract public function query($query);
 
     public function schema($output_file)
     {
@@ -185,11 +191,6 @@ abstract class AdapterBase implements AdapterInterface
     }
 
     public function drop_table($tbl)
-    {
-
-    }
-
-    public function identifier($str)
     {
 
     }
@@ -244,17 +245,7 @@ abstract class AdapterBase implements AdapterInterface
 
     }
 
-    public function type_to_sql($type, $options = array())
-    {
-
-    }
-
     public function primary_keys($table_name)
-    {
-
-    }
-
-    public function add_column_options($type, $options, $performing_change = false)
     {
 
     }
@@ -265,11 +256,6 @@ abstract class AdapterBase implements AdapterInterface
     }
 
     public function remove_version($version)
-    {
-
-    }
-
-    public function query($query)
     {
 
     }

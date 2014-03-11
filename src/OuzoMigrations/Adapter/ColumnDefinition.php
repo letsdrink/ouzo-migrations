@@ -9,20 +9,14 @@ class ColumnDefinition
      * @var AdapterBase
      */
     private $_adapter;
-
-    public $name;
-
-    public $type;
-
-    public $properties;
-
     private $_options = array();
 
-    public function __construct($adapter, $name, $type, $options = array())
+    public $name;
+    public $type;
+    public $properties;
+
+    public function __construct(AdapterBase $adapter, $name, $type, $options = array())
     {
-        if (!($adapter instanceof AdapterBase)) {
-            throw new OuzoMigrationsException('Invalid Adapter instance.', OuzoMigrationsException::INVALID_ADAPTER);
-        }
         if (empty($name) || !is_string($name)) {
             throw new OuzoMigrationsException("Invalid 'name' parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
@@ -31,26 +25,25 @@ class ColumnDefinition
         }
 
         $this->_adapter = $adapter;
+        $this->_options = $options;
         $this->name = $name;
         $this->type = $type;
-        $this->_options = $options;
     }
 
-    public function to_sql()
+    public function toSql()
     {
-        $column_sql = sprintf("%s %s", $this->_adapter->identifier($this->name), $this->sql_type());
-        $column_sql .= $this->_adapter->add_column_options($this->type, $this->_options);
+        $sql = sprintf("%s %s", $this->_adapter->identifier($this->name), $this->_sqlType());
+        $sql .= $this->_adapter->addColumnOptions($this->type, $this->_options);
+        return $sql;
+    }
 
-        return $column_sql;
+    private function _sqlType()
+    {
+        return $this->_adapter->typeToSql($this->type, $this->_options);
     }
 
     public function __toString()
     {
-        return $this->to_sql();
-    }
-
-    private function sql_type()
-    {
-        return $this->_adapter->type_to_sql($this->type, $this->_options);
+        return $this->toSql();
     }
 }

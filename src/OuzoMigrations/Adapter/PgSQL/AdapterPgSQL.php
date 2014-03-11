@@ -5,6 +5,7 @@ use Ouzo\Utilities\Arrays;
 use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
+use PDOStatement;
 
 class AdapterPgSQL extends AdapterBase
 {
@@ -155,6 +156,146 @@ class AdapterPgSQL extends AdapterBase
         return $result;
     }
 
+    public function identifier($string)
+    {
+        return '"' . $string . '"';
+    }
+
+    public function typeToSql($type, $options = array())
+    {
+        $natives = $this->nativeDatabaseTypes();
+        if (!array_key_exists($type, $natives)) {
+            $error = sprintf("Error: I dont know what column type of '%s' maps to for Postgres.", $type);
+            $error .= "\nYou provided: {$type}\n";
+            $error .= "Valid types are: \n";
+            $types = array_keys($natives);
+            foreach ($types as $t) {
+                if ($t == 'primary_key') {
+                    continue;
+                }
+                $error .= "\t{$t}\n";
+            }
+            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
+        }
+
+        $scale = null;
+        $precision = null;
+        $limit = null;
+
+        if (isset($options['precision'])) {
+            $precision = $options['precision'];
+        }
+        if (isset($options['scale'])) {
+            $scale = $options['scale'];
+        }
+        if (isset($options['limit'])) {
+            $limit = $options['limit'];
+        }
+
+        $native_type = $natives[$type];
+        if (is_array($native_type) && array_key_exists('name', $native_type)) {
+            $column_type_sql = $native_type['name'];
+        } else {
+            return $native_type;
+        }
+        if ($type == "decimal") {
+            //ignore limit, use precison and scale
+            if ($precision == null && array_key_exists('precision', $native_type)) {
+                $precision = $native_type['precision'];
+            }
+            if ($scale == null && array_key_exists('scale', $native_type)) {
+                $scale = $native_type['scale'];
+            }
+            if ($precision != null) {
+                if (is_int($scale)) {
+                    $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
+                } else {
+                    $column_type_sql .= sprintf("(%d)", $precision);
+                }
+                //scale
+            } else {
+                if ($scale) {
+                    throw new OuzoMigrationsException("Error adding decimal column: precision cannot be empty if scale is specified", OuzoMigrationsException::INVALID_ARGUMENT);
+                }
+            }
+            //pre
+        }
+        // integer columns dont support limit (sizing)
+        if ($native_type['name'] != "integer") {
+            if ($limit == null && array_key_exists('limit', $native_type)) {
+                $limit = $native_type['limit'];
+            }
+            if ($limit) {
+                $column_type_sql .= sprintf("(%d)", $limit);
+            }
+        }
+
+        return $column_type_sql;
+    }
+
+    public function addColumnOptions($type, $options)
+    {
+        $sql = "";
+        if (!is_array($options)) {
+            return $sql;
+        }
+        if (array_key_exists('default', $options) && $options['default'] !== null) {
+            if (is_int($options['default'])) {
+                $default_format = '%d';
+            } elseif (is_bool($options['default'])) {
+                $default_format = "'%d'";
+            } else {
+                $default_format = "'%s'";
+            }
+            $default_value = sprintf($default_format, $options['default']);
+            $sql .= sprintf(" DEFAULT %s", $default_value);
+        }
+
+        if (Arrays::getValue($options, 'primary_key', false)) {
+            $sql .= " primary key";
+        }
+
+        if (array_key_exists('null', $options) && $options['null'] === false) {
+            $sql .= " NOT NULL";
+        }
+        return $sql;
+    }
+
+    public function query($query)
+    {
+        $query_type = $this->determineQueryType($query);
+        $data = array();
+        if ($query_type == AdapterBase::SQL_SELECT || $query_type == AdapterBase::SQL_SHOW) {
+            $result = $this->_dbHandle->query($query);
+            if (!$result) {
+                $this->_throwQueryException($result, $query);
+            }
+            while ($row = pg_fetch_assoc($result)) {
+                $data[] = $row;
+            }
+            return $data;
+        } else {
+            $result = $this->_dbHandle->query($query);
+            if (!$result) {
+                $this->_throwQueryException($result, $query);
+            }
+            $returning_regex = '/ RETURNING \"(.+)\"$/';
+            $matches = array();
+            if (preg_match($returning_regex, $query, $matches)) {
+                if (count($matches) == 2) {
+                    $returning_column_value = pg_fetch_result($result, 0, $matches[1]);
+                    return ($returning_column_value);
+                }
+            }
+            return true;
+        }
+    }
+
+    private function _throwQueryException(PDOStatement $result, $query)
+    {
+        throw new OuzoMigrationsException("Error executing 'query' with:\n " . $query . "\n\n Reason: " . $result->errorInfo(), OuzoMigrationsException::QUERY_ERROR);
+    }
+
     public function pk_and_sequence_for($table)
     {
         $sql = <<<SQL
@@ -192,40 +333,10 @@ SQL;
         return system($command);
     }
 
-    public function query($query)
-    {
-        $query_type = $this->determine_query_type($query);
-        $data = array();
-        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $res = pg_query($this->conn, $query);
-            if ($this->isError($res)) {
-                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
-            }
-            while ($row = pg_fetch_assoc($res)) {
-                $data[] = $row;
-            }
-            return $data;
-        } else {
-            $res = $this->_dbHandle->query($query);
-            if ($this->isError($res)) {
-                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
-            }
-            $returning_regex = '/ RETURNING \"(.+)\"$/';
-            $matches = array();
-            if (preg_match($returning_regex, $query, $matches)) {
-                if (count($matches) == 2) {
-                    $returning_column_value = pg_fetch_result($res, 0, $matches[1]);
-                    return ($returning_column_value);
-                }
-            }
-            return true;
-        }
-    }
-
     public function select_one($query)
     {
         $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
+        $query_type = $this->determineQueryType($query);
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = pg_query($this->conn, $query);
             if ($this->isError($res)) {
@@ -244,11 +355,6 @@ SQL;
         return true;
     }
 
-    public function identifier($string)
-    {
-        return '"' . $string . '"';
-    }
-
     public function rename_table($name, $new_name)
     {
         if (empty($name)) {
@@ -258,13 +364,13 @@ SQL;
             throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
-        $this->execute_ddl($sql);
+        $this->executeDdl($sql);
         $pk_and_sequence_for = $this->pk_and_sequence_for($new_name);
         if (!empty($pk_and_sequence_for)) {
             list($pk, $seq) = $pk_and_sequence_for;
             if ($seq == "{$name}_{$pk}_seq") {
                 $new_seq = "{$new_name}_{$pk}_seq";
-                $this->execute_ddl("ALTER TABLE $seq RENAME TO $new_seq");
+                $this->executeDdl("ALTER TABLE $seq RENAME TO $new_seq");
             }
         }
     }
@@ -293,11 +399,11 @@ SQL;
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
             $this->quoteTable($table_name),
             $this->quoteColumnName($column_name),
-            $this->type_to_sql($type, $options)
+            $this->typeToSql($type, $options)
         );
-        $sql .= $this->add_column_options($type, $options);
+        $sql .= $this->addColumnOptions($type, $options);
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_column($table_name, $column_name)
@@ -306,7 +412,7 @@ SQL;
             $this->quoteTable($table_name),
             $this->quoteColumnName($column_name)
         );
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function rename_column($table_name, $column_name, $new_column_name)
@@ -327,7 +433,7 @@ SQL;
             $this->quoteColumnName($column_name),
             $this->quoteColumnName($new_column_name)
         );
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function change_column($table_name, $column_name, $type, $options = array())
@@ -357,9 +463,9 @@ SQL;
         $sql = sprintf("ALTER TABLE %s ALTER COLUMN %s TYPE %s",
             $this->quoteTable($table_name),
             $this->quoteColumnName($column_name),
-            $this->type_to_sql($type, $options)
+            $this->typeToSql($type, $options)
         );
-        $sql .= $this->add_column_options($type, $options, true);
+        $sql .= $this->addColumnOptions($type, $options);
 
         if (array_key_exists('default', $options)) {
             $this->change_column_default($table_name, $column_name, $options['default']);
@@ -368,7 +474,7 @@ SQL;
             $default = array_key_exists('default', $options) ? $options['default'] : null;
             $this->change_column_null($table_name, $column_name, $options['null'], $default);
         }
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     private function change_column_default($table_name, $column_name, $default)
@@ -378,7 +484,7 @@ SQL;
             $this->quoteColumnName($column_name),
             $this->quote($default)
         );
-        $this->execute_ddl($sql);
+        $this->executeDdl($sql);
     }
 
     private function change_column_null($table_name, $column_name, $null, $default = null)
@@ -480,7 +586,7 @@ SQL;
             join(", ", $cols)
         );
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_index($table_name, $column_name, $options = array())
@@ -499,7 +605,7 @@ SQL;
         }
         $sql = sprintf("DROP INDEX %s", $this->quoteColumnName($index_name));
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function has_index($table_name, $column_name, $options = array())
@@ -552,78 +658,6 @@ SQL;
         return $indexes;
     }
 
-    public function type_to_sql($type, $options = array())
-    {
-        $natives = $this->nativeDatabaseTypes();
-        if (!array_key_exists($type, $natives)) {
-            $error = sprintf("Error: I dont know what column type of '%s' maps to for Postgres.", $type);
-            $error .= "\nYou provided: {$type}\n";
-            $error .= "Valid types are: \n";
-            $types = array_keys($natives);
-            foreach ($types as $t) {
-                if ($t == 'primary_key') {
-                    continue;
-                }
-                $error .= "\t{$t}\n";
-            }
-            throw new OuzoMigrationsException($error, OuzoMigrationsException::INVALID_ARGUMENT);
-        }
-
-        $scale = null;
-        $precision = null;
-        $limit = null;
-
-        if (isset($options['precision'])) {
-            $precision = $options['precision'];
-        }
-        if (isset($options['scale'])) {
-            $scale = $options['scale'];
-        }
-        if (isset($options['limit'])) {
-            $limit = $options['limit'];
-        }
-
-        $native_type = $natives[$type];
-        if (is_array($native_type) && array_key_exists('name', $native_type)) {
-            $column_type_sql = $native_type['name'];
-        } else {
-            return $native_type;
-        }
-        if ($type == "decimal") {
-            //ignore limit, use precison and scale
-            if ($precision == null && array_key_exists('precision', $native_type)) {
-                $precision = $native_type['precision'];
-            }
-            if ($scale == null && array_key_exists('scale', $native_type)) {
-                $scale = $native_type['scale'];
-            }
-            if ($precision != null) {
-                if (is_int($scale)) {
-                    $column_type_sql .= sprintf("(%d, %d)", $precision, $scale);
-                } else {
-                    $column_type_sql .= sprintf("(%d)", $precision);
-                }
-                //scale
-            } else {
-                if ($scale) {
-                    throw new OuzoMigrationsException("Error adding decimal column: precision cannot be empty if scale is specified", OuzoMigrationsException::INVALID_ARGUMENT);
-                }
-            }
-            //pre
-        }
-        // integer columns dont support limit (sizing)
-        if ($native_type['name'] != "integer") {
-            if ($limit == null && array_key_exists('limit', $native_type)) {
-                $limit = $native_type['limit'];
-            }
-            if ($limit) {
-                $column_type_sql .= sprintf("(%d)", $limit);
-            }
-        }
-
-        return $column_type_sql;
-    }
-
     public function primary_keys($table_name)
     {
         $sql = <<<SQL
@@ -652,43 +686,16 @@ SQL;
         return $primary_keys;
     }
 
-    public function add_column_options($type, $options, $performing_change = false)
-    {
-        $sql = "";
-
-        if (!is_array($options)) {
-            return $sql;
-        }
-        if (!$performing_change) {
-            if (array_key_exists('default', $options) && $options['default'] !== null) {
-                if (is_int($options['default'])) {
-                    $default_format = '%d';
-                } elseif (is_bool($options['default'])) {
-                    $default_format = "'%d'";
-                } else {
-                    $default_format = "'%s'";
-                }
-                $default_value = sprintf($default_format, $options['default']);
-                $sql .= sprintf(" DEFAULT %s", $default_value);
-            }
-
-            if (array_key_exists('null', $options) && $options['null'] === false) {
-                $sql .= " NOT NULL";
-            }
-        }
-        return $sql;
-    }
-
     public function set_current_version($version)
     {
         $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_version($version)
     {
         $sql = sprintf("DELETE FROM %s WHERE version = '%s'", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function __toString()

@@ -23,13 +23,19 @@ interface AdapterInterface
 
     public function dropDatabase($db);
 
+    public function identifier($string);
+
+    public function typeToSql($type, $options = array());
+
+    public function addColumnOptions($type, $options);
+
+    public function query($query);
+
     public function schema($output_file);
 
     public function select_one($query);
 
     public function drop_table($tbl);
-
-    public function identifier($str);
 
     public function rename_table($name, $new_name);
 
@@ -51,15 +57,9 @@ interface AdapterInterface
 
     public function indexes($table_name);
 
-    public function type_to_sql($type, $options = array());
-
     public function primary_keys($table_name);
-
-    public function add_column_options($type, $options, $performing_change = false);
 
     public function set_current_version($version);
 
     public function remove_version($version);
-
-    public function query($query);
 }

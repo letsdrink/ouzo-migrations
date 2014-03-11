@@ -200,7 +200,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function query($query)
     {
         $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
+        $query_type = $this->determineQueryType($query);
         $data = array();
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->conn->query($query);
@@ -226,7 +226,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function select_one($query)
     {
         $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
+        $query_type = $this->determineQueryType($query);
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->conn->query($query);
             if ($this->isError($res)) {
@@ -255,9 +255,9 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $this->conn->real_escape_string($string);
     }
 
-    public function identifier($str)
+    public function identifier($string)
     {
-        return "`" . $str . "`";
+        return "`" . $string . "`";
     }
 
     public function quote($value)
@@ -274,7 +274,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $sql = sprintf("RENAME TABLE %s TO %s", $this->identifier($name), $this->identifier($new_name));
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function add_column($table_name, $column_name, $type, $options = array())
@@ -298,15 +298,15 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE %s ADD `%s` %s", $this->identifier($table_name), $column_name, $this->type_to_sql($type, $options));
-        $sql .= $this->add_column_options($type, $options);
-        return $this->execute_ddl($sql);
+        $sql = sprintf("ALTER TABLE %s ADD `%s` %s", $this->identifier($table_name), $column_name, $this->typeToSql($type, $options));
+        $sql .= $this->addColumnOptions($type, $options);
+        return $this->executeDdl($sql);
     }
 
     public function remove_column($table_name, $column_name)
     {
         $sql = sprintf("ALTER TABLE %s DROP COLUMN %s", $this->identifier($table_name), $this->identifier($column_name));
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function rename_column($table_name, $column_name, $new_column_name)
@@ -327,8 +327,8 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             $this->identifier($column_name),
             $this->identifier($new_column_name), $current_type);
 
-        $sql .= $this->add_column_options($current_type, $column_info);
-        return $this->execute_ddl($sql);
+        $sql .= $this->addColumnOptions($current_type, $column_info);
+        return $this->executeDdl($sql);
     }
 
     public function change_column($table_name, $column_name, $type, $options = array())
@@ -354,9 +354,9 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         if (!array_key_exists('scale', $options)) {
             $options['scale'] = null;
         }
-        $sql = sprintf("ALTER TABLE `%s` CHANGE `%s` `%s` %s", $table_name, $column_name, $column_name, $this->type_to_sql($type, $options));
-        $sql .= $this->add_column_options($type, $options);
-        return $this->execute_ddl($sql);
+        $sql = sprintf("ALTER TABLE `%s` CHANGE `%s` `%s` %s", $table_name, $column_name, $column_name, $this->typeToSql($type, $options));
+        $sql .= $this->addColumnOptions($type, $options);
+        return $this->executeDdl($sql);
     }
 
     public function column_info($table, $column)
@@ -422,7 +422,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             $this->identifier($table_name),
             join(", ", $cols));
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_index($table_name, $column_name, $options = array())
@@ -440,7 +440,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             $index_name = Naming::index_name($table_name, $column_name);
         }
         $sql = sprintf("DROP INDEX %s ON %s", $this->identifier($index_name), $this->identifier($table_name));
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function has_index($table_name, $column_name, $options = array())
@@ -482,7 +482,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $indexes;
     }
 
-    public function type_to_sql($type, $options = array())
+    public function typeToSql($type, $options = array())
     {
         $natives = $this->nativeDatabaseTypes();
         if (!array_key_exists($type, $natives)) {
@@ -588,7 +588,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return array();
     }
 
-    public function add_column_options($type, $options, $performing_change = false)
+    public function addColumnOptions($type, $options)
     {
         $sql = "";
 
@@ -644,13 +644,13 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function set_current_version($version)
     {
         $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_version($version)
     {
         $sql = sprintf("DELETE FROM %s WHERE version = '%s'", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function __toString()

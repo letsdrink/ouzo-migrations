@@ -104,7 +104,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function query($query)
     {
         $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
+        $query_type = $this->determineQueryType($query);
         $data = array();
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $SqliteResult = $this->executeQuery($query);
@@ -124,7 +124,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function select_one($query)
     {
         $this->logger->log($query);
-        $query_type = $this->determine_query_type($query);
+        $query_type = $this->determineQueryType($query);
 
         if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
             $res = $this->executeQuery($query);
@@ -145,7 +145,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function drop_table($table_name)
     {
         $ddl = sprintf("DROP TABLE IF EXISTS %s", $this->quoteTable($table_name));
-        $this->execute_ddl($ddl);
+        $this->executeDdl($ddl);
         return true;
     }
 
@@ -173,7 +173,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             throw new OuzoMigrationsException("Missing new column name parameter", OuzoMigrationsException::INVALID_ARGUMENT);
         }
         $sql = sprintf("ALTER TABLE %s RENAME TO %s", $this->identifier($name), $this->identifier($new_name));
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function add_column($table_name, $column_name, $type, $options = array())
@@ -196,11 +196,11 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         $sql = sprintf("ALTER TABLE %s ADD COLUMN %s %s",
             $this->quoteTable($table_name),
             $this->quote_column_name($column_name),
-            $this->type_to_sql($type, $options)
+            $this->typeToSql($type, $options)
         );
-        $sql .= $this->add_column_options($type, $options);
+        $sql .= $this->addColumnOptions($type, $options);
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_column($table_name, $column_name)
@@ -295,7 +295,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
             join(", ", $cols)
         );
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_index($table_name, $column_name, $options = array())
@@ -314,7 +314,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         }
         $sql = sprintf("DROP INDEX %s", $this->quote_column_name($index_name));
 
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function has_index($table_name, $column_name, $options = array())
@@ -356,7 +356,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $indexes;
     }
 
-    public function type_to_sql($type, $options = array())
+    public function typeToSql($type, $options = array())
     {
         $natives = $this->nativeDatabaseTypes();
         if (!array_key_exists($type, $natives)) {
@@ -395,7 +395,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $primary_keys;
     }
 
-    public function add_column_options($type, $options, $performing_change = false)
+    public function addColumnOptions($type, $options)
     {
         if (!is_array($options)) {
             return '';
@@ -425,13 +425,13 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function set_current_version($version)
     {
         $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     public function remove_version($version)
     {
         $sql = sprintf("DELETE FROM %s WHERE version = '%s'", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->execute_ddl($sql);
+        return $this->executeDdl($sql);
     }
 
     private function connect($dsn)
