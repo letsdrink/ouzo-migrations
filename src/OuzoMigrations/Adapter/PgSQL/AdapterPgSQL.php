@@ -104,7 +104,7 @@ class AdapterPgSQL extends AdapterBase
     public function databaseExists($db)
     {
         $sql = sprintf("SELECT datname FROM pg_database WHERE datname = '%s'", $db);
-        $result = $this->select_one($sql);
+        $result = $this->selectOne($sql);
         return (count($result) == 1 && $result['datname'] == $db);
     }
 
@@ -270,7 +270,7 @@ class AdapterPgSQL extends AdapterBase
             if (!$result) {
                 $this->_throwQueryException($result, $query);
             }
-            while ($row = pg_fetch_assoc($result)) {
+            foreach ($result as $row) {
                 $data[] = $row;
             }
             return $data;
@@ -296,6 +296,20 @@ class AdapterPgSQL extends AdapterBase
         throw new OuzoMigrationsException("Error executing 'query' with:\n " . $query . "\n\n Reason: " . $result->errorInfo(), OuzoMigrationsException::QUERY_ERROR);
     }
 
+    public function selectOne($query)
+    {
+        $query_type = $this->determineQueryType($query);
+        if ($query_type == AdapterBase::SQL_SELECT || $query_type == AdapterBase::SQL_SHOW) {
+            $result = $this->_dbHandle->query($query);
+            if (!$result) {
+                $this->_throwQueryException($result, $query);
+            }
+            return $result->fetch();
+        } else {
+            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
+        }
+    }
+
     public function pk_and_sequence_for($table)
     {
         $sql = <<<SQL
@@ -315,9 +329,10 @@ class AdapterPgSQL extends AdapterBase
         AND dep.refobjid      = '%s'::regclass
 SQL;
         $sql = sprintf($sql, $table);
-        $result = $this->select_one($sql);
+        $result = $this->selectOne($sql);
         if ($result) {
-            return (array($result['attname'], $result['relname']));
+            return (array($result['attname'], $result['re            $res = pg_query($this->conn, $query);
+lname']));
         } else {
             return array();
         }
@@ -331,21 +346,6 @@ SQL;
             $this->db_info['database']
         );
         return system($command);
-    }
-
-    public function select_one($query)
-    {
-        $this->logger->log($query);
-        $query_type = $this->determineQueryType($query);
-        if ($query_type == SQL_SELECT || $query_type == SQL_SHOW) {
-            $res = pg_query($this->conn, $query);
-            if ($this->isError($res)) {
-                throw new OuzoMigrationsException(sprintf("Error executing 'query' with:\n%s\n\nReason: %s\n\n", $query, pg_last_error($this->conn)), OuzoMigrationsException::QUERY_ERROR);
-            }
-            return pg_fetch_assoc($res);
-        } else {
-            throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
-        }
     }
 
     public function drop_table($tbl)
@@ -525,7 +525,7 @@ SQL;
        ORDER BY a.attnum
 SQL;
             $sql = sprintf($sql, $this->quoteTable($table), $column);
-            $result = $this->select_one($sql);
+            $result = $this->selectOne($sql);
             $data = array();
             if (is_array($result)) {
                 $data['type'] = $result['format_type'];
@@ -645,7 +645,7 @@ SQL;
       ORDER BY i.relname
 SQL;
         $sql = sprintf($sql, $table_name);
-        $result = $this->select_all($sql);
+        $result = $this->selectAll($sql);
 
         $indexes = array();
         foreach ($result as $row) {
@@ -673,7 +673,7 @@ SQL;
         AND indisprimary
 SQL;
         $sql = sprintf($sql, $table_name);
-        $result = $this->select_all($sql);
+        $result = $this->selectAll($sql);
 
         $primary_keys = array();
         foreach ($result as $row) {

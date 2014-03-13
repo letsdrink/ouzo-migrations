@@ -217,11 +217,11 @@ class FrameworkRunner
             }
             //query old table, if it less than or equal to our max version, then its a candidate for insertion
             $query_sql = sprintf("SELECT version FROM %s WHERE version >= %d", RUCKUSING_SCHEMA_TBL_NAME, $file['version']);
-            $existing_version_old_style = $this->_adapter->select_one($query_sql);
+            $existing_version_old_style = $this->_adapter->selectOne($query_sql);
             if (count($existing_version_old_style) > 0) {
                 //make sure it doesnt exist in our new table, who knows how it got inserted?
                 $new_vers_sql = sprintf("SELECT version FROM %s WHERE version = %d", RUCKUSING_TS_SCHEMA_TBL_NAME, $file['version']);
-                $existing_version_new_style = $this->_adapter->select_one($new_vers_sql);
+                $existing_version_new_style = $this->_adapter->selectOne($new_vers_sql);
                 if (empty($existing_version_new_style)) {
                     // use sprintf & %d to force it to be stripped of any leading zeros, we *know* this represents an old version style
                     // so we dont have to worry about PHP and integer overflow

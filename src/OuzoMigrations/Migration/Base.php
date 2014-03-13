@@ -96,7 +96,7 @@ class Base
 
     public function select_one($sql)
     {
-        return $this->_adapter->select_one($sql);
+        return $this->_adapter->selectOne($sql);
     }
 
     public function select_all($sql)

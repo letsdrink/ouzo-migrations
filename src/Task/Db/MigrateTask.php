@@ -5,6 +5,7 @@ use Exception;
 use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\TaskInterface;
+use OuzoMigrations\Util\Migrator;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -14,21 +15,36 @@ define('STYLE_OFFSET', 2);
 class MigrateTask implements TaskInterface
 {
     const OUZO_MIGRATIONS_SCHEMA_TABLE_NAME = 'schema_migrations';
+    const MIGRATION_UP = 'UP';
+    const MIGRATION_DOWN = 'DOWN';
 
+    /**
+     * @var InputInterface
+     */
+    private $_input;
+    /**
+     * @var OutputInterface
+     */
     private $_output;
     /**
      * @var AdapterBase
      */
     private $_adapter;
+    /**
+     * @var Migrator
+     */
+    private $_migrator;
 
     function __construct(InputInterface $input, OutputInterface $output)
     {
+        $this->_input = $input;
         $this->_output = $output;
     }
 
-    public function setAdapter(AdapterBase $adapter)
+    public function setAdapterAndMigrator(AdapterBase $adapter)
     {
         $this->_adapter = $adapter;
+        $this->_migrator = new Migrator($adapter);
     }
 
     private function _writeln($message)
@@ -39,8 +55,10 @@ class MigrateTask implements TaskInterface
     public function execute()
     {
         $this->_writeln("<info>[db:migrate]</info>");
+        $this->_writeln("\tUsing database: <comment>" . $this->_adapter->getDatabaseName() . "</comment>\n");
 
         $this->_checkMigrationTableAndCreate();
+        $this->_prepareToMigrate();
     }
 
     private function _checkMigrationTableAndCreate()
@@ -60,6 +78,39 @@ class MigrateTask implements TaskInterface
         } catch (Exception $e) {
             throw new OuzoMigrationsException("Error auto-creating 'schema_info' table: " . $e->getMessage(), OuzoMigrationsException::MIGRATION_FAILED);
         }
+    }
+
+    private function _prepareToMigrate()
+    {
+        $direction = $this->_direction();
+        $destination = '';
+
+        $this->_writeln("\tMigrating in direction: <info>" . $direction . '</info>');
+
+        if (!is_null($destination)) {
+            $this->_return .= " to: {$destination}\n";
+        } else {
+            $this->_return .= ":\n";
+        }
+        $migrations = $this->_migrator_util->get_runnable_migrations(
+            $this->_migratorDirs,
+            $direction,
+            $destination
+        );
+        if (count($migrations) == 0) {
+            $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
+
+            return;
+        }
+//            $this->run_migrations($migrations, $direction, $destination);
+    }
+
+    private function _direction()
+    {
+        $direction = self::MIGRATION_UP;
+        if ($this->_input->getArgument('version')) {
+        }
+        return $direction;
     }
 
     public function exec($args)
@@ -96,11 +147,11 @@ class MigrateTask implements TaskInterface
             $current_version = $this->_migrator_util->get_max_version();
             if ($style == STYLE_REGULAR) {
                 if (is_null($target_version)) {
-                    $this->prepare_to_migrate($target_version, 'up');
+                    $this->_prepareToMigrate($target_version, 'up');
                 } elseif ($current_version > $target_version) {
-                    $this->prepare_to_migrate($target_version, 'down');
+                    $this->_prepareToMigrate($target_version, 'down');
                 } else {
-                    $this->prepare_to_migrate($target_version, 'up');
+                    $this->_prepareToMigrate($target_version, 'up');
                 }
             }
 
@@ -157,33 +208,7 @@ class MigrateTask implements TaskInterface
             $this->_return .= "\n------------- TARGET ------------------\n";
             $this->_return .= print_r($target, true);
         }
-        $this->prepare_to_migrate(isset($target['version']) ? $target['version'] : null, $direction);
-    }
-
-    private function prepare_to_migrate($destination, $direction)
-    {
-        try {
-            $this->_return .= "\tMigrating " . strtoupper($direction);
-            if (!is_null($destination)) {
-                $this->_return .= " to: {$destination}\n";
-            } else {
-                $this->_return .= ":\n";
-            }
-            $migrations = $this->_migrator_util->get_runnable_migrations(
-                $this->_migratorDirs,
-                $direction,
-                $destination
-            );
-            if (count($migrations) == 0) {
-                $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
-
-                return;
-            }
-            $result = $this->run_migrations($migrations, $direction, $destination);
-        } catch (Exception $ex) {
-            throw $ex;
-        }
-
+        $this->_prepareToMigrate(isset($target['version']) ? $target['version'] : null, $direction);
     }
 
     private function run_migrations($migrations, $target_method, $destination)

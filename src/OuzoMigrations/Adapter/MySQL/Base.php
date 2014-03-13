@@ -134,7 +134,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function databaseExists($db)
     {
         $ddl = "SHOW DATABASES";
-        $result = $this->select_all($ddl);
+        $result = $this->selectAll($ddl);
         if (count($result) == 0) {
             return false;
         }
@@ -223,7 +223,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         }
     }
 
-    public function select_one($query)
+    public function selectOne($query)
     {
         $this->logger->log($query);
         $query_type = $this->determineQueryType($query);
@@ -369,7 +369,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         }
         try {
             $sql = sprintf("SHOW FULL COLUMNS FROM %s LIKE '%s'", $this->identifier($table), $column);
-            $result = $this->select_one($sql);
+            $result = $this->selectOne($sql);
             if (is_array($result)) {
                 $result = array_change_key_case($result, CASE_LOWER);
             }
@@ -469,7 +469,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function indexes($table_name)
     {
         $sql = sprintf("SHOW KEYS FROM %s", $this->identifier($table_name));
-        $result = $this->select_all($sql);
+        $result = $this->selectAll($sql);
         $indexes = array();
         $cur_idx = null;
         foreach ($result as $row) {

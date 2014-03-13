@@ -25,7 +25,7 @@ class MigrateCommand extends Command
         $config = Config::getValue('db', $env);;
 
         $generateTask = new MigrateTask($input, $output);
-        $generateTask->setAdapter(AdapterFactory::create($config));
+        $generateTask->setAdapterAndMigrator(AdapterFactory::create($config));
         $generateTask->execute();
     }
 } 

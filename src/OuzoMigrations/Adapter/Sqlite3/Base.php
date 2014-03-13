@@ -97,7 +97,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function tableExists($tbl, $reload_tables = false)
     {
         $query = sprintf("SELECT tbl_name FROM sqlite_master WHERE type='table' AND tbl_name=%s;", $this->quote_column_name($tbl));
-        $table = $this->select_one($query);
+        $table = $this->selectOne($query);
         return is_array($table) && sizeof($table) > 0;
     }
 
@@ -121,7 +121,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         }
     }
 
-    public function select_one($query)
+    public function selectOne($query)
     {
         $this->logger->log($query);
         $query_type = $this->determineQueryType($query);
@@ -343,7 +343,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
     public function indexes($table_name)
     {
         $sql = sprintf("PRAGMA INDEX_LIST(%s);", $this->quoteTable($table_name));
-        $result = $this->select_all($sql);
+        $result = $this->selectAll($sql);
 
         $indexes = array();
         foreach ($result as $row) {

@@ -113,7 +113,7 @@ abstract class AdapterBase implements AdapterInterface
         return $this->query($query);
     }
 
-    public function select_all($query)
+    public function selectAll($query)
     {
         return $this->query($query);
     }
@@ -180,12 +180,9 @@ abstract class AdapterBase implements AdapterInterface
 
     abstract public function query($query);
 
+    abstract public function selectOne($query);
+
     public function schema($output_file)
-    {
-
-    }
-
-    public function select_one($query)
     {
 
     }

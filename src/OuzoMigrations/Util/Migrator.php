@@ -1,8 +1,10 @@
 <?php
 namespace OuzoMigrations\Util;
 
+use Ouzo\Utilities\Arrays;
 use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
+use Task\Db\MigrateTask;
 
 class Migrator
 {
@@ -10,43 +12,21 @@ class Migrator
      * @var AdapterBase
      */
     private $_adapter = null;
-
     private $_migrations = array();
 
-    public function __construct($adapter)
+    public function __construct(AdapterBase $adapter)
     {
-        $this->setAdapter($adapter);
-    }
-
-    /**
-     * @param $adapter
-     * @throws OuzoMigrationsException
-     * @return Migrator
-     */
-    public function setAdapter($adapter)
-    {
-        if (!($adapter instanceof AdapterBase)) {
-            throw new OuzoMigrationsException('Adapter must be implement Base!', OuzoMigrationsException::INVALID_ADAPTER);
-        }
         $this->_adapter = $adapter;
-
-        return $this;
     }
 
-    public function get_max_version()
+    public function getMaxVersion()
     {
-        $versions_nested = $this->_adapter->select_all(sprintf("SELECT version FROM %s", RUCKUSING_TS_SCHEMA_TBL_NAME));
-        $versions = array();
-        foreach ($versions_nested as $v) {
-            $versions[] = $v['version'];
-        }
-        $num_versions = count($versions);
-        if ($num_versions) {
-            sort($versions); //sorts lowest-to-highest (ascending)
-            return (string)$versions[$num_versions - 1];
-        } else {
-            return null;
-        }
+        $versions = $this->_adapter->selectAll("SELECT version FROM " . MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME);
+        usort($versions, function ($a, $b) {
+            return $a['version'] > $b['version'] ? -1 : 1;
+        });
+        $first = Arrays::first($versions);
+        return Arrays::getValue($first, 'version');
     }
 
     public function get_runnable_migrations($directories, $direction, $destination = null, $use_cache = true)
@@ -62,7 +42,7 @@ class Migrator
         $runnable = array();
         $migrations = array();
         $migrations = $this->get_migration_files($directories, $direction);
-        $current = $this->find_version($migrations, $this->get_max_version());
+        $current = $this->find_version($migrations, $this->getMaxVersion());
         $target = $this->find_version($migrations, $destination);
         if (is_null($target) && !is_null($destination) && $destination > 0) {
             throw new OuzoMigrationsException(
@@ -198,7 +178,7 @@ class Migrator
     private function executed_migrations()
     {
         $query_sql = sprintf('SELECT version FROM %s', RUCKUSING_TS_SCHEMA_TBL_NAME);
-        $versions = $this->_adapter->select_all($query_sql);
+        $versions = $this->_adapter->selectAll($query_sql);
         $executed = array();
         foreach ($versions as $v) {
             $executed[] = $v['version'];

@@ -31,9 +31,9 @@ interface AdapterInterface
 
     public function query($query);
 
-    public function schema($output_file);
+    public function selectOne($query);
 
-    public function select_one($query);
+    public function schema($output_file);
 
     public function drop_table($tbl);
 
