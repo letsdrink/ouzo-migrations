@@ -33,6 +33,8 @@ interface AdapterInterface
 
     public function selectOne($query);
 
+    public function setCurrentVersion($version);
+
     public function schema($output_file);
 
     public function drop_table($tbl);
@@ -58,8 +60,6 @@ interface AdapterInterface
     public function indexes($table_name);
 
     public function primary_keys($table_name);
-
-    public function set_current_version($version);
 
     public function remove_version($version);
 }

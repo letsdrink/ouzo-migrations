@@ -6,6 +6,7 @@ use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Util\Naming;
 use PDOStatement;
+use Task\Db\MigrateTask;
 
 class AdapterPgSQL extends AdapterBase
 {
@@ -308,6 +309,12 @@ class AdapterPgSQL extends AdapterBase
         } else {
             throw new OuzoMigrationsException("Query for select_one() is not one of SELECT or SHOW: $query", OuzoMigrationsException::QUERY_ERROR);
         }
+    }
+
+    public function setCurrentVersion($version)
+    {
+        $sql = "INSERT INTO " . MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME . " (version) VALUES ('" . $version . "')";
+        return $this->executeDdl($sql);
     }
 
     public function pk_and_sequence_for($table)
@@ -684,12 +691,6 @@ SQL;
         }
 
         return $primary_keys;
-    }
-
-    public function set_current_version($version)
-    {
-        $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
-        return $this->executeDdl($sql);
     }
 
     public function remove_version($version)

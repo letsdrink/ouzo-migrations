@@ -1,6 +1,8 @@
 <?php
 namespace OuzoMigrations\Util;
 
+use DirectoryIterator;
+use Ouzo\Config;
 use Ouzo\Utilities\Arrays;
 use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
@@ -12,7 +14,6 @@ class Migrator
      * @var AdapterBase
      */
     private $_adapter = null;
-    private $_migrations = array();
 
     public function __construct(AdapterBase $adapter)
     {
@@ -25,63 +26,106 @@ class Migrator
         usort($versions, function ($a, $b) {
             return $a['version'] > $b['version'] ? -1 : 1;
         });
-        $first = Arrays::first($versions);
+        $first = Arrays::firstOrNull($versions) ? : array();
         return Arrays::getValue($first, 'version');
     }
 
-    public function get_runnable_migrations($directories, $direction, $destination = null, $use_cache = true)
+    public static function getMigrationDir($module = 'default')
     {
-        // cache migration lookups and early return if we've seen this requested set
-        if ($use_cache == true) {
-            $key = $direction . '-' . $destination;
-            if (array_key_exists($key, $this->_migrations)) {
-                return ($this->_migrations[$key]);
+        return Config::getValue('migrations_dir', $module);
+    }
+
+    public function getRunnableMigrations($migrationDir, $direction, $destination = null)
+    {
+        $migrations = self::getMigrationFiles($migrationDir, $direction);
+
+        $currentVersion = $this->findVersion($migrations, $this->getMaxVersion());
+        $targetVersion = $this->findVersion($migrations, $destination);
+
+        if (!$targetVersion && $destination && $destination > 0) {
+            throw new OuzoMigrationsException("Could not find target version {$destination} in set of migrations.", OuzoMigrationsException::INVALID_TARGET_MIGRATION);
+        }
+
+        return $migrations;
+
+//        $start = $direction == 'up' ? 0 : array_search($currentVersion, $migrations);
+//        $start = $start !== false ? $start : 0;
+//
+//        $finish = array_search($targetVersion, $migrations);
+//        $finish = $finish !== false ? $finish : (count($migrations) - 1);
+//
+//        $item_length = ($finish - $start) + 1;
+//
+//        $runnable = array_slice($migrations, $start, $item_length);
+//
+//        //dont include first item if going down but not if going all the way to the bottom
+//        if ($direction == 'down' && count($runnable) > 0 && $targetVersion != null) {
+//            array_pop($runnable);
+//        }
+//
+//        $executed = $this->get_executed_migrations();
+//        $to_execute = array();
+//
+//        foreach ($runnable as $migration) {
+//            //Skip ones that we have already executed
+//            if ($direction == 'up' && in_array($migration['version'], $executed)) {
+//                continue;
+//            }
+//            //Skip ones that we never executed
+//            if ($direction == 'down' && !in_array($migration['version'], $executed)) {
+//                continue;
+//            }
+//            $to_execute[] = $migration;
+//        }
+
+//        return ($to_execute);
+    }
+
+    public static function getMigrationFiles($path, $direction)
+    {
+        if (!file_exists($path)) {
+            throw new OuzoMigrationsException("Could not find target migrations dir {$path}.", OuzoMigrationsException::INVALID_MIGRATION_DIR);
+        }
+
+        $files = array();
+
+        $migrationsDir = new DirectoryIterator($path);
+        foreach ($migrationsDir as $migrationFile) {
+            if (preg_match('/^(\d+)_(.*)\.php$/', $migrationFile->getFilename())) {
+                $files[] = new MigrationFile($migrationFile);
             }
         }
 
-        $runnable = array();
-        $migrations = array();
-        $migrations = $this->get_migration_files($directories, $direction);
-        $current = $this->find_version($migrations, $this->getMaxVersion());
-        $target = $this->find_version($migrations, $destination);
-        if (is_null($target) && !is_null($destination) && $destination > 0) {
-            throw new OuzoMigrationsException(
-                "Could not find target version {$destination} in set of migrations.",
-                OuzoMigrationsException::INVALID_TARGET_MIGRATION
-            );
-        }
-        $start = $direction == 'up' ? 0 : array_search($current, $migrations);
-        $start = $start !== false ? $start : 0;
-        $finish = array_search($target, $migrations);
-        $finish = $finish !== false ? $finish : (count($migrations) - 1);
-        $item_length = ($finish - $start) + 1;
+        usort($files, array("\\OuzoMigrations\\Util\\Migrator", "_migrationCompare"));
 
-        $runnable = array_slice($migrations, $start, $item_length);
-
-        //dont include first item if going down but not if going all the way to the bottom
-        if ($direction == 'down' && count($runnable) > 0 && $target != null) {
-            array_pop($runnable);
+        if ($direction == MigrateTask::MIGRATION_DOWN) {
+            $files = array_reverse($files);
         }
 
-        $executed = $this->get_executed_migrations();
-        $to_execute = array();
+        return $files;
+    }
 
-        foreach ($runnable as $migration) {
-            //Skip ones that we have already executed
-            if ($direction == 'up' && in_array($migration['version'], $executed)) {
-                continue;
+    /**
+     * @SuppressWarnings(PHPMD)
+     */
+    private static function _migrationCompare(MigrationFile $a, MigrationFile $b)
+    {
+        return strcmp($a->getFilename(), $b->getFilename());
+    }
+
+    /**
+     * @param MigrationFile[] $migrationFiles
+     * @param $version
+     * @return null
+     */
+    public function findVersion($migrationFiles, $version)
+    {
+        foreach ($migrationFiles as $migrationFile) {
+            if ($migrationFile->getVersion() == $version) {
+                return $migrationFiles;
             }
-            //Skip ones that we never executed
-            if ($direction == 'down' && !in_array($migration['version'], $executed)) {
-                continue;
-            }
-            $to_execute[] = $migration;
         }
-        if ($use_cache == true) {
-            $this->_migrations[$key] = $to_execute;
-        }
-
-        return ($to_execute);
+        return null;
     }
 
     public static function generate_timestamp()
@@ -89,12 +133,12 @@ class Migrator
         return gmdate('YmdHis', time());
     }
 
-    public function resolve_current_version($version, $direction)
+    public function resolveCurrentVersion($version, $direction)
     {
-        if ($direction === 'up') {
-            $this->_adapter->set_current_version($version);
+        if ($direction === MigrateTask::MIGRATION_UP) {
+            $this->_adapter->setCurrentVersion($version);
         }
-        if ($direction === 'down') {
+        if ($direction === MigrateTask::MIGRATION_DOWN) {
             $this->_adapter->remove_version($version);
         }
 
@@ -104,75 +148,6 @@ class Migrator
     public function get_executed_migrations()
     {
         return $this->executed_migrations();
-    }
-
-    public static function get_migration_files($directories, $direction)
-    {
-        $valid_files = array();
-        foreach ($directories as $name => $path) {
-            if (!is_dir($path)) {
-                if (mkdir($path, 0755, true) === FALSE) {
-                    throw new OuzoMigrationsException("\n\tUnable to create migrations directory at %s, check permissions?", $path, OuzoMigrationsException::INVALID_MIGRATION_DIR);
-                }
-            }
-            $files = scandir($path);
-            $file_cnt = count($files);
-            if ($file_cnt > 0) {
-                for ($i = 0; $i < $file_cnt; $i++) {
-                    if (preg_match('/^(\d+)_(.*)\.php$/', $files[$i], $matches)) {
-                        if (count($matches) == 3) {
-                            $valid_files[] = array(
-                                'name' => $files[$i],
-                                'module' => $name
-                            );
-                        }
-                    }
-                }
-            }
-        }
-
-        usort($valid_files, array("Ruckusing_Util_Migrator", "migration_compare")); //sorts in place
-
-        if ($direction == 'down') {
-            $valid_files = array_reverse($valid_files);
-        }
-
-        //user wants a nested structure
-        $files = array();
-        $cnt = count($valid_files);
-        for ($i = 0; $i < $cnt; $i++) {
-            $migration = $valid_files[$i];
-            if (preg_match('/^(\d+)_(.*)\.php$/', $migration['name'], $matches)) {
-                $files[] = array(
-                    'version' => $matches[1],
-                    'class' => $matches[2],
-                    'file' => $matches[0],
-                    'module' => $migration['module']
-                );
-            }
-        }
-
-        return $files;
-    }
-
-    public function find_version($migrations, $version, $only_index = false)
-    {
-        $len = count($migrations);
-        for ($i = 0; $i < $len; $i++) {
-            if ($migrations[$i]['version'] == $version) {
-                return $only_index ? $i : $migrations[$i];
-            }
-        }
-
-        return null;
-    }
-
-    /**
-     * @SuppressWarnings(PHPMD)
-     */
-    private static function migration_compare($a, $b)
-    {
-        return strcmp($a["name"], $b["name"]);
     }
 
     private function executed_migrations()

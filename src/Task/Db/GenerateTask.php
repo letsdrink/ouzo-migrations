@@ -6,6 +6,7 @@ use Ouzo\Utilities\Path;
 use Ouzo\Utilities\Strings;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\TaskInterface;
+use OuzoMigrations\Util\Migrator;
 use OuzoMigrations\Util\Naming;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
@@ -32,7 +33,7 @@ class GenerateTask implements TaskInterface
         $this->_className = Naming::generateMigrationClassName($this->_migrationFileName);
         $this->_fileName = Naming::generateMigrationFileName($this->_migrationFileName);
 
-        $this->migrationsDir = Config::getValue('migrations_dir', $this->_module);
+        $this->migrationsDir = Migrator::getMigrationDir($this->_module);
     }
 
     public function getClassName()

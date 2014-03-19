@@ -182,6 +182,8 @@ abstract class AdapterBase implements AdapterInterface
 
     abstract public function selectOne($query);
 
+    abstract public function setCurrentVersion($version);
+
     public function schema($output_file)
     {
 
@@ -243,11 +245,6 @@ abstract class AdapterBase implements AdapterInterface
     }
 
     public function primary_keys($table_name)
-    {
-
-    }
-
-    public function set_current_version($version)
     {
 
     }

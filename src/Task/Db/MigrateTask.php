@@ -2,10 +2,13 @@
 namespace Task\Db;
 
 use Exception;
+use Ouzo\Utilities\Files;
 use OuzoMigrations\Adapter\AdapterBase;
 use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\TaskInterface;
+use OuzoMigrations\Util\MigrationFile;
 use OuzoMigrations\Util\Migrator;
+use OuzoMigrations\Util\Naming;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -34,6 +37,7 @@ class MigrateTask implements TaskInterface
      * @var Migrator
      */
     private $_migrator;
+    private $_migrationDir = null;
 
     function __construct(InputInterface $input, OutputInterface $output)
     {
@@ -52,12 +56,18 @@ class MigrateTask implements TaskInterface
         $this->_output->writeln($message);
     }
 
+    private function _write($message)
+    {
+        $this->_output->write($message);
+    }
+
     public function execute()
     {
         $this->_writeln("<info>[db:migrate]</info>");
         $this->_writeln("\tUsing database: <comment>" . $this->_adapter->getDatabaseName() . "</comment>\n");
 
         $this->_checkMigrationTableAndCreate();
+        $this->_setMigrationDir();
         $this->_prepareToMigrate();
     }
 
@@ -80,29 +90,84 @@ class MigrateTask implements TaskInterface
         }
     }
 
+    private function _setMigrationDir()
+    {
+        $this->_migrationDir = Migrator::getMigrationDir();
+    }
+
     private function _prepareToMigrate()
     {
         $direction = $this->_direction();
-        $destination = '';
+        $destination = null;
 
-        $this->_writeln("\tMigrating in direction: <info>" . $direction . '</info>');
+        $this->_write("\tMigrating in direction: <info>" . $direction . '</info>');
 
-        if (!is_null($destination)) {
-            $this->_return .= " to: {$destination}\n";
+        if (!$destination) {
+            $this->_writeln(":\n");
         } else {
-            $this->_return .= ":\n";
+            $this->_writeln(" to: " . $destination . "\n");
         }
-        $migrations = $this->_migrator_util->get_runnable_migrations(
-            $this->_migratorDirs,
-            $direction,
-            $destination
-        );
-        if (count($migrations) == 0) {
-            $this->_return .= "\nNo relevant migrations to run. Exiting...\n";
 
+        $migrations = $this->_migrator->getRunnableMigrations($this->_migrationDir, $direction, $destination);
+
+        if (!$migrations) {
+            $this->_writeln("<info>No relevant migrations to run.</info> Exiting...");
             return;
         }
-//            $this->run_migrations($migrations, $direction, $destination);
+        $this->runMigrations($migrations, $direction);
+    }
+
+    /**
+     * @param MigrationFile[] $migrationFiles
+     * @param $targetMethod
+     * @return array
+     * @throws OuzoMigrationsException
+     */
+    private function runMigrations($migrationFiles, $targetMethod)
+    {
+        $lastVersion = -1;
+        foreach ($migrationFiles as $migrationFile) {
+            $fullPath = $migrationFile->getFullPath();
+
+            if (is_file($fullPath) && is_readable($fullPath)) {
+                Files::load($fullPath);
+
+                $className = Naming::class_from_migration_file($migrationFile->getFilename());
+                $obj = new $className($this->_adapter);
+
+                $startTimer = $this->_startTimer();
+                try {
+                    $this->_adapter->beginTransaction();
+                    $obj->$targetMethod();
+                    $this->_migrator->resolveCurrentVersion($migrationFile->getVersion(), $targetMethod);
+                    $this->_adapter->commitTransaction();
+                } catch (OuzoMigrationsException $e) {
+                    $this->_adapter->rollbackTransaction();
+                    throw new OuzoMigrationsException(sprintf("%s - %s", $migrationFile->getClassName(), $e->getMessage()), OuzoMigrationsException::MIGRATION_FAILED);
+                }
+                $endTimer = $this->_endTimer();
+
+                $deltaTimer = $this->_deltaTimer($startTimer, $endTimer);
+                $this->_writeln(sprintf("========= %s ======== (%.2f)\n", $migrationFile->getClassName(), $deltaTimer));
+                $lastVersion = $migrationFile->getVersion();
+            }
+        }
+        return array('last_version' => $lastVersion);
+    }
+
+    private function _startTimer()
+    {
+        return microtime(true);
+    }
+
+    private function _endTimer()
+    {
+        return microtime(true);
+    }
+
+    private function _deltaTimer($start, $end)
+    {
+        return $end - $start;
     }
 
     private function _direction()
@@ -209,57 +274,6 @@ class MigrateTask implements TaskInterface
             $this->_return .= print_r($target, true);
         }
         $this->_prepareToMigrate(isset($target['version']) ? $target['version'] : null, $direction);
-    }
-
-    private function run_migrations($migrations, $target_method, $destination)
-    {
-        $last_version = -1;
-        foreach ($migrations as $file) {
-            $full_path = $this->_migratorDirs[$file['module']] . DIRECTORY_SEPARATOR . $file['file'];
-            if (is_file($full_path) && is_readable($full_path)) {
-                require_once $full_path;
-                $klass = Ruckusing_Util_Naming::class_from_migration_file($file['file']);
-                $obj = new $klass($this->_adapter);
-                $start = $this->start_timer();
-                try {
-                    //start transaction
-                    $this->_adapter->start_transaction();
-                    $result = $obj->$target_method();
-                    //successfully ran migration, update our version and commit
-                    $this->_migrator_util->resolve_current_version($file['version'], $target_method);
-                    $this->_adapter->commit_transaction();
-                } catch (OuzoMigrationsException $e) {
-                    $this->_adapter->rollbackTransaction();
-                    //wrap the caught exception in our own
-                    throw new OuzoMigrationsException(sprintf("%s - %s", $file['class'], $e->getMessage()), OuzoMigrationsException::MIGRATION_FAILED);
-                }
-                $end = $this->end_timer();
-                $diff = $this->diff_timer($start, $end);
-                $this->_return .= sprintf("========= %s ======== (%.2f)\n", $file['class'], $diff);
-                $last_version = $file['version'];
-                $exec = true;
-            }
-        }
-
-        //update the schema info
-        $result = array('last_version' => $last_version);
-
-        return $result;
-    }
-
-    private function start_timer()
-    {
-        return microtime(true);
-    }
-
-    private function end_timer()
-    {
-        return microtime(true);
-    }
-
-    private function diff_timer($s, $e)
-    {
-        return $e - $s;
     }
 
     private function verify_environment()

@@ -1,7 +1,12 @@
 <?php
 use Ouzo\Config;
+use Ouzo\Tests\Assert;
+use Ouzo\Utilities\Arrays;
+use Ouzo\Utilities\Path;
 use OuzoMigrations\Adapter\PgSQL\AdapterPgSQL;
+use OuzoMigrations\Util\MigrationFile;
 use OuzoMigrations\Util\Migrator;
+use Task\Db\MigrateTask;
 
 class MigratorTest extends PHPUnit_Framework_TestCase
 {
@@ -35,6 +40,24 @@ class MigratorTest extends PHPUnit_Framework_TestCase
 
         //then
         $this->assertEquals('123', $currentVersion);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnMigrations()
+    {
+        //given
+        $migrationsDir = Path::join(OUZO_BASE_TEST, 'dummy', 'db', 'migrations', 'ouzo_migrations_test');
+
+        //when
+        $migrationFiles = Migrator::getMigrationFiles($migrationsDir, MigrateTask::MIGRATION_UP);
+
+        //then
+        $migrationFiles = Arrays::map($migrationFiles, function(MigrationFile $file){
+            return $file->getFilename();
+        });
+        Assert::thatArray($migrationFiles)->containsExactly('001_CreateUsers.php', '003_AddIndexToBlogs.php', '20090122193325_AddNewTable.php');
     }
 
     protected function tearDown()

@@ -641,7 +641,7 @@ class AdapterBase extends \OuzoMigrations\Adapter\AdapterBase implements Adapter
         return $sql;
     }
 
-    public function set_current_version($version)
+    public function setCurrentVersion($version)
     {
         $sql = sprintf("INSERT INTO %s (version) VALUES ('%s')", RUCKUSING_TS_SCHEMA_TBL_NAME, $version);
         return $this->executeDdl($sql);

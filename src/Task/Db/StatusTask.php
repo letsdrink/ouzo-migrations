@@ -23,7 +23,7 @@ class StatusTask implements TaskInterface
         $output .= "[db:status]: \n";
         $util = new Migrator($this->_adapter);
         $migrations = $util->get_executed_migrations();
-        $files = $util->get_migration_files($this->get_framework()->migrations_directories(), 'up');
+        $files = $util->getMigrationFiles($this->get_framework()->migrations_directories(), 'up');
         $applied = array();
         $not_applied = array();
         foreach ($files as $file) {
