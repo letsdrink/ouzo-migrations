@@ -46,39 +46,12 @@ class Migrator
             throw new OuzoMigrationsException("Could not find target version {$destination} in set of migrations.", OuzoMigrationsException::INVALID_TARGET_MIGRATION);
         }
 
-        return $migrations;
+        $executedMigrations = $this->getExecutedMigrations();
+        $migrationsToExecute = Arrays::filter($migrations, function (MigrationFile $file) use ($executedMigrations) {
+            return !in_array($file->getVersion(), $executedMigrations);
+        });
 
-//        $start = $direction == 'up' ? 0 : array_search($currentVersion, $migrations);
-//        $start = $start !== false ? $start : 0;
-//
-//        $finish = array_search($targetVersion, $migrations);
-//        $finish = $finish !== false ? $finish : (count($migrations) - 1);
-//
-//        $item_length = ($finish - $start) + 1;
-//
-//        $runnable = array_slice($migrations, $start, $item_length);
-//
-//        //dont include first item if going down but not if going all the way to the bottom
-//        if ($direction == 'down' && count($runnable) > 0 && $targetVersion != null) {
-//            array_pop($runnable);
-//        }
-//
-//        $executed = $this->get_executed_migrations();
-//        $to_execute = array();
-//
-//        foreach ($runnable as $migration) {
-//            //Skip ones that we have already executed
-//            if ($direction == 'up' && in_array($migration['version'], $executed)) {
-//                continue;
-//            }
-//            //Skip ones that we never executed
-//            if ($direction == 'down' && !in_array($migration['version'], $executed)) {
-//                continue;
-//            }
-//            $to_execute[] = $migration;
-//        }
-
-//        return ($to_execute);
+        return $migrationsToExecute;
     }
 
     public static function getMigrationFiles($path, $direction)
@@ -128,9 +101,15 @@ class Migrator
         return null;
     }
 
-    public static function generate_timestamp()
+    public function getExecutedMigrations()
     {
-        return gmdate('YmdHis', time());
+        $query = 'SELECT version FROM ' . MigrateTask::OUZO_MIGRATIONS_SCHEMA_TABLE_NAME . ' ORDER BY version';
+        $rows = $this->_adapter->selectAll($query);
+        $executed = array();
+        foreach ($rows as $row) {
+            $executed[] = $row['version'];
+        }
+        return $executed;
     }
 
     public function resolveCurrentVersion($version, $direction)
@@ -141,25 +120,6 @@ class Migrator
         if ($direction === MigrateTask::MIGRATION_DOWN) {
             $this->_adapter->remove_version($version);
         }
-
         return $version;
-    }
-
-    public function get_executed_migrations()
-    {
-        return $this->executed_migrations();
-    }
-
-    private function executed_migrations()
-    {
-        $query_sql = sprintf('SELECT version FROM %s', RUCKUSING_TS_SCHEMA_TBL_NAME);
-        $versions = $this->_adapter->selectAll($query_sql);
-        $executed = array();
-        foreach ($versions as $v) {
-            $executed[] = $v['version'];
-        }
-        sort($executed);
-
-        return $executed;
     }
 }

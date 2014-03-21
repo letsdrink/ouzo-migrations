@@ -8,7 +8,6 @@ use OuzoMigrations\OuzoMigrationsException;
 use OuzoMigrations\Task\TaskInterface;
 use OuzoMigrations\Util\MigrationFile;
 use OuzoMigrations\Util\Migrator;
-use OuzoMigrations\Util\Naming;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 
@@ -129,7 +128,7 @@ class MigrateTask implements TaskInterface
             if (is_file($fullPath) && is_readable($fullPath)) {
                 Files::load($fullPath);
 
-                $className = Naming::class_from_migration_file($migrationFile->getFilename());
+                $className = $migrationFile->getClassName();
                 $obj = new $className($this->_adapter);
 
                 $startTimer = $this->_startTimer();

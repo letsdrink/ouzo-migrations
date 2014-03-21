@@ -31,18 +31,6 @@ class Naming
         return self::CLASS_NS_PREFIX . ucfirst($parts[0]) . '_' . ucfirst($parts[1]);
     }
 
-    public static function class_from_migration_file($file_name)
-    {
-        $className = false;
-        if (preg_match('/^(\d+)_(.*)\.php$/', $file_name, $matches)) {
-            if (count($matches) == 3) {
-                $className = $matches[2];
-            }
-        }
-
-        return $className;
-    }
-
     public static function camelcase($str)
     {
         $str = preg_replace('/\s+/', '_', $str);
@@ -84,9 +72,14 @@ class Naming
 
     public static function generateMigrationFileName($fileName)
     {
-        $timestamp = Migrator::generate_timestamp();
+        $timestamp = self::generateTimestamp();
         $name = self::generateMigrationClassName($fileName);
         return $timestamp . '_' . $name . '.php';
+    }
+
+    public static function generateTimestamp()
+    {
+        return gmdate('YmdHis', time());
     }
 
     public static function classFromFileToName($fileName)

@@ -3,6 +3,7 @@ namespace OuzoMigrations\Util;
 
 use DirectoryIterator;
 use Ouzo\Utilities\Arrays;
+use Ouzo\Utilities\Strings;
 
 class MigrationFile
 {
@@ -34,7 +35,7 @@ class MigrationFile
 
     public function getClassName()
     {
-        return Arrays::getValue($this->_parts, 1);
+        return Strings::remove(Arrays::getValue($this->_parts, 1), '.php');
     }
 
     public function getFullPath()

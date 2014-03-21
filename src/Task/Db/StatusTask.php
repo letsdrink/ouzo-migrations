@@ -22,7 +22,7 @@ class StatusTask implements TaskInterface
         $output = "Started: " . date('Y-m-d g:ia T') . "\n\n";
         $output .= "[db:status]: \n";
         $util = new Migrator($this->_adapter);
-        $migrations = $util->get_executed_migrations();
+        $migrations = $util->getExecutedMigrations();
         $files = $util->getMigrationFiles($this->get_framework()->migrations_directories(), 'up');
         $applied = array();
         $not_applied = array();
